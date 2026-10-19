@@ -14,6 +14,7 @@ from scripts.apply_overrides import (
     modify_player_battle_pp,
     modify_player_pp_checks,
     modify_move_pp_display,
+    modify_pikachu_move_pages,
 )
 
 
@@ -140,6 +141,28 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
         self.assertIn("gText_EmptyString3, B_WIN_PP_REMAINING", result)
         self.assertNotIn("ConvertIntToDecimalStringN", result)
         self.assertEqual(result, modify_move_pp_display(result))
+
+
+
+    def test_pikachu_second_move_page(self):
+        original = '''void HandleInputChooseMove(enum BattlerId battler)
+{
+    if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
+    {
+}
+static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
+{
+    BattlePutTextOnWindow(gText_EmptyString3, B_WIN_PP_REMAINING);
+}
+        InitMoveSelectionsVarsAndStrings(battler);
+        gBattleStruct->gimmick.playerSelect = FALSE;'''
+        result = modify_pikachu_move_pages(original)
+        for name in ("MOVE_IRON_TAIL", "MOVE_GRASS_KNOT", "MOVE_BRICK_BREAK", "MOVE_THUNDER_WAVE"):
+            self.assertIn(name, result)
+        self.assertIn("JOY_NEW(SELECT_BUTTON)", result)
+        self.assertIn('COMPOUND_STRING("2/2")', result)
+        self.assertIn("GetMonData(GetBattlerMon(battler), MON_DATA_MOVE1 + i)", result)
+        self.assertEqual(modify_pikachu_move_pages(result), result)
 
 
 if __name__ == "__main__":

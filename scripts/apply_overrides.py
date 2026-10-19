@@ -55,6 +55,7 @@ CONFIG = {
         "I_REUSABLE_TMS": "TRUE",
         "I_USE_EVO_HELD_ITEMS_FROM_BAG": "TRUE",
         "I_EXP_SHARE_ITEM": "GEN_6",
+        "I_EXP_SHARE_FLAG": "FLAG_UNUSED_0x264",
     },
     "include/config/general.h": {
         "EXPANSION_INTRO": "FALSE",

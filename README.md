@@ -15,12 +15,21 @@ A work-in-progress **GBA adventure** using [RHH's pokeemerald-expansion](https:/
 - Unique GBA header title/game code for identification in emulators.
 - GitHub Actions has **successfully compiled and validated** a 32 MiB `.gba` artifact for Delta on iOS ([verified build](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39269721177)). Emulator gameplay and save/load testing remain to be done.
 
+## Latest iPhone / Delta game download
+
+**Direct game link (always latest successful build):**
+https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest/download/ShatteredRealms.gba
+
+Every source change on `main` runs automated tests and builds the `.gba` game. Passing builds are published to [GitHub Releases](https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest) with the same filename each time. The link does not work until the first release has finished publishing. See [iPhone update & save instructions](docs/IPHONE_UPDATES.md) before replacing a game in Delta.
+
+**Save warning:** Modified ROM hashes can make Delta display a separate game, and some engine changes may make saves incompatible. Always export your old game's in-game save before importing an update.
+
 ## Build on GitHub (no PC necessary)
 
 1. Go to **Actions** > **Build Shattered Realms**.
 2. Select **Run workflow** (or open the [successful Alpha 0.1 run](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39269721177)).
-3. After the build job succeeds, open its run page and download the **ShatteredRealms-Alpha0.1-GBA** artifact.
-4. Extract the ZIP using Files on iPhone, then import `ShatteredRealms-Alpha0.1.gba` into Delta.
+3. After the build succeeds, open the [latest release](https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest) and download **ShatteredRealms.gba** (no ZIP extraction needed).
+4. Import `ShatteredRealms.gba` with **Delta → + → Files** on iPhone.
 
 For local builds, clone **this** repository, install the toolchain in the [upstream instructions](https://github.com/rh-hideout/pokeemerald-expansion/blob/expansion/1.17.1/INSTALL.md), then run:
 
@@ -39,7 +48,7 @@ The script applies edits to the engine checkout, not to the six original GBC gam
 - `scripts/apply_overrides.py` — deterministic gameplay patches for the pinned engine
 - `scripts/verify_rom.py` — built-ROM header and size validation
 - `tests/` — regression tests for our customizations
-- `.github/workflows/` — engine checkout, compilation, and downloadable build
+- `.github/workflows/` — local engine compilation, tests, downloadable artifact and automatic Latest Release
 - `docs/ROADMAP.md` — development milestones and acceptance criteria
 
 The complete Emerald Expansion engine is now **committed in `engine/`**. GitHub Actions builds the local engine source and applies our Shattered Realms customizations. The six original Game Boy / Game Boy Color ROMs, if added separately, are not used as the GBA engine.

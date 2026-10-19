@@ -3,6 +3,8 @@ name: Build Shattered Realms
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'engine/**'
       - 'scripts/**'
@@ -10,11 +12,17 @@ on:
       - '.github/workflows/build-shattered-realms.yml'
       - 'README.md'
 
+# A later push must never be overwritten by a slower, older build.
+concurrency:
+  group: shattered-realms-iphone-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
-  contents: read
+  contents: write  # Required to create GitHub Releases after a verified build.
 
 jobs:
   test-and-build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -41,16 +49,45 @@ jobs:
         run: make -C engine -j2 -Otarget TITLE=SHATTERED GAME_CODE=BSRE FILE_NAME=shattered-realms
 
       - name: Verify and package
+        shell: bash
         run: |
+          set -euo pipefail
           python3 scripts/verify_rom.py engine/shattered-realms.gba
           mkdir -p dist
-          cp engine/shattered-realms.gba dist/ShatteredRealms-Alpha0.1.gba
-          sha256sum dist/ShatteredRealms-Alpha0.1.gba > dist/SHA256SUMS.txt
+          cp engine/shattered-realms.gba dist/ShatteredRealms.gba
+          (cd dist && sha256sum ShatteredRealms.gba > SHA256SUMS.txt)
+          test -s dist/ShatteredRealms.gba
+          (cd dist && sha256sum -c SHA256SUMS.txt)
 
-      - name: Upload iPhone / Delta build
+      - name: Keep a private-to-Actions build artifact for troubleshooting
         uses: actions/upload-artifact@v4
         with:
           name: ShatteredRealms-Alpha0.1-GBA
           path: dist/
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish easy-to-download iPhone build to GitHub Releases
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: alpha0.1-build-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Shattered Realms — iPhone Build #${{ github.run_number }}
+          make_latest: true
+          prerelease: false
+          draft: false
+          fail_on_unmatched_files: true
+          files: |
+            dist/ShatteredRealms.gba
+            dist/SHA256SUMS.txt
+          body: |
+            **Automated Shattered Realms Alpha 0.1 build** from commit \`${{ github.sha }}\`.
+
+            Download **ShatteredRealms.gba** under Assets, then import it with **Delta → + → Files** on iPhone.
+
+            **Before updating, export the save from your old Delta game: long-press the game → Manage Save File → Export Save File.** Import the save into the updated game's entry and test it *before* deleting an older copy. New builds may not be save-compatible.
+
+            Permanent latest build link:
+            https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest/download/ShatteredRealms.gba
+
+            This release uses the Emerald Expansion prototype. Original Shattered Realms maps, story and quests are still in development.

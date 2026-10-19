@@ -170,6 +170,10 @@ def modify_player_battle_pp(contents: str) -> str:
                 struct Pokemon *partyMon = GetBattlerMon(battler);
                 for (i = 0; i < MAX_MON_MOVES; i++)
                 {
+                    // Restore Pikachu's saved moves before the next battle menu;
+                    // the extra page never replaces moves in the save file.
+                    if (gBattleMons[battler].species == SPECIES_PIKACHU)
+                        gBattleMons[battler].moves[i] = GetMonData(partyMon, MON_DATA_MOVE1 + i);
                     if (gBattleMons[battler].moves[i] != MOVE_NONE)
                     {
                         u32 maxPP = CalculatePPWithBonus(gBattleMons[battler].moves[i],

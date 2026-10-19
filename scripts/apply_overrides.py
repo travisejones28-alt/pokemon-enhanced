@@ -65,6 +65,12 @@ CONFIG = {
     },
     "include/config/overworld.h": {
         "OW_FOLLOWERS_ENABLED": "TRUE",
+        "OW_SHOW_ITEM_DESCRIPTIONS": "OW_ITEM_DESCRIPTIONS_ALWAYS",
+    },
+    "include/config/battle.h": {
+        "B_TRAINER_MON_RANDOM_ABILITY": "2",
+        "B_QUICK_MOVE_CURSOR_TO_RUN": "TRUE",
+        "B_RUN_TRAINER_BATTLE": "FALSE",
     },
 }
 

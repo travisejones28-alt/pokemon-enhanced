@@ -9,6 +9,11 @@ from scripts.apply_overrides import (
     modify_defines,
     modify_encounters,
     modify_evolutions,
+    modify_starter_choices,
+    modify_starter_gift,
+    modify_player_battle_pp,
+    modify_player_pp_checks,
+    modify_move_pp_display,
 )
 
 
@@ -66,6 +71,75 @@ class TestOverrides(unittest.TestCase):
                 self.assertEqual(entry["land_mons"]["mons"][slot]["species"], name)
             self.assertEqual(entry["land_mons"]["mons"][0]["min_level"], 2)
             self.assertEqual(entry["land_mons"]["mons"][0]["max_level"], 3)
+
+
+
+    def test_pikachu_starter_selector(self):
+        original = "    GRASS_STARTER,\n    FIRE_STARTER,\n    WATER_STARTER,"
+        result = modify_starter_choices(original)
+        self.assertIn("SPECIES_PIKACHU", result)
+        self.assertNotIn("    FIRE_STARTER,", result)
+        self.assertEqual(result, modify_starter_choices(result))
+
+    def test_pikachu_signature_moves_only_on_gift(self):
+        original = (
+            '#include "palette.h"\n'
+            "    ScriptGiveMon(starterMon, 5, ITEM_NONE);\n"
+            "    ResetTasks();"
+        )
+        result = modify_starter_gift(original)
+        for move in ("THUNDERBOLT", "VOLT_TACKLE", "SURF", "EXTREME_SPEED"):
+            self.assertIn("MOVE_" + move, result)
+        self.assertIn("starterMon == SPECIES_PIKACHU", result)
+        self.assertEqual(result, modify_starter_gift(result))
+
+    def test_unlimited_pp_only_for_player(self):
+        original = (
+            "            RecordedBattle_CopyBattlerMoves(battler);\n"
+            "            gBattleCommunication[battler] = STATE_BEFORE_ACTION_CHOSEN;"
+        )
+        result = modify_player_battle_pp(original)
+        self.assertIn("IsOnPlayerSide(battler)", result)
+        self.assertIn("!BattlerHasAi(battler)", result)
+        self.assertIn("SetMonData(partyMon, MON_DATA_PP1 + i, &maxPP)", result)
+        self.assertEqual(result, modify_player_battle_pp(result))
+
+    def test_player_pp_exempt_but_enemy_still_checked(self):
+        original = (
+            "    if (gBattleMons[battler].pp[moveId] == 0)\n"
+            "    {\n"
+            "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0)"
+        )
+        result = modify_player_pp_checks(original)
+        self.assertIn("&& !IsOnPlayerSide(battler)", result)
+        self.assertEqual(result, modify_player_pp_checks(result))
+
+    def test_no_pp_counter_in_battle_menu(self):
+        original = '''static void MoveSelectionDisplayPPString(enum BattlerId battler)
+{
+    StringCopy(gDisplayedStringBattle, gText_MoveInterfacePP);
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP);
+}
+static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
+{
+    u8 *txtPtr;
+    struct ChooseMoveStruct *moveInfo;
+
+    if (gBattleResources->bufferA[battler][2] == TRUE) // check if we didn't want to display PP number
+        return;
+
+    SetPPNumbersPaletteInMoveSelection(battler);
+    moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
+    txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPP[gMoveSelectionCursor[battler]], STR_CONV_MODE_RIGHT_ALIGN, 2);
+    *(txtPtr)++ = CHAR_SLASH;
+    ConvertIntToDecimalStringN(txtPtr, moveInfo->maxPP[gMoveSelectionCursor[battler]], STR_CONV_MODE_RIGHT_ALIGN, 2);
+
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
+}'''
+        result = modify_move_pp_display(original)
+        self.assertIn("gText_EmptyString3, B_WIN_PP_REMAINING", result)
+        self.assertNotIn("ConvertIntToDecimalStringN", result)
+        self.assertEqual(result, modify_move_pp_display(result))
 
 
 if __name__ == "__main__":

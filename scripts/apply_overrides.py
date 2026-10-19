@@ -922,6 +922,100 @@ def modify_quest_map_script(contents: str, map_name: str) -> str:
 
 
 
+
+def modify_first_gym_party(contents: str) -> str:
+    """First badge is earned in Astra's harder multi-type Rift Gym."""
+    if "Name: ASTRA" in contents.split("=== TRAINER_ROXANNE_1 ===", 1)[1].split("=== TRAINER_BRAWLY_1 ===", 1)[0]:
+        return contents
+    pattern = r"=== TRAINER_ROXANNE_1 ===\n.*?(?=\n=== TRAINER_BRAWLY_1 ===)"
+    replacement = """=== TRAINER_ROXANNE_1 ===
+Name: ASTRA
+Class: Leader
+Pic: Hex Maniac
+Gender: Female
+Music: Female
+Items: Super Potion / Super Potion
+Double Battle: No
+AI: Check Bad Move / Try To Faint / Check Viability
+
+Wooper @ Eviolite
+Level: 16
+IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
+- Mud Shot
+- Water Gun
+- Yawn
+- Protect
+
+Sandile @ Oran Berry
+Level: 17
+IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
+- Bite
+- Sand Tomb
+- Rock Tomb
+- Assurance
+
+Gible @ Sitrus Berry
+Level: 19
+IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
+- Dragon Breath
+- Bulldoze
+- Sandstorm
+- Rock Tomb
+
+Misdreavus @ Sitrus Berry
+Level: 20
+IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
+- Shadow Sneak
+- Psybeam
+- Confuse Ray
+- Mystical Fire
+"""
+    if len(re.findall(pattern, contents, re.S)) != 1:
+        raise ValueError("Could not find original first gym leader party")
+    result = re.sub(pattern, lambda match: replacement.rstrip(), contents, count=1, flags=re.S)
+    # Preserve rematch IDs, but align other Roxanne battle names with Astra.
+    result = re.sub(r"(=== TRAINER_ROXANNE_\d+ ===\nName: )ROXANNE",
+                    lambda match: match.group(1) + "ASTRA", result)
+    return result
+
+
+def modify_first_gym_dialogue(contents: str) -> str:
+    """Original first gym storyline and badge flags remain, with new chapter script."""
+    if "I guard the RIFT GYM" in contents:
+        return contents
+    start = contents.index("RustboroCity_Gym_Text_RoxanneIntro:\n")
+    end = contents.index("\nRustboroCity_Gym_Text_RoxanneDefeat:", start)
+    new_intro = r'''RustboroCity_Gym_Text_RoxanneIntro:
+	.string "ASTRA: I guard the RIFT GYM.\p"
+	.string "TEAM ECLIPSE has unsettled\n"
+	.string "the balance of every type.\p"
+	.string "Here you will face GROUND,\n"
+	.string "DRAGON, and GHOST POKeMON!\p"
+	.string "Your unlimited power will\n"
+	.string "not replace good strategy!$"'''
+    contents = contents[:start] + new_intro + contents[end:]
+    contents = contents.replace("ROXANNE", "ASTRA")
+    contents = contents.replace(
+        '"of ROCK-type POKéMON.\\p"',
+        '"of many different POKéMON.\\p"',
+    )
+    contents = contents.replace(
+        '"The ROCK type is very durable, but\\n"',
+        '"Her GROUND-types resist ELECTRIC.\\n"',
+    )
+    return contents
+
+
+def modify_first_gym_character(contents: str) -> str:
+    document = json.loads(contents)
+    targets = [obj for obj in document["object_events"]
+               if obj.get("script") == "RustboroCity_Gym_EventScript_Roxanne"]
+    if len(targets) != 1:
+        raise ValueError("Expected one first gym leader overworld sprite")
+    targets[0]["graphics_id"] = "OBJ_EVENT_GFX_HEX_MANIAC"
+    return json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+
+
 def apply(engine: Path) -> None:
     if not (engine / "Makefile").is_file():
         raise FileNotFoundError(f"Missing pokeemerald-expansion Makefile: {engine}")
@@ -952,6 +1046,13 @@ def apply(engine: Path) -> None:
     for relative_path, patcher in gameplay_sources.items():
         path = engine / relative_path
         updates[path] = patcher(path.read_text(encoding="utf-8"))
+
+    gym_party_path = engine / "src/data/trainers.party"
+    updates[gym_party_path] = modify_first_gym_party(gym_party_path.read_text(encoding="utf-8"))
+    gym_script_path = engine / "data/maps/RustboroCity_Gym/scripts.inc"
+    updates[gym_script_path] = modify_first_gym_dialogue(gym_script_path.read_text(encoding="utf-8"))
+    gym_map_path = engine / "data/maps/RustboroCity_Gym/map.json"
+    updates[gym_map_path] = modify_first_gym_character(gym_map_path.read_text(encoding="utf-8"))
 
     map_groups_path = engine / "data/maps/map_groups.json"
     updates[map_groups_path] = modify_rift_map_groups(map_groups_path.read_text(encoding="utf-8"))

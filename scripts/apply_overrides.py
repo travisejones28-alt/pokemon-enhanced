@@ -72,6 +72,7 @@ CONFIG = {
         "P_TM_MOVES_RELEARNER": "TRUE",
         "P_SUMMARY_SCREEN_MOVE_RELEARNER": "TRUE",
         "P_ENABLE_ALL_TM_MOVES": "TRUE",
+        "P_PRE_EVO_MOVES": "TRUE",
     },
     "include/config/pokedex_plus_hgss.h": {
         "POKEDEX_PLUS_HGSS": "TRUE",
@@ -274,12 +275,17 @@ def modify_all_move_pages(contents: str) -> str:
     """
     contents = replace_once(
         contents,
-        "void HandleInputChooseMove(enum BattlerId battler)\n{",
+        '#include "data.h"\n',
+        '#include "data.h"\n#include "data/tutor_moves.h"\n',
+    )
+    contents = replace_once(
+        contents,
+        "void HandleInputChooseMove(enum BattlerId battler)\n{
         """// Shattered Realms move library: multi-page selection without changing the
 // persistent four slots in BoxPokemon or the battle controller wire format.
-#define SHATTERED_MAX_LIBRARY_MOVES 64
+#define SHATTERED_MAX_LIBRARY_MOVES 256
 static enum Move sShatteredMoves[MAX_BATTLERS_COUNT][SHATTERED_MAX_LIBRARY_MOVES];
-static u8 sShatteredMoveCounts[MAX_BATTLERS_COUNT];
+static u16 sShatteredMoveCounts[MAX_BATTLERS_COUNT];
 static u8 sShatteredMovePages[MAX_BATTLERS_COUNT];
 
 static void ShatteredRememberMove(enum BattlerId battler, enum Move move)
@@ -311,13 +317,41 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
     for (u32 i = 0; i < MAX_MON_MOVES; i++)
         ShatteredRememberMove(battler, GetMonData(mon, MON_DATA_MOVE1 + i));
 
-    // Every earlier level-up attack remains selectable even after replacement.
-    const struct LevelUpMove *learnset = GetSpeciesLevelUpLearnset(species);
-    for (u32 i = 0; learnset[i].move != LEVEL_UP_MOVE_END; i++)
+    // Every previously unlocked level-up attack, including pre-evolutions.
+    for (enum Species cursorSpecies = species; cursorSpecies != SPECIES_NONE;
+         cursorSpecies = GetSpeciesPreEvolution(cursorSpecies))
     {
-        if (learnset[i].level > 0 && learnset[i].level <= level)
-            ShatteredRememberMove(battler, learnset[i].move);
+        const struct LevelUpMove *learnset = GetSpeciesLevelUpLearnset(cursorSpecies);
+        for (u32 i = 0; learnset[i].move != LEVEL_UP_MOVE_END; i++)
+        {
+            if (learnset[i].level > 0 && learnset[i].level <= level)
+                ShatteredRememberMove(battler, learnset[i].move);
+        }
     }
+
+    // Legal machine and tutor attacks stay available when replaced or forgotten.
+    // Item unlocks remain controlled by the game's existing move compatibility.
+    for (u32 i = 0; i < NUM_ALL_MACHINES; i++)
+    {
+        enum Move machineMove = GetTMHMMoveId(i + 1);
+        if (machineMove != MOVE_NONE && CanLearnTeachableMove(species, machineMove))
+            ShatteredRememberMove(battler, machineMove);
+    }
+    for (u32 i = 0; gTutorMoves[i] != MOVE_UNAVAILABLE; i++)
+    {
+        enum Move tutorMove = gTutorMoves[i];
+        if (CanLearnTeachableMove(species, tutorMove))
+            ShatteredRememberMove(battler, tutorMove);
+    }
+
+    // Egg moves also remain available once the species can legally learn them.
+    enum Species eggSpecies = species;
+    while (GetSpeciesPreEvolution(eggSpecies) != SPECIES_NONE)
+        eggSpecies = GetSpeciesPreEvolution(eggSpecies);
+    const u16 *eggMoves = GetSpeciesEggMoves(eggSpecies);
+    if (eggMoves[0] != MOVE_UNAVAILABLE)
+        for (u32 i = 0; eggMoves[i] != MOVE_UNAVAILABLE; i++)
+            ShatteredRememberMove(battler, eggMoves[i]);
 
     // Your original Pikachu starter keeps four extra signature moves.
     // Built-in friendship is the save-compatible Bond System.

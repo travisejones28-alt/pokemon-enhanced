@@ -45,6 +45,10 @@ class TestOverrides(unittest.TestCase):
         self.assertEqual(item_settings["I_EXP_SHARE_ITEM"], "GEN_6")
         self.assertEqual(item_settings["I_EXP_SHARE_FLAG"], "FLAG_UNUSED_0x264")
         self.assertEqual(CONFIG["include/config/overworld.h"]["OW_FOLLOWERS_ENABLED"], "TRUE")
+        battle_settings = CONFIG["include/config/battle.h"]
+        self.assertEqual(battle_settings["B_TRAINER_MON_RANDOM_ABILITY"], "2")
+        self.assertEqual(battle_settings["B_RUN_TRAINER_BATTLE"], "FALSE")
+        self.assertEqual(CONFIG["include/config/overworld.h"]["OW_SHOW_ITEM_DESCRIPTIONS"], "OW_ITEM_DESCRIPTIONS_ALWAYS")
 
     def test_no_unexpected_route_indices(self):
         for slots in ROUTE_SPECIES.values():

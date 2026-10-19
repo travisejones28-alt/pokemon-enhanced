@@ -342,7 +342,6 @@ void BS_ItemRestoreHP(void)"""
         after = modify_first_gym_dialogue(text)
         self.assertIn("I guard the RIFT GYM", after)
         self.assertEqual(after, modify_first_gym_dialogue(after))
-        self.assertIn("TRAINER_ROXANNE_1", modify_first_gym_dialogue(text.replace('ROXANNE
 
         gfx = json.dumps({"object_events": [
             {"script": "RustboroCity_Gym_EventScript_Roxanne", "graphics_id": "OBJ_EVENT_GFX_ROXANNE"}

@@ -1005,7 +1005,8 @@ def modify_first_gym_dialogue(contents: str) -> str:
 	.string "Your unlimited power will\n"
 	.string "not replace good strategy!$"'''
     contents = contents[:start] + new_intro + contents[end:]
-    contents = contents.replace("ROXANNE", "ASTRA")
+    # Keep engine symbols and save flags stable; rename dialogue only.
+    contents = contents.replace('"ROXANNE', '"ASTRA').replace(' ROXANNE', ' ASTRA')
     contents = contents.replace(
         '"of ROCK-type POKéMON.\\p"',
         '"of many different POKéMON.\\p"',
@@ -1025,6 +1026,16 @@ def modify_first_gym_character(contents: str) -> str:
         raise ValueError("Expected one first gym leader overworld sprite")
     targets[0]["graphics_id"] = "OBJ_EVENT_GFX_HEX_MANIAC"
     return json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+
+
+
+def modify_rift_script_registration(contents: str) -> str:
+    """Include new Rift Hollow scripts in the event-script assembler."""
+    return replace_once(
+        contents,
+        '\\t.include "data/maps/Route101/scripts.inc"',
+        '\\t.include "data/maps/Route101/scripts.inc"\\n\\t.include "data/maps/RiftHollow/scripts.inc"',
+    )
 
 
 def apply(engine: Path) -> None:
@@ -1053,6 +1064,7 @@ def apply(engine: Path) -> None:
         "src/battle_ai_main.c": modify_hard_trainer_ai,
         "data/text/birch_speech.inc": modify_rift_intro,
         "data/maps/Route101/scripts.inc": modify_route_rift_teaser,
+        "data/event_scripts.s": modify_rift_script_registration,
     }
     for relative_path, patcher in gameplay_sources.items():
         path = engine / relative_path

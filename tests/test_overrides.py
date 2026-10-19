@@ -28,6 +28,9 @@ from scripts.apply_overrides import (
     modify_rift_map_groups,
     modify_quest_npc_map,
     modify_quest_map_script,
+    modify_first_gym_party,
+    modify_first_gym_dialogue,
+    modify_first_gym_character,
     RIFT_NPCS,
 )
 
@@ -317,6 +320,32 @@ void BS_ItemRestoreHP(void)"""
             self.assertEqual(changed, modify_quest_map_script(changed, map_name))
         self.assertIn("FLAG_UNUSED_0x90F", modify_quest_map_script("", "OldaleTown"))
 
+
+
+    def test_original_first_rift_gym_leader(self):
+        parties = (
+            "=== TRAINER_ROXANNE_1 ===\nName: ROXANNE\nClass: Leader\n\nGeodude\nLevel: 12\n"
+            "\n=== TRAINER_BRAWLY_1 ==="
+        )
+        converted = modify_first_gym_party(parties)
+        self.assertIn("Name: ASTRA", converted)
+        self.assertIn("Misdreavus", converted)
+        self.assertIn("Gible", converted)
+        self.assertIn("Wooper", converted)
+        self.assertIn("=== TRAINER_BRAWLY_1 ===", converted)
+        self.assertEqual(converted, modify_first_gym_party(converted))
+
+        text = 'RustboroCity_Gym_Text_RoxanneIntro:\n\t.string "ROXANNE$"\n\nRustboroCity_Gym_Text_RoxanneDefeat:\n\t.string "You won.$"'
+        after = modify_first_gym_dialogue(text)
+        self.assertIn("I guard the RIFT GYM", after)
+        self.assertEqual(after, modify_first_gym_dialogue(after))
+
+        gfx = json.dumps({"object_events": [
+            {"script": "RustboroCity_Gym_EventScript_Roxanne", "graphics_id": "OBJ_EVENT_GFX_ROXANNE"}
+        ]})
+        replaced = modify_first_gym_character(gfx)
+        self.assertIn("OBJ_EVENT_GFX_HEX_MANIAC", replaced)
+        self.assertEqual(replaced, modify_first_gym_character(replaced))
 
 if __name__ == "__main__":
     unittest.main()

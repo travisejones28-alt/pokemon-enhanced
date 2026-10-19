@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - 'engine/**'
       - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/build-shattered-realms.yml'
@@ -20,13 +21,8 @@ jobs:
       - name: Check out Shattered Realms project
         uses: actions/checkout@v4
 
-      - name: Check out pinned pokeemerald-expansion engine
-        uses: actions/checkout@v4
-        with:
-          repository: rh-hideout/pokeemerald-expansion
-          ref: bb1093a7c72d3961d9a37d8e02ad2abc2c866682
-          path: engine
-          persist-credentials: false
+      - name: Ensure complete local Emerald engine is present
+        run: test -f engine/Makefile
 
       - name: Test our game modifications
         run: python3 -m unittest discover -s tests -v

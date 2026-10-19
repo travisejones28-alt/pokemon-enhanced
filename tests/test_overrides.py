@@ -334,6 +334,7 @@ void BS_ItemRestoreHP(void)"""
         self.assertIn("Gible", converted)
         self.assertIn("Wooper", converted)
         self.assertIn("=== TRAINER_BRAWLY_1 ===", converted)
+        self.assertIn("\n\n=== TRAINER_BRAWLY_1 ===", converted)
         self.assertEqual(converted, modify_first_gym_party(converted))
 
         text = 'RustboroCity_Gym_Text_RoxanneIntro:\n\t.string "ROXANNE$"\n\nRustboroCity_Gym_Text_RoxanneDefeat:\n\t.string "You won.$"'

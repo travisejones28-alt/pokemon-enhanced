@@ -1,41 +1,53 @@
-# Build #57 validation — 19 October 2026
+# Build #59 validation — 19 October 2026
 
-Game source commit: `3edce876a204ec067cbe2f5e99ae2c8acbca5f93`.
+Game source commit: `669bc9a6696dfb524fd0bb6874074651d66e8bff`.
 
-- [Successful GitHub Actions run](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39316354404)
-- [Published release](https://github.com/travisejones28-alt/pokemon-enhanced/releases/tag/alpha0.1-build-57)
+- [GitHub Actions run](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39326577859)
+- [Published release](https://github.com/travisejones28-alt/pokemon-enhanced/releases/tag/alpha0.1-build-59)
 - [Permanent ROM download](https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest/download/ShatteredRealms.gba)
 - ROM size: 33554432 bytes (32 MiB).
-- ROM SHA-256: `cb37df1271863a005f9d9da8ac1efa70b12a8b2aaf162483fd936b0b9add6bc3`.
-- Previous recovery ROM: [build #55](https://github.com/travisejones28-alt/pokemon-enhanced/releases/tag/alpha0.1-build-55).
+- Published ROM SHA-256: `643e57af8c83f99b5c635d856e2bbdfd378aa7ee015c36949db5d2fdbe5a10c5`.
+- Previous recovery ROM: [build #57](https://github.com/travisejones28-alt/pokemon-enhanced/releases/tag/alpha0.1-build-57).
 
 ## Results
 
 | Check | Result |
 | --- | --- |
-| Python regression suite, including generated-C host tests | 41 tests passed locally; Actions test step passed |
-| Full override application to vendored sources | Passed |
+| Python regression suite | 59 passed locally from the clean committed source; Actions gate passed |
+| Full staged override application | Passed locally and in Actions |
 | Second complete application makes no changes | Passed locally and in Actions |
-| GBA compilation using the existing workflow | Passed |
-| ROM title/game code: SHATTERED / BSRE | Verification step passed |
-| ROM size and header checksum | Verification step passed |
-| SHA-256 manifest verification | Passed |
+| GBA compilation | Passed locally and in Actions |
+| Targeted mGBA regressions | 17 passed locally; Actions gate passed |
+| ROM title/game code | SHATTERED / BSRE |
+| ROM size/header checksum/SHA-256 manifest | Passed |
 | Release publication and expected ROM asset | Confirmed by release metadata |
-| New-game playthrough in Delta | Not performed |
-| Single/double battle emulator regression | Not performed |
-| Representative previous/new save load/save round trips | Not performed; save files unavailable |
-| Entire anomaly quest, boss reward and first Gym playthrough | Not performed |
-| Follower transitions and friendship unlock gameplay | Not performed |
+| Full chapter/boss balance playthrough | Not performed |
+| Follower map-transition visual checks | Not performed |
+| Actual exported Delta save compatibility | Not performed; no player save supplied |
 
-The local host has a C compiler but no GBA toolchain or GBA emulator. Compilation
-and ROM verification ran in GitHub Actions. Host C tests exercise generated
-logic; they do not emulate the GBA battle engine.
+The GBA tests cover exceptional move retention through replacement, evolution
+and PC storage; identity separation; journal capacity protection; friendship
+unlock persistence; trade alternatives; single/double battle PP; Spite;
+Transform; Encore; switching; blocked-page library recovery; and save footprint.
+A generated old-format flash save is loaded, migrated, saved and reloaded while
+checking party, Bag, position and the existing dexNavChain field. This is not a
+real historical Delta save.
 
-This is a **compiled alpha for testing**, not a claim of fully verified gameplay.
-See [the implementation audit](IMPLEMENTATION_AUDIT.md) for unfinished systems,
-and [save backup/import instructions](SAVE_COMPATIBILITY.md) before updating.
+The upstream battle test harness uses replay controllers. Tests explicitly opt
+into local-player policy through a TESTING-only adapter; a separate replay case
+confirms ordinary PP depletion. The adapter is excluded from the production ROM.
 
-No save or Pokémon layouts were intentionally changed by the two repair commits.
-No new game is intentionally required. This does not establish compatibility with
-every previous build. Keep the old ROM tile and exported battery save until
-Continue, party, PC, Bag, maps and save/reload have been verified on iPhone.
+ARM ABI probes comparing old/new persistent structures confirmed unchanged
+SaveBlock1 (15568), SaveBlock2 (3884), PC storage (34144), Pokemon (100) and
+BoxPokemon (80) byte sizes, plus sampled offsets. SaveBlock3 grows from 4 to
+1540 bytes inside its existing 1624-byte reserved capacity. Existing species,
+map/layout/region and trainer-flag indices are preserved.
+
+This is a **compiled alpha with targeted emulator regressions**. It does not
+establish every move/UI combination, real-save compatibility, or full campaign
+balance. See [the implementation audit](IMPLEMENTATION_AUDIT.md),
+[the chapter walkthrough](CHAPTER_ONE.md) and
+[save backup/import instructions](SAVE_COMPATIBILITY.md).
+Keep the old ROM tile and exported battery save until Continue, party, PC, Bag,
+maps and saving/reloading have been verified on iPhone. New ROM contents can
+produce another Delta tile; transfer the battery save manually, not a save state.

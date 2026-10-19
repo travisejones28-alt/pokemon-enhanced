@@ -63,6 +63,9 @@ CONFIG = {
     "include/config/text.h": {
         "TEXT_SPEED_FAST_MODIFIER": "3",
     },
+    "include/config/overworld.h": {
+        "OW_FOLLOWERS_ENABLED": "TRUE",
+    },
 }
 
 # Retain the Linking Cord method as a second, early-evolution option.
@@ -297,9 +300,19 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
     }
 
     // Your original Pikachu starter keeps four extra signature moves.
+    // Built-in friendship is the save-compatible Bond System.
     if (species == SPECIES_PIKACHU)
+    {
         for (u32 i = 0; i < ARRAY_COUNT(sStarterSignatureMoves); i++)
             ShatteredRememberMove(battler, sStarterSignatureMoves[i]);
+        u32 bond = GetMonData(mon, MON_DATA_FRIENDSHIP);
+        if (bond >= 120)
+            ShatteredRememberMove(battler, MOVE_ZIPPY_ZAP);
+        if (bond >= 180)
+            ShatteredRememberMove(battler, MOVE_SPLISHY_SPLASH);
+        if (bond >= 230)
+            ShatteredRememberMove(battler, MOVE_FLOATY_FALL);
+    }
 }
 
 static void ShatteredToggleMovePage(enum BattlerId battler)

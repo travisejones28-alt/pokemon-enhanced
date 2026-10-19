@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic Alpha 0.1 changes for RHH pokeemerald-expansion 1.17.1.
+"""Deterministic Shattered Realms changes for RHH pokeemerald-expansion 1.17.1.
 
 Only writes to a separately checked-out engine directory. Fails closed when
 expected data/definitions are missing, to avoid silently applying to a new
@@ -115,6 +115,127 @@ def modify_encounters(contents: str) -> str:
     return json.dumps(parsed, indent=2, ensure_ascii=False) + "\n"
 
 
+
+def replace_once(contents: str, before: str, after: str) -> str:
+    """Fail closed on unexpected engine edits and allow repeated application."""
+    if after in contents:
+        return contents
+    if contents.count(before) != 1:
+        raise ValueError(f"Expected one patch anchor, found {contents.count(before)}: {before[:80]!r}")
+    return contents.replace(before, after, 1)
+
+
+def modify_starter_choices(contents: str) -> str:
+    """The default middle starter is Pikachu; the other two remain available."""
+    return replace_once(
+        contents,
+        "    GRASS_STARTER,\n    FIRE_STARTER,\n    WATER_STARTER,",
+        "    GRASS_STARTER,\n    SPECIES_PIKACHU,\n    WATER_STARTER,",
+    )
+
+
+def modify_starter_gift(contents: str) -> str:
+    """Give the starting Pikachu four strong attacks without changing save layout."""
+    contents = replace_once(
+        contents,
+        '#include "palette.h"\n',
+        '#include "palette.h"\n#include "pokemon.h"\n',
+    )
+    return replace_once(
+        contents,
+        "    ScriptGiveMon(starterMon, 5, ITEM_NONE);\n    ResetTasks();",
+        """    ScriptGiveMon(starterMon, 5, ITEM_NONE);
+    // Shattered Realms starter: special moves apply only to the Pikachu gift.
+    if (starterMon == SPECIES_PIKACHU)
+    {
+        struct Pokemon *starter = &gParties[B_TRAINER_PLAYER][0];
+        SetMonMoveSlot(starter, MOVE_THUNDERBOLT, 0);
+        SetMonMoveSlot(starter, MOVE_VOLT_TACKLE, 1);
+        SetMonMoveSlot(starter, MOVE_SURF, 2);
+        SetMonMoveSlot(starter, MOVE_EXTREME_SPEED, 3);
+    }
+    ResetTasks();""",
+    )
+
+
+def modify_player_battle_pp(contents: str) -> str:
+    """Restore player-controlled moves at every turn, leaving enemy PP untouched."""
+    before = "            RecordedBattle_CopyBattlerMoves(battler);\n            gBattleCommunication[battler] = STATE_BEFORE_ACTION_CHOSEN;"
+    after = """            RecordedBattle_CopyBattlerMoves(battler);
+            // Shattered Realms: player-controlled Pokémon never run out of PP.
+            // Do not alter the PP rules for opponents, link or recorded battles.
+            if (IsOnPlayerSide(battler) && !BattlerHasAi(battler)
+                && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK)))
+            {
+                struct Pokemon *partyMon = GetBattlerMon(battler);
+                for (i = 0; i < MAX_MON_MOVES; i++)
+                {
+                    if (gBattleMons[battler].moves[i] != MOVE_NONE)
+                    {
+                        u32 maxPP = CalculatePPWithBonus(gBattleMons[battler].moves[i],
+                                                         gBattleMons[battler].ppBonuses, i);
+                        gBattleMons[battler].pp[i] = maxPP;
+                        SetMonData(partyMon, MON_DATA_PP1 + i, &maxPP);
+                    }
+                }
+            }
+            gBattleCommunication[battler] = STATE_BEFORE_ACTION_CHOSEN;"""
+    return replace_once(contents, before, after)
+
+
+def modify_player_pp_checks(contents: str) -> str:
+    """Prevent an occasional mid-turn drain from forcing the player's Struggle."""
+    contents = replace_once(
+        contents,
+        "    if (gBattleMons[battler].pp[moveId] == 0)\n    {",
+        "    if (gBattleMons[battler].pp[moveId] == 0 && !IsOnPlayerSide(battler))\n    {",
+    )
+    return replace_once(
+        contents,
+        "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0)",
+        "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0 && !IsOnPlayerSide(battler))",
+    )
+
+
+def modify_move_pp_display(contents: str) -> str:
+    """Remove the PP counter from the battle move selection interface."""
+    contents = replace_once(
+        contents,
+        """static void MoveSelectionDisplayPPString(enum BattlerId battler)
+{
+    StringCopy(gDisplayedStringBattle, gText_MoveInterfacePP);
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP);
+}""",
+        """static void MoveSelectionDisplayPPString(enum BattlerId battler)
+{
+    BattlePutTextOnWindow(gText_EmptyString3, B_WIN_PP);
+}""",
+    )
+    return replace_once(
+        contents,
+        """static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
+{
+    u8 *txtPtr;
+    struct ChooseMoveStruct *moveInfo;
+
+    if (gBattleResources->bufferA[battler][2] == TRUE) // check if we didn't want to display PP number
+        return;
+
+    SetPPNumbersPaletteInMoveSelection(battler);
+    moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
+    txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPP[gMoveSelectionCursor[battler]], STR_CONV_MODE_RIGHT_ALIGN, 2);
+    *(txtPtr)++ = CHAR_SLASH;
+    ConvertIntToDecimalStringN(txtPtr, moveInfo->maxPP[gMoveSelectionCursor[battler]], STR_CONV_MODE_RIGHT_ALIGN, 2);
+
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
+}""",
+        """static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
+{
+    BattlePutTextOnWindow(gText_EmptyString3, B_WIN_PP_REMAINING);
+}""",
+    )
+
+
 def apply(engine: Path) -> None:
     if not (engine / "Makefile").is_file():
         raise FileNotFoundError(f"Missing pokeemerald-expansion Makefile: {engine}")
@@ -127,12 +248,23 @@ def apply(engine: Path) -> None:
     encounter_file = engine / "src/data/wild_encounters.json"
     updates[encounter_file] = modify_encounters(encounter_file.read_text(encoding="utf-8"))
 
+    gameplay_sources = {
+        "src/starter_choose.c": modify_starter_choices,
+        "src/battle_setup.c": modify_starter_gift,
+        "src/battle_main.c": modify_player_battle_pp,
+        "src/battle_util.c": modify_player_pp_checks,
+        "src/battle_controller_player.c": modify_move_pp_display,
+    }
+    for relative_path, patcher in gameplay_sources.items():
+        path = engine / relative_path
+        updates[path] = patcher(path.read_text(encoding="utf-8"))
+
     # Don't partially write if validation fails.
     for path, content in updates.items():
         if path.read_text(encoding="utf-8") != content:
             path.write_text(content, encoding="utf-8")
             print("Updated", path)
-    print("Shattered Realms Alpha 0.1 overrides applied")
+    print("Shattered Realms gameplay overrides applied")
 
 
 def main() -> None:

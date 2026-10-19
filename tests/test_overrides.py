@@ -44,6 +44,7 @@ class TestOverrides(unittest.TestCase):
         item_settings = CONFIG["include/config/item.h"]
         self.assertEqual(item_settings["I_EXP_SHARE_ITEM"], "GEN_6")
         self.assertEqual(item_settings["I_EXP_SHARE_FLAG"], "FLAG_UNUSED_0x264")
+        self.assertEqual(CONFIG["include/config/overworld.h"]["OW_FOLLOWERS_ENABLED"], "TRUE")
 
     def test_no_unexpected_route_indices(self):
         for slots in ROUTE_SPECIES.values():
@@ -170,6 +171,10 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
         for name in ("MOVE_IRON_TAIL", "MOVE_GRASS_KNOT", "MOVE_BRICK_BREAK", "MOVE_THUNDER_WAVE"):
             self.assertIn(name, result)
         self.assertIn("GetSpeciesLevelUpLearnset(species)", result)
+        self.assertIn("GetMonData(mon, MON_DATA_FRIENDSHIP)", result)
+        self.assertIn("MOVE_ZIPPY_ZAP", result)
+        self.assertIn("MOVE_SPLISHY_SPLASH", result)
+        self.assertIn("MOVE_FLOATY_FALL", result)
         self.assertIn("JOY_NEW(SELECT_BUTTON)", result)
         self.assertIn("sShatteredMoves[battler]", result)
         self.assertIn("sShatteredMoveCounts[battler]", result)

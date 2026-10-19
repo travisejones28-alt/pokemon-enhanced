@@ -61,6 +61,12 @@ class TestOverrides(unittest.TestCase):
     def test_no_unexpected_route_indices(self):
         for slots in ROUTE_SPECIES.values():
             self.assertTrue(all(isinstance(index, int) and 0 <= index < 12 for index in slots))
+        self.assertGreaterEqual(len(ROUTE_SPECIES), 14)
+        for map_name, slots in ROUTE_SPECIES.items():
+            self.assertEqual(len(set(slots.values())), len(slots), map_name)
+            self.assertTrue(map_name.startswith("MAP_"))
+        self.assertIn("MAP_PETALBURG_WOODS", ROUTE_SPECIES)
+        self.assertIn("MAP_GRANITE_CAVE_1F", ROUTE_SPECIES)
 
     def test_evolution_idempotence(self):
         original = "\n".join(

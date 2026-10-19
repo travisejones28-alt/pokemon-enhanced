@@ -25,6 +25,10 @@ from scripts.apply_overrides import (
     modify_hard_trainer_bag,
     modify_rift_intro,
     modify_route_rift_teaser,
+    modify_rift_map_groups,
+    modify_quest_npc_map,
+    modify_quest_map_script,
+    RIFT_NPCS,
 )
 
 
@@ -281,6 +285,31 @@ void BS_ItemRestoreHP(void)"""
         self.assertIn("TEAM ECLIPSE", after)
         self.assertIn("Route101_Text_TakeTiredPokemonToPokeCenter:", after)
         self.assertEqual(after, modify_route_rift_teaser(after))
+
+
+
+    def test_rift_hollow_append_does_not_change_old_map_ids(self):
+        original = json.dumps({"gMapGroup_Dungeons": ["AlteringCave", "MeteorFalls_StevensCave"]})
+        changed = modify_rift_map_groups(original)
+        result = json.loads(changed)["gMapGroup_Dungeons"]
+        self.assertEqual(result[:2], ["AlteringCave", "MeteorFalls_StevensCave"])
+        self.assertEqual(result[-1], "RiftHollow")
+        self.assertEqual(changed, modify_rift_map_groups(changed))
+
+    def test_all_four_quest_npcs_are_single_swap(self):
+        for map_name, (old_script, new_script) in RIFT_NPCS.items():
+            original = json.dumps({"object_events": [{"script": old_script}]})
+            changed = modify_quest_npc_map(original, map_name)
+            self.assertIn(new_script, changed)
+            self.assertEqual(changed, modify_quest_npc_map(changed, map_name))
+
+    def test_all_four_quest_scripts_idempotent(self):
+        for map_name in RIFT_NPCS:
+            source = "DummyMap_MapScripts::\n\t.byte 0\n"
+            changed = modify_quest_map_script(source, map_name)
+            self.assertIn(RIFT_NPCS[map_name][1] + "::", changed)
+            self.assertEqual(changed, modify_quest_map_script(changed, map_name))
+        self.assertIn("FLAG_UNUSED_0x90F", modify_quest_map_script("", "OldaleTown"))
 
 
 if __name__ == "__main__":

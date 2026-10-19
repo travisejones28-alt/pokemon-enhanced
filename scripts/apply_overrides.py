@@ -753,6 +753,11 @@ ShatteredOldale_EventScript_QuestProgress::
 
 ShatteredOldale_EventScript_RiftCleared::
 	msgbox ShatteredOldale_Text_QuestComplete, MSGBOX_DEFAULT
+	msgbox ShatteredOldale_Text_EnterRift, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, ShatteredOldale_EventScript_QuestExit
+	closemessage
+	warp MAP_RIFT_HOLLOW, 18, 21
+	waitstate
 	release
 	end
 

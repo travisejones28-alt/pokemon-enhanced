@@ -7,13 +7,13 @@ A work-in-progress **GBA adventure** using [RHH's pokeemerald-expansion](https:/
 
 ## Implemented in Alpha 0.1
 
-- Reproducible build pinned to pokeemerald-expansion **1.17.1** (`bb1093a7c72d3961d9a37d8e02ad2abc2c866682`).
+- Complete Emerald Expansion source included in **engine/**, pinned to upstream **1.17.1** (`bb1093a7c72d3961d9a37d8e02ad2abc2c866682`).
 - Modern species data from **Generations 1–9** provided by the engine. This does **not** mean every species can already be caught.
 - Cross-generation encounter tables for **Routes 101–103** (12 slots each; levels and encounter rates remain unchanged).
 - Kadabra, Machoke, Haunter and Graveler evolve by level, without trading. Linking Cord alternatives remain available.
 - Reusable TMs, modern Exp. Share key item, and evolution held items usable from the bag.
 - Unique GBA header title/game code for identification in emulators.
-- GitHub Actions builds a `.gba` artifact that can be imported into Delta on iOS.
+- GitHub Actions is configured to build a `.gba` artifact for Delta on iOS (verify build status under Actions).
 
 ## Build on GitHub (no PC necessary)
 
@@ -22,7 +22,7 @@ A work-in-progress **GBA adventure** using [RHH's pokeemerald-expansion](https:/
 3. After the build job succeeds, open its run page and download the **ShatteredRealms-Alpha0.1-GBA** artifact.
 4. Extract the ZIP using Files on iPhone, then import `ShatteredRealms-Alpha0.1.gba` into Delta.
 
-For local builds, install the toolchain in the [upstream instructions](https://github.com/rh-hideout/pokeemerald-expansion/blob/expansion/1.17.1/INSTALL.md), clone the pinned upstream engine into `engine/`, then run:
+For local builds, clone **this** repository, install the toolchain in the [upstream instructions](https://github.com/rh-hideout/pokeemerald-expansion/blob/expansion/1.17.1/INSTALL.md), then run:
 
 ```bash
 python3 -m unittest discover -s tests -v
@@ -35,13 +35,14 @@ The script applies edits to the engine checkout, not to the six original GBC gam
 
 ## Project layout
 
+- `engine/` — entire Emerald Expansion 1.17.1 engine, assets, maps and tools
 - `scripts/apply_overrides.py` — deterministic gameplay patches for the pinned engine
 - `scripts/verify_rom.py` — built-ROM header and size validation
 - `tests/` — regression tests for our customizations
 - `.github/workflows/` — engine checkout, compilation, and downloadable build
-- `docs/ROADMAP.md` — milestones and future features
+- `docs/ROADMAP.md` — development milestones and acceptance criteria
 
-The large upstream engine is **downloaded automatically** when building; it is not duplicated into this repository. The six original Game Boy / Game Boy Color ROMs, if added separately, are not used as the GBA engine.
+The complete Emerald Expansion engine is now **committed in `engine/`**. GitHub Actions builds the local engine source and applies our Shattered Realms customizations. The six original Game Boy / Game Boy Color ROMs, if added separately, are not used as the GBA engine.
 
 ## Important
 

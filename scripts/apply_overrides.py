@@ -236,6 +236,104 @@ def modify_move_pp_display(contents: str) -> str:
     )
 
 
+
+def modify_pikachu_move_pages(contents: str) -> str:
+    """Eight accessible starter attacks in two battle-menu pages (SELECT toggles).
+    
+    Extra moves are virtual battle choices. The standard four saved moves remain
+    untouched, so we do not change BoxPokemon, battle data sizes or save layout.
+    """
+    contents = replace_once(
+        contents,
+        "void HandleInputChooseMove(enum BattlerId battler)\n{",
+        """// Shattered Realms starter: SELECT toggles between four normal saved moves
+// and four signature attacks without altering the saved Pokémon move slots.
+static u8 sShatteredPikachuPage[MAX_BATTLERS_COUNT];
+
+static void ShatteredTogglePikachuPage(enum BattlerId battler)
+{
+    static const enum Move sExtraMoves[MAX_MON_MOVES] =
+    {
+        MOVE_IRON_TAIL,
+        MOVE_GRASS_KNOT,
+        MOVE_BRICK_BREAK,
+        MOVE_THUNDER_WAVE,
+    };
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
+
+    MoveSelectionDestroyCursorAt(gMoveSelectionCursor[battler]);
+    sShatteredPikachuPage[battler] ^= 1;
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+    {
+        enum Move move = sShatteredPikachuPage[battler]
+                       ? sExtraMoves[i]
+                       : GetMonData(GetBattlerMon(battler), MON_DATA_MOVE1 + i);
+        u32 pp = GetMovePP(move);
+        moveInfo->moves[i] = move;
+        moveInfo->currentPP[i] = pp;
+        moveInfo->maxPP[i] = pp;
+        gBattleMons[battler].moves[i] = move;
+        gBattleMons[battler].pp[i] = pp;
+    }
+    gMoveSelectionCursor[battler] = 0;
+    MoveSelectionDisplayMoveNames(battler);
+    MoveSelectionCreateCursorAt(gMoveSelectionCursor[battler], 0);
+    MoveSelectionDisplayPPNumber(battler);
+    MoveSelectionDisplayMoveType(battler);
+    if (B_SHOW_EFFECTIVENESS)
+        MoveSelectionDisplayMoveEffectiveness(CheckTargetTypeEffectiveness(battler), battler);
+    TryMoveSelectionDisplayMoveDescription(battler);
+}
+
+void HandleInputChooseMove(enum BattlerId battler)
+{""",
+    )
+    contents = replace_once(
+        contents,
+        """    if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
+    {""",
+        """    if (JOY_NEW(SELECT_BUTTON) && !gBattleStruct->descriptionSubmenu
+        && !gBattleStruct->zmove.viewing && gBattleMons[battler].species == SPECIES_PIKACHU
+        && IsOnPlayerSide(battler) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+    {
+        PlaySE(SE_SELECT);
+        ShatteredTogglePikachuPage(battler);
+    }
+    else if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
+    {""",
+    )
+    contents = replace_once(
+        contents,
+        """        InitMoveSelectionsVarsAndStrings(battler);
+        gBattleStruct->gimmick.playerSelect = FALSE;""",
+        """        sShatteredPikachuPage[battler] = 0;
+        InitMoveSelectionsVarsAndStrings(battler);
+        gBattleStruct->gimmick.playerSelect = FALSE;""",
+    )
+    contents = replace_once(
+        contents,
+        """static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
+{
+    BattlePutTextOnWindow(gText_EmptyString3, B_WIN_PP_REMAINING);
+}""",
+        """static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
+{
+    if (gBattleMons[battler].species == SPECIES_PIKACHU && IsOnPlayerSide(battler))
+    {
+        if (sShatteredPikachuPage[battler] == 0)
+            BattlePutTextOnWindow(COMPOUND_STRING("1/2"), B_WIN_PP_REMAINING);
+        else
+            BattlePutTextOnWindow(COMPOUND_STRING("2/2"), B_WIN_PP_REMAINING);
+    }
+    else
+    {
+        BattlePutTextOnWindow(gText_EmptyString3, B_WIN_PP_REMAINING);
+    }
+}""",
+    )
+    return contents
+
+
 def apply(engine: Path) -> None:
     if not (engine / "Makefile").is_file():
         raise FileNotFoundError(f"Missing pokeemerald-expansion Makefile: {engine}")
@@ -253,7 +351,7 @@ def apply(engine: Path) -> None:
         "src/battle_setup.c": modify_starter_gift,
         "src/battle_main.c": modify_player_battle_pp,
         "src/battle_util.c": modify_player_pp_checks,
-        "src/battle_controller_player.c": modify_move_pp_display,
+        "src/battle_controller_player.c": lambda c: modify_pikachu_move_pages(modify_move_pp_display(c)),
     }
     for relative_path, patcher in gameplay_sources.items():
         path = engine / relative_path

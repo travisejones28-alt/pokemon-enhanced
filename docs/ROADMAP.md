@@ -1,56 +1,61 @@
-# Shattered Realms — Game Plan
+# Pokémon: Shattered Realms — Development Roadmap
 
-**Goal:** a genuinely new single-player GBA Pokémon adventure that runs in Delta on iPhone, built on Emerald Expansion 1.17.1.
+## Current reality (19 October 2026)
 
-## Stage 1 — Engine and first playable build (Alpha 0.1)
-- [x] Copy all Emerald Expansion source files into `engine/`.
-- [x] Keep the original six GBC files untouched.
-- [x] Configure starter prototype: mixed-generation wild encounters on Emerald Routes 101–103; no-trade level evolutions for Kadabra, Haunter, Machoke and Graveler; reusable TMs; modern experience share.
-- [x] Set up build automation and regression tests.
-- [ ] **Gate:** build must complete, ROM header must pass, and game must boot/save/load on Delta.
-- [ ] Smoke-test wild encounter slot distribution, trade-free evolutions and player options.
+The full **pokeemerald-expansion 1.17.1** source is committed under `engine/`, and its Git tree exactly matches pinned upstream commit `bb1093a7c72d3961d9a37d8e02ad2abc2c866682`.
 
-The Alpha 0.1 prototype is NOT yet the full new game. It retains Emerald's existing map and story.
+**Alpha 0.1 is a gameplay prototype, not a finished original adventure.** It still uses Emerald's story and world. Modern Pokémon species data is present, but we must deliberately make each species obtainable.
 
-## Stage 2 — New game opening (Alpha 0.2)
-- [ ] Replace the opening with an original **Team Eclipse / dimensional rift** setup.
-- [ ] Design a new hometown and first original route (new mapping and scripted NPCs).
-- [ ] Choose three new cross-generation starter Pokémon.
-- [ ] Add an original rival, first battle, and scripted rift encounter.
-- [ ] New title-screen art and game intro.
-- [ ] **Gate:** 30 minutes of original, completable gameplay on Delta.
+### Alpha 0.1 — Build and test baseline
+- [x] Copy every upstream tracked engine file into `engine/`.
+- [x] Retain six original GB/GBC game ROMs without altering them.
+- [x] Pin the engine revision and create a GitHub build workflow.
+- [x] Add all-generation wild Pokémon encounters on Routes 101–103.
+- [x] Add reusable TMs, evolution items usable from the Bag, and level-up alternatives for four trade evolutions.
+- [x] Configure a dedicated flag for the modern Exp. Share.
+- [x] Add regression tests and GBA header checks.
+- [ ] **Get a successful end-to-end GitHub build** and downloadable `.gba`.
+- [ ] **Smoke test on Delta**: new game, starter, encounter, capture, battle, save/reload, basic menus.
+- [ ] Record baseline ROM SHA-256 and tested Delta version.
 
-## Stage 3 — Complete first chapter (Alpha 0.3)
-- [ ] Original regional map structure: at least 3 towns, 4 routes and 2 dungeons.
-- [ ] New gym or major boss, custom trainer teams, and first legendary clue.
-- [ ] Quest journal prototype, side missions, and story flags.
-- [ ] Difficulty settings and tuned level curve.
-- [ ] HM-free exploration design with story-appropriate abilities or key items.
-- [ ] **Gate:** 2–3 hours of original progression with no progression softlocks.
+### Alpha 0.2 — The first *new* game experience
+- [ ] Original title/intro and Team Eclipse teaser.
+- [ ] Design starter choices across generations; balance three rival paths.
+- [ ] One new hometown, starter event and nearby original route.
+- [ ] New encounters, trainers, signposts, NPC dialogue and item placement.
+- [ ] First mysterious rift encounter / encounter cinematic.
+- [ ] Verify start-to-first-town experience and save continuity.
 
-## Stage 4 — Collection and advanced combat (Alpha 0.4)
-- [ ] Catalog obtainability for each implemented Pokémon, Generation 1–9.
-- [ ] Remove *all* mandatory trading requirements, not only the first four.
-- [ ] Integrate regional forms, new evolutions and available mega evolutions.
-- [ ] Add trainer rematches, scalable AI and optional harder difficulty.
-- [ ] Upgrade Pokémon storage, move relearner and accessible evolution items.
-- [ ] Balance shiny odds, rare encounters and XP progression.
+### Alpha 0.3 — Chapter One (1–3 hour vertical slice)
+- [ ] Original first gym, leader battle and badge reward.
+- [ ] Three complete new maps with shortcuts, hidden secrets and optional paths.
+- [ ] Three quests plus visible quest progress.
+- [ ] First boss or rare Pokémon hunt with a unique reward.
+- [ ] Balance wild encounters, XP, evolution and difficulty settings.
+- [ ] Complete playthrough and emulator compatibility testing.
 
-## Stage 5 — Shattered Realms world expansion
-- [ ] New region and interconnected rift dungeons; selectively revisit changed Johto/Kanto/Hoenn.
-- [ ] Legendary questlines for Celebi, Mewtwo, Rayquaza, Giratina and more.
-- [ ] Rare world events, environmental puzzles, hidden laboratories and boss phases.
-- [ ] Battle Tower, Champion challenges, postgame and New Game+ (only after save compatibility review).
-- [ ] National Dex distribution and late-game completion rewards.
+### Alpha 0.4 — Expanded Pokémon systems
+- [ ] Full evolution-method audit: no mandatory trades.
+- [ ] Phased generation-by-generation wild, gift, egg and quest distribution plan.
+- [ ] Better Dex search, encounter hints, storage and collection goals.
+- [ ] Mega Evolution unlock quest and progression gating.
+- [ ] Legendary quests, shiny-hunt incentives, and difficulty modes.
 
-## Development rules
-1. **Source of truth:** all upstream game code/assets in `engine/`; Shattered Realms scripts/tests/docs alongside them.
-2. **Never overwrite the six original GB/GBC ROMs.** They aren't the GBA source engine.
-3. **Quality over size:** a polished small original region is more valuable than nine copied regions.
-4. **Every milestone gets:** GitHub commit(s), repeatable build, unit tests, GBA boot/save check, and release notes.
-5. **Mobile first:** validate with Delta touch controls, save/load, stable gameplay and playable performance.
-6. **ROM constraints:** monitor 32 MiB GBA size, event flag allocations, memory, sprite limits and save format.
-7. **Save compatibility:** never silently change data layouts; document when a fresh save is required.
-8. **Credits:** preserve the upstream engine's credits and document any third-party content.
+### Beta — Shattered Realms world
+- [ ] Distinct interconnected Rift Realm with towns, caves and dungeons.
+- [ ] Curated return trips to classic regions, initially Johto and Kanto.
+- [ ] Team Eclipse storyline, branching encounters and rival arcs.
+- [ ] Champions Tournament, Battle Tower, and substantial endgame content.
+- [ ] Completionist routes to every supported Pokémon.
+- [ ] Full playthrough, balance, save migration and performance pass.
 
-**Next build target:** Alpha 0.1 must compile successfully. After that the focus shifts to Stage 2 rather than stacking extra cheat features on Emerald.
+## Technical standards
+
+1. Make small, testable commits; do not silently replace the pinned engine.
+2. Source is now **vendored into `engine/`**; build from that source instead of automatically downloading another copy.
+3. Keep original GB/GBC ROMs untouched. Shattered Realms is a **new GBA game**, not a patched Crystal save.
+4. Pokémon being defined in species data does not make them catchable; test every encounter, evolution and gift.
+5. Avoid save-data layout and species-index changes after saves are distributed unless a migration is supplied.
+6. Keep the game playable on Delta and within actual GBA ROM/hardware limitations.
+7. Maintain RHH contributor credits and respect the project's licenses.
+8. If this is for personal use, **change repository visibility to Private**: the repository was public during inspection.

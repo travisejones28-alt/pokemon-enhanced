@@ -15,6 +15,13 @@ from scripts.apply_overrides import (
     modify_player_pp_checks,
     modify_move_pp_display,
     modify_pikachu_move_pages,
+    modify_unlimited_money,
+    modify_infinite_candy,
+    modify_bag_candy_supply,
+    modify_fast_experience,
+    modify_hard_trainer_levels,
+    modify_hard_trainer_ai,
+    modify_hard_trainer_bag,
 )
 
 
@@ -164,6 +171,72 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
         self.assertIn("GetMonData(GetBattlerMon(battler), MON_DATA_MOVE1 + i)", result)
         self.assertEqual(modify_pikachu_move_pages(result), result)
 
+
+
+    def test_unlimited_money_only_player_wallet(self):
+        sample = """u32 GetMoney(u32 *moneyPtr)
+{
+    return *moneyPtr ^ gSaveBlock2Ptr->encryptionKey;
+}
+void RemoveMoney(u32 *moneyPtr, u32 toSub)
+{
+    u32 toSet = GetMoney(moneyPtr);"""
+        after = modify_unlimited_money(sample)
+        self.assertIn("return MAX_MONEY;", after)
+        self.assertIn("if (moneyPtr == &gSaveBlock1Ptr->money)", after)
+        self.assertEqual(after, modify_unlimited_money(after))
+
+    def test_reusable_candies_regular_bag_only(self):
+        sample = """bool32 RemoveBagItem(enum Item itemId, u16 count)
+{
+    itemId = SanitizeBagItemId(itemId);
+    if (itemId == ITEM_NONE)
+        return FALSE;"""
+        after = modify_infinite_candy(sample)
+        self.assertIn("return CheckBagHasItem(ITEM_RARE_CANDY, 1);", after)
+        self.assertIn("CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE", after)
+        self.assertEqual(after, modify_infinite_candy(after))
+
+    def test_existing_save_receives_candies_on_bag_open(self):
+        sample = """void GoToBagMenu(u8 location, u8 pocket, MainCallback exitCallback)
+{
+    gBagMenu = AllocZeroed(sizeof(*gBagMenu));"""
+        after = modify_bag_candy_supply(sample)
+        self.assertIn("AddBagItem(ITEM_RARE_CANDY, 99);", after)
+        self.assertEqual(after, modify_bag_candy_supply(after))
+
+    def test_four_times_battle_exp_preserves_exp_tables(self):
+        sample = """        *expAmount = value + 1;
+    }
+}
+
+void BS_ItemRestoreHP(void)"""
+        after = modify_fast_experience(sample)
+        self.assertIn("*expAmount *= 4;", after)
+        self.assertEqual(after, modify_fast_experience(after))
+
+    def test_trainer_boost_not_frontier(self):
+        sample = "    CreateMon(mon, trainerMon->species, trainerMon->lvl, personality, trainer->otID);"
+        after = modify_hard_trainer_levels(sample)
+        self.assertIn("if (!trainer->isFrontier)", after)
+        self.assertIn("min(MAX_LEVEL", after)
+        self.assertEqual(after, modify_hard_trainer_levels(after))
+
+    def test_smart_hard_trainer_ai(self):
+        sample = """    if (IsDoubleBattle() && flags != 0)
+    {
+        flags |= AI_FLAG_DOUBLE_BATTLE;"""
+        after = modify_hard_trainer_ai(sample)
+        self.assertIn("AI_FLAG_HP_AWARE", after)
+        self.assertEqual(after, modify_hard_trainer_ai(after))
+
+    def test_no_bag_in_trainer_battles(self):
+        sample = """bool32 IsAllowedToUseBag(void)
+{
+    switch (VarGet(B_VAR_NO_BAG_USE))"""
+        after = modify_hard_trainer_bag(sample)
+        self.assertIn("return FALSE;", after)
+        self.assertEqual(after, modify_hard_trainer_bag(after))
 
 if __name__ == "__main__":
     unittest.main()

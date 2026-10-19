@@ -25,11 +25,17 @@ jobs:
           fetch-depth: 1
 
       - name: Download all pinned Emerald Expansion source files
+        id: import_source
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -e engine/Makefile ]]; then
-            echo "engine/ already contains upstream source. Will not overwrite."
+          if [[ -f engine/Makefile ]]; then
+            echo "engine_present=true" >> "$GITHUB_OUTPUT"
+            echo "engine/ already contains source. Preserving it; no import needed."
+            exit 0
+          fi
+          if [[ -d engine ]]; then
+            echo "Found an incomplete engine/ directory; refusing to overwrite it."
             exit 1
           fi
           git clone --depth 1 --branch expansion/1.17.1 --single-branch \
@@ -45,6 +51,7 @@ jobs:
           echo "Imported $(find engine -type f | wc -l) source files"
 
       - name: Commit complete engine snapshot, preserve original games
+        if: steps.import_source.outputs.engine_present != 'true'
         shell: bash
         run: |
           set -euo pipefail

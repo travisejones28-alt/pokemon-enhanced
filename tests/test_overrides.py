@@ -24,6 +24,15 @@ class TestOverrides(unittest.TestCase):
         with self.assertRaises(ValueError):
             modify_defines("#define OTHER TRUE\n", {"I_REUSABLE_TMS": "TRUE"})
 
+    def test_exp_share_has_required_persistent_flag(self):
+        item_settings = CONFIG["include/config/item.h"]
+        self.assertEqual(item_settings["I_EXP_SHARE_ITEM"], "GEN_6")
+        self.assertEqual(item_settings["I_EXP_SHARE_FLAG"], "FLAG_UNUSED_0x264")
+
+    def test_no_unexpected_route_indices(self):
+        for slots in ROUTE_SPECIES.values():
+            self.assertTrue(all(isinstance(index, int) and 0 <= index < 12 for index in slots))
+
     def test_evolution_idempotence(self):
         original = "\n".join(
             "{EVO_TRADE, 0, " + s + "}" for s in TRADE_EVOLUTIONS

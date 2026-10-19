@@ -13,12 +13,12 @@ A work-in-progress **GBA adventure** using [RHH's pokeemerald-expansion](https:/
 - Kadabra, Machoke, Haunter and Graveler evolve by level, without trading. Linking Cord alternatives remain available.
 - Reusable TMs, modern Exp. Share key item, and evolution held items usable from the bag.
 - Unique GBA header title/game code for identification in emulators.
-- GitHub Actions is configured to build a `.gba` artifact for Delta on iOS (verify build status under Actions).
+- GitHub Actions has **successfully compiled and validated** a 32 MiB `.gba` artifact for Delta on iOS ([verified build](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39269721177)). Emulator gameplay and save/load testing remain to be done.
 
 ## Build on GitHub (no PC necessary)
 
 1. Go to **Actions** > **Build Shattered Realms**.
-2. Select **Run workflow** (or wait for a source push).
+2. Select **Run workflow** (or open the [successful Alpha 0.1 run](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39269721177)).
 3. After the build job succeeds, open its run page and download the **ShatteredRealms-Alpha0.1-GBA** artifact.
 4. Extract the ZIP using Files on iPhone, then import `ShatteredRealms-Alpha0.1.gba` into Delta.
 

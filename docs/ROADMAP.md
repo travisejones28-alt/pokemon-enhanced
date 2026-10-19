@@ -14,9 +14,10 @@ The full **pokeemerald-expansion 1.17.1** source is committed under `engine/`, a
 - [x] Add reusable TMs, evolution items usable from the Bag, and level-up alternatives for four trade evolutions.
 - [x] Configure a dedicated flag for the modern Exp. Share.
 - [x] Add regression tests and GBA header checks.
-- [ ] **Get a successful end-to-end GitHub build** and downloadable `.gba`.
+- [x] **Successful end-to-end GitHub build and downloadable `.gba`**, verified in GitHub Actions run [39269721177](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39269721177).
 - [ ] **Smoke test on Delta**: new game, starter, encounter, capture, battle, save/reload, basic menus.
-- [ ] Record baseline ROM SHA-256 and tested Delta version.
+- [ ] Record built **ROM** SHA-256 (separate from downloadable artifact ZIP digest) and tested Delta version.
+- [ ] Investigate non-blocking upstream PNG `bKGD: invalid index` warnings as graphics are replaced (build currently passes).
 
 ### Alpha 0.2 — The first *new* game experience
 - [ ] Original title/intro and Team Eclipse teaser.

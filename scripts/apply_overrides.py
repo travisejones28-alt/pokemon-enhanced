@@ -275,11 +275,6 @@ def modify_all_move_pages(contents: str) -> str:
     """
     contents = replace_once(
         contents,
-        '#include "data.h"\n',
-        '#include "data.h"\n#include "data/tutor_moves.h"\n',
-    )
-    contents = replace_once(
-        contents,
         "void HandleInputChooseMove(enum BattlerId battler)\n{",
         """// Shattered Realms move library: multi-page selection without changing the
 // persistent four slots in BoxPokemon or the battle controller wire format.
@@ -337,9 +332,20 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
         if (machineMove != MOVE_NONE && CanLearnTeachableMove(species, machineMove))
             ShatteredRememberMove(battler, machineMove);
     }
-    for (u32 i = 0; gTutorMoves[i] != MOVE_UNAVAILABLE; i++)
+    // The pinned engine has no vendored data/tutor_moves.h. Use a curated
+    // set of tutor-style attacks with the same compatibility validation.
+    static const enum Move sTutorMoves[] =
     {
-        enum Move tutorMove = gTutorMoves[i];
+        MOVE_ICE_PUNCH, MOVE_FIRE_PUNCH, MOVE_THUNDER_PUNCH,
+        MOVE_DRAIN_PUNCH, MOVE_BUG_BITE, MOVE_IRON_HEAD,
+        MOVE_SEED_BOMB, MOVE_KNOCK_OFF, MOVE_SUPERPOWER,
+        MOVE_STEALTH_ROCK, MOVE_TRICK, MOVE_COVET, MOVE_SNORE,
+        MOVE_BOUNCE, MOVE_HEAT_WAVE, MOVE_ICY_WIND,
+        MOVE_TAILWIND, MOVE_DARK_PULSE, MOVE_THROAT_CHOP,
+    };
+    for (u32 i = 0; i < ARRAY_COUNT(sTutorMoves); i++)
+    {
+        enum Move tutorMove = sTutorMoves[i];
         if (CanLearnTeachableMove(species, tutorMove))
             ShatteredRememberMove(battler, tutorMove);
     }

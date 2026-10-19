@@ -1033,8 +1033,8 @@ def modify_rift_script_registration(contents: str) -> str:
     """Include new Rift Hollow scripts in the event-script assembler."""
     return replace_once(
         contents,
-        '\\t.include "data/maps/Route101/scripts.inc"',
-        '\\t.include "data/maps/Route101/scripts.inc"\\n\\t.include "data/maps/RiftHollow/scripts.inc"',
+        '\t.include "data/maps/Route101/scripts.inc"',
+        '\t.include "data/maps/Route101/scripts.inc"\n\t.include "data/maps/RiftHollow/scripts.inc"',
     )
 
 

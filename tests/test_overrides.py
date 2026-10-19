@@ -14,7 +14,7 @@ from scripts.apply_overrides import (
     modify_player_battle_pp,
     modify_player_pp_checks,
     modify_move_pp_display,
-    modify_pikachu_move_pages,
+    modify_all_move_pages,
     modify_unlimited_money,
     modify_infinite_candy,
     modify_bag_candy_supply,
@@ -151,7 +151,7 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
 
 
 
-    def test_pikachu_second_move_page(self):
+    def test_all_pokemon_move_library_pages(self):
         original = '''void HandleInputChooseMove(enum BattlerId battler)
 {
     if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
@@ -163,14 +163,16 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
 }
         InitMoveSelectionsVarsAndStrings(battler);
         gBattleStruct->gimmick.playerSelect = FALSE;'''
-        result = modify_pikachu_move_pages(original)
+        result = modify_all_move_pages(original)
         for name in ("MOVE_IRON_TAIL", "MOVE_GRASS_KNOT", "MOVE_BRICK_BREAK", "MOVE_THUNDER_WAVE"):
             self.assertIn(name, result)
+        self.assertIn("GetSpeciesLevelUpLearnset(species)", result)
         self.assertIn("JOY_NEW(SELECT_BUTTON)", result)
-        self.assertIn('COMPOUND_STRING("2/2")', result)
-        self.assertIn("GetMonData(GetBattlerMon(battler), MON_DATA_MOVE1 + i)", result)
-        self.assertEqual(modify_pikachu_move_pages(result), result)
-
+        self.assertIn("sShatteredMoves[battler]", result)
+        self.assertIn("sShatteredMoveCounts[battler]", result)
+        self.assertIn("level <= level", result)
+        self.assertIn("B_WIN_PP_REMAINING", result)
+        self.assertEqual(modify_all_move_pages(result), result)
 
 
     def test_unlimited_money_only_player_wallet(self):

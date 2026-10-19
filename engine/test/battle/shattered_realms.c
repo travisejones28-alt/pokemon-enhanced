@@ -1,6 +1,7 @@
 #include "global.h"
 #include "test/battle.h"
 #include "shattered_battle.h"
+#include "battle_util.h"
 
 SINGLE_BATTLE_TEST("Shattered PP stays unlimited for player and normal for opponent")
 {
@@ -92,5 +93,42 @@ SINGLE_BATTLE_TEST("Shattered replay mode retains ordinary player PP limitations
     } THEN {
         EXPECT_EQ(player->pp[0], GetMovePP(MOVE_CELEBRATE) - 1);
         EXPECT_EQ(opponent->pp[0], GetMovePP(MOVE_CELEBRATE) - 1);
+    }
+}
+
+SINGLE_BATTLE_TEST("Shattered switching keeps each Pokemon's saved attacks and PP separate")
+{
+    GIVEN {
+        gShatteredTestLocalMechanics = TRUE;
+        PLAYER(SPECIES_PIKACHU) { Moves(MOVE_CELEBRATE, MOVE_THUNDER_WAVE); }
+        PLAYER(SPECIES_MAGIKARP) { Moves(MOVE_SPLASH, MOVE_CELEBRATE); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_CELEBRATE); }
+    } WHEN {
+        TURN { MOVE(player, MOVE_CELEBRATE); MOVE(opponent, MOVE_CELEBRATE); }
+        TURN { SWITCH(player, 1); MOVE(opponent, MOVE_CELEBRATE); }
+        TURN { MOVE(player, MOVE_SPLASH); MOVE(opponent, MOVE_CELEBRATE); }
+    } THEN {
+        EXPECT_EQ(player->species, SPECIES_MAGIKARP);
+        EXPECT_EQ(player->moves[0], MOVE_SPLASH);
+        EXPECT_EQ(player->pp[0], GetMovePP(MOVE_SPLASH));
+        EXPECT_EQ(GetMonData(&gParties[B_TRAINER_PLAYER][0], MON_DATA_MOVE1), MOVE_CELEBRATE);
+        EXPECT_EQ(GetMonData(&gParties[B_TRAINER_PLAYER][1], MON_DATA_MOVE1), MOVE_SPLASH);
+    }
+}
+
+SINGLE_BATTLE_TEST("Shattered blocked visible page finds an unlocked attack without changing the save")
+{
+    GIVEN {
+        gShatteredTestLocalMechanics = TRUE;
+        PLAYER(SPECIES_PIKACHU) { Moves(MOVE_GROWL, MOVE_TAIL_WHIP, MOVE_THUNDER_WAVE, MOVE_CELEBRATE); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_CELEBRATE); }
+    } WHEN {
+        TURN { MOVE(player, MOVE_CELEBRATE); MOVE(opponent, MOVE_CELEBRATE); }
+    } THEN {
+        player->volatiles.tauntTimer = 2;
+        EXPECT(ShatteredTryUsableLibraryPage(B_BATTLER_0));
+        EXPECT(CheckMoveLimitations(B_BATTLER_0, 0, MOVE_LIMITATIONS_ALL) != 15);
+        EXPECT_EQ(GetMonData(&gParties[B_TRAINER_PLAYER][0], MON_DATA_MOVE1), MOVE_GROWL);
+        EXPECT_EQ(GetMonData(&gParties[B_TRAINER_PLAYER][0], MON_DATA_MOVE4), MOVE_CELEBRATE);
     }
 }

@@ -30,6 +30,7 @@ from scripts.apply_overrides import (
     modify_quest_map_script,
     modify_first_gym_party,
     modify_first_gym_dialogue,
+    modify_rift_script_registration,
     modify_first_gym_character,
     RIFT_NPCS,
 )
@@ -341,6 +342,35 @@ void BS_ItemRestoreHP(void)"""
         after = modify_first_gym_dialogue(text)
         self.assertIn("I guard the RIFT GYM", after)
         self.assertEqual(after, modify_first_gym_dialogue(after))
+        self.assertIn("TRAINER_ROXANNE_1", modify_first_gym_dialogue(text.replace('ROXANNE
+
+        gfx = json.dumps({"object_events": [
+            {"script": "RustboroCity_Gym_EventScript_Roxanne", "graphics_id": "OBJ_EVENT_GFX_ROXANNE"}
+        ]})
+        replaced = modify_first_gym_character(gfx)
+        self.assertIn("OBJ_EVENT_GFX_HEX_MANIAC", replaced)
+        self.assertEqual(replaced, modify_first_gym_character(replaced))
+
+    def test_rift_hollow_scripts_are_registered(self):
+        source = '\\t.include "data/maps/Route101/scripts.inc"'
+        new = modify_rift_script_registration(source)
+        self.assertIn('data/maps/RiftHollow/scripts.inc', new)
+        self.assertEqual(new, modify_rift_script_registration(new))
+
+if __name__ == "__main__":
+    unittest.main()
+,'ROXANNE
+
+        gfx = json.dumps({"object_events": [
+            {"script": "RustboroCity_Gym_EventScript_Roxanne", "graphics_id": "OBJ_EVENT_GFX_ROXANNE"}
+        ]})
+        replaced = modify_first_gym_character(gfx)
+        self.assertIn("OBJ_EVENT_GFX_HEX_MANIAC", replaced)
+        self.assertEqual(replaced, modify_first_gym_character(replaced))
+
+if __name__ == "__main__":
+    unittest.main()
+).replace('RustboroCity_Gym_Text_RoxanneDefeat:', 'TRAINER_ROXANNE_1\\nRustboroCity_Gym_Text_RoxanneDefeat:')))
 
         gfx = json.dumps({"object_events": [
             {"script": "RustboroCity_Gym_EventScript_Roxanne", "graphics_id": "OBJ_EVENT_GFX_ROXANNE"}

@@ -1,0 +1,57 @@
+name: Import pinned Emerald Expansion source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/import-engine.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-emerald-engine
+  cancel-in-progress: false
+
+jobs:
+  import-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out Pokemon Enhanced repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+
+      - name: Download all pinned Emerald Expansion source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -e engine/Makefile ]]; then
+            echo "engine/ already contains upstream source. Will not overwrite."
+            exit 1
+          fi
+          git clone --depth 1 --branch expansion/1.17.1 --single-branch \
+            https://github.com/rh-hideout/pokeemerald-expansion.git /tmp/shattered-upstream
+          actual="$(git -C /tmp/shattered-upstream rev-parse HEAD)"
+          expected="bb1093a7c72d3961d9a37d8e02ad2abc2c866682"
+          if [[ "$actual" != "$expected" ]]; then
+            echo "Upstream version drift: $actual (expected $expected)"
+            exit 1
+          fi
+          mkdir -p engine
+          rsync -a --exclude='.git/' /tmp/shattered-upstream/ engine/
+          echo "Imported $(find engine -type f | wc -l) source files"
+
+      - name: Commit complete engine snapshot, preserve original games
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f engine
+          git diff --cached --stat | tail -n 15
+          git commit -m "Import pinned RHH Emerald Expansion 1.17.1 into engine/"
+          git push origin HEAD:main
+          echo "Engine source committed to main"

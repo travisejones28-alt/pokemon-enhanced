@@ -34,3 +34,20 @@ Every published GitHub release is kept as a separate tagged build so older ROM v
 - Hard trainer teams: adaptive levels, stronger AI, items disabled inside trainer battles.
 - Field Bag: grant Rare Candies and item supply kit, reuse and re-open Bag.
 - Overworld following: entering/exiting buildings, fishing, surfing, healing, fainting, Pokémon swapping.
+
+
+## Repair increment — 19 October 2026
+
+No Pokémon/save structures, species indices, map group ordering, or save-sector
+formats are changed by this repair. No migration or new game is intentionally
+required. This is a source audit, not an old-save test: representative exported
+Delta saves were unavailable. The prior ROM and exported save must be retained.
+
+Virtual pages now preserve current battle slots through Transform, Mimic and
+Encore by suspending paging during those effects. Saved PP is refilled using
+the saved move's PP. No persistent move-history storage has been added.
+
+An unchanged filename, title and game code cannot guarantee one Delta tile.
+The ROM hash changes with code; transfer the exported battery save manually.
+Delta save states may capture old ROM-dependent RAM and should not be used for
+cross-build transfers. Use the in-game save and Continue.

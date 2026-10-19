@@ -2,7 +2,7 @@
 
 ## Current reality (19 October 2026)
 
-The full **pokeemerald-expansion 1.17.1** source is committed under `engine/`, and its Git tree exactly matches pinned upstream commit `bb1093a7c72d3961d9a37d8e02ad2abc2c866682`.
+The full **pokeemerald-expansion 1.17.1** source is committed under `engine/`, and was originally imported from pinned upstream commit `bb1093a7c72d3961d9a37d8e02ad2abc2c866682`.
 
 **Alpha 0.1 is a gameplay prototype, not a finished original adventure.** It still uses Emerald's story and world. Modern Pokémon species data is present, but we must deliberately make each species obtainable.
 
@@ -50,6 +50,24 @@ The full **pokeemerald-expansion 1.17.1** source is committed under `engine/`, a
 - [ ] Completionist routes to every supported Pokémon.
 - [ ] Full playthrough, balance, save migration and performance pass.
 
+## Repair increment — 19 October 2026
+
+- [x] Repair full override idempotency and Route 101 patch composition.
+- [x] Correct packed trainer IV floors and enable smarter switching.
+- [x] Preserve runtime moves during Transform, Mimic and Encore; suspend paging.
+- [x] Supply common evolution stones and Linking Cords without duplicate entries.
+- [x] Add vendored-source integration and host C regression tests.
+- [ ] Persistent per-Pokémon learned-move archive and migration design.
+- [ ] Emulator tests for every slot-sensitive battle mechanic and doubles.
+- [ ] Representative old/new save round-trip tests in Delta.
+- [ ] Complete original starting town/routes and multi-realm campaign.
+- [ ] Full obtainable-species/evolution audit and campaign balance pass.
+
+Source progress beyond the initial roadmap: original intro, anomaly quest,
+Rift Hollow/Eclipse boss, Astra Gym replacement, fourteen encounter areas and
+expanded Pokédex configuration exist. They require gameplay acceptance; the
+unchecked playthrough milestones remain deliberately open.
+
 ## Technical standards
 
 1. Make small, testable commits; do not silently replace the pinned engine.
@@ -60,3 +78,4 @@ The full **pokeemerald-expansion 1.17.1** source is committed under `engine/`, a
 6. Keep the game playable on Delta and within actual GBA ROM/hardware limitations.
 7. Maintain RHH contributor credits and respect the project's licenses.
 8. If this is for personal use, **change repository visibility to Private**: the repository was public during inspection.
+

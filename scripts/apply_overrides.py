@@ -251,6 +251,8 @@ def modify_encounters(contents: str) -> str:
 def replace_once(contents: str, before: str, after: str) -> str:
     """Fail closed on unexpected engine edits and allow repeated application."""
     if after in contents:
+        if contents.count(after) != 1 or before in contents.replace(after, "", 1):
+            raise ValueError(f"Duplicate or mixed patch state: {before[:80]!r}")
         return contents
     if contents.count(before) != 1:
         raise ValueError(f"Expected one patch anchor, found {contents.count(before)}: {before[:80]!r}")
@@ -297,21 +299,26 @@ def modify_player_battle_pp(contents: str) -> str:
             // Shattered Realms: player-controlled Pokémon never run out of PP.
             // Do not alter the PP rules for opponents, link or recorded battles.
             if (IsOnPlayerSide(battler) && !BattlerHasAi(battler)
-                && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK)))
+                && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED | BATTLE_TYPE_RECORDED_LINK)))
             {
                 struct Pokemon *partyMon = GetBattlerMon(battler);
                 for (i = 0; i < MAX_MON_MOVES; i++)
                 {
-                    // Restore all saved moves before the next battle menu;
-                    // the extra page never replaces moves in the save file.
-                    if (!gBattleMons[battler].volatiles.transformed)
-                        gBattleMons[battler].moves[i] = GetMonData(partyMon, MON_DATA_MOVE1 + i);
+                    // Preserve battle-only moves, transformation and Encore slots.
+                    // No virtual move is ever copied into the saved move slots.
                     if (gBattleMons[battler].moves[i] != MOVE_NONE)
                     {
                         u32 maxPP = CalculatePPWithBonus(gBattleMons[battler].moves[i],
                                                          gBattleMons[battler].ppBonuses, i);
                         gBattleMons[battler].pp[i] = maxPP;
-                        SetMonData(partyMon, MON_DATA_PP1 + i, &maxPP);
+                    }
+                    // Party PP belongs to the SAVED move, not its virtual slot.
+                    enum Move savedMove = GetMonData(partyMon, MON_DATA_MOVE1 + i);
+                    if (savedMove != MOVE_NONE)
+                    {
+                        u32 savedPP = CalculatePPWithBonus(savedMove,
+                            GetMonData(partyMon, MON_DATA_PP_BONUSES), i);
+                        SetMonData(partyMon, MON_DATA_PP1 + i, &savedPP);
                     }
                 }
             }
@@ -347,6 +354,8 @@ def modify_move_pp_display(contents: str) -> str:
     BattlePutTextOnWindow(gText_EmptyString3, B_WIN_PP);
 }""",
     )
+    if "#define SHATTERED_MAX_LIBRARY_MOVES" in contents:
+        return contents
     return replace_once(
         contents,
         """static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
@@ -378,8 +387,8 @@ def modify_all_move_pages(contents: str) -> str:
 
     This is deliberately save-layout-preserving: the catalog is rebuilt from the
     saved four move slots and the species' level-up learnset each battle turn.
-    TM moves in saved slots remain available; forgotten TM moves are not yet
-    archived, since they need a separate persistent move-history structure.
+    Compatible TM/egg moves are unlocked by species rather than history.
+    Forgotten event-only moves are not archived; persistent history is pending.
     """
     contents = replace_once(
         contents,
@@ -390,6 +399,16 @@ def modify_all_move_pages(contents: str) -> str:
 static enum Move sShatteredMoves[MAX_BATTLERS_COUNT][SHATTERED_MAX_LIBRARY_MOVES];
 static u16 sShatteredMoveCounts[MAX_BATTLERS_COUNT];
 static u8 sShatteredMovePages[MAX_BATTLERS_COUNT];
+
+static bool32 ShatteredCanUseLibrary(enum BattlerId battler)
+{
+    return IsOnPlayerSide(battler) && !BattlerHasAi(battler)
+        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
+                                | BATTLE_TYPE_RECORDED_LINK))
+        && !gBattleMons[battler].volatiles.transformed
+        && !gBattleMons[battler].volatiles.mimickedMoves
+        && gBattleMons[battler].volatiles.encoredMove == MOVE_NONE;
+}
 
 static void ShatteredRememberMove(enum BattlerId battler, enum Move move)
 {
@@ -410,13 +429,16 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
     };
     sShatteredMoveCounts[battler] = 0;
     sShatteredMovePages[battler] = 0;
-    if (!IsOnPlayerSide(battler) || gBattleTypeFlags & BATTLE_TYPE_LINK)
+    if (!ShatteredCanUseLibrary(battler))
         return;
 
     struct Pokemon *mon = GetBattlerMon(battler);
     enum Species species = GetMonData(mon, MON_DATA_SPECIES);
     u32 level = GetMonData(mon, MON_DATA_LEVEL);
-    // Preserve chosen TM, tutor, and event moves in the first four slots.
+    // Keep current runtime slots first: Encore and move effects refer to slots.
+    // Saved attacks are then included even after browsing virtual pages.
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+        ShatteredRememberMove(battler, gBattleMons[battler].moves[i]);
     for (u32 i = 0; i < MAX_MON_MOVES; i++)
         ShatteredRememberMove(battler, GetMonData(mon, MON_DATA_MOVE1 + i));
 
@@ -432,8 +454,8 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
         }
     }
 
-    // Legal machine and tutor attacks stay available when replaced or forgotten.
-    // Item unlocks remain controlled by the game's existing move compatibility.
+    // Species-compatible machines are available without owning each TM.
+    // This is a compatibility catalog, not a persistent learned-move archive.
     for (u32 i = 0; i < NUM_ALL_MACHINES; i++)
     {
         enum Move machineMove = GetTMHMMoveId(i + 1);
@@ -505,6 +527,8 @@ static void ShatteredToggleMovePage(enum BattlerId battler)
         gBattleMons[battler].pp[i] = pp;
     }
     gMoveSelectionCursor[battler] = 0;
+    AssignUsableZMoves(battler, moveInfo->moves);
+    TryChangeZTrigger(battler, 0);
     MoveSelectionDisplayMoveNames(battler);
     MoveSelectionCreateCursorAt(0, 0);
     MoveSelectionDisplayPPNumber(battler);
@@ -522,8 +546,7 @@ void HandleInputChooseMove(enum BattlerId battler)
         """    if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
     {""",
         """    if (JOY_NEW(SELECT_BUTTON) && !gBattleStruct->descriptionSubmenu
-        && !gBattleStruct->zmove.viewing && IsOnPlayerSide(battler)
-        && !(gBattleTypeFlags & BATTLE_TYPE_LINK)
+        && !gBattleStruct->zmove.viewing && ShatteredCanUseLibrary(battler)
         && sShatteredMoveCounts[battler] > MAX_MON_MOVES)
     {
         PlaySE(SE_SELECT);
@@ -534,12 +557,16 @@ void HandleInputChooseMove(enum BattlerId battler)
     )
     contents = replace_once(
         contents,
+        "else if (B_MOVE_REARRANGEMENT_IN_BATTLE < GEN_4 && JOY_NEW(SELECT_BUTTON)",
+        "else if (B_MOVE_REARRANGEMENT_IN_BATTLE < GEN_4 && sShatteredMoveCounts[battler] == 0 && JOY_NEW(SELECT_BUTTON)",
+    )
+    contents = replace_once(
+        contents,
         """        InitMoveSelectionsVarsAndStrings(battler);
         gBattleStruct->gimmick.playerSelect = FALSE;""",
         """        ShatteredBuildMoveLibrary(battler);
-        // Always re-enter on the saved first page, even if the user cancelled
-        // out of a previous virtual move page during this same turn.
-        if (IsOnPlayerSide(battler) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+        // Preserve battle-only slots when transformed, mimicking or Encored.
+        if (ShatteredCanUseLibrary(battler))
         {
             for (u32 slot = 0; slot < MAX_MON_MOVES; slot++)
             {
@@ -664,6 +691,16 @@ def modify_bag_candy_supply(contents: str) -> str:
             AddBagItem(ITEM_FULL_RESTORE, 99);
         if (!CheckBagHasItem(ITEM_ESCAPE_ROPE, 1))
             AddBagItem(ITEM_ESCAPE_ROPE, 99);
+        static const enum Item evolutionItems[] =
+        {
+            ITEM_LINKING_CORD, ITEM_FIRE_STONE, ITEM_WATER_STONE,
+            ITEM_THUNDER_STONE, ITEM_LEAF_STONE, ITEM_MOON_STONE,
+            ITEM_SUN_STONE, ITEM_SHINY_STONE, ITEM_DUSK_STONE,
+            ITEM_DAWN_STONE, ITEM_ICE_STONE,
+        };
+        for (u32 i = 0; i < ARRAY_COUNT(evolutionItems); i++)
+            if (!CheckBagHasItem(evolutionItems[i], 1))
+                AddBagItem(evolutionItems[i], 1);
     }
     gBagMenu = AllocZeroed(sizeof(*gBagMenu));""",
     )
@@ -720,10 +757,17 @@ def modify_hard_trainer_ivs(contents: str) -> str:
     return replace_once(
         contents,
         "    SetMonData(mon, MON_DATA_IVS, &trainerMon->iv);",
-        """    // Minimum 28/31 IVs, so opponent stats keep up with infinite candies.
+        """    // IVs are SIX packed 5-bit values, not a single uniform IV.
     data = trainerMon->iv;
-    if (!trainer->isFrontier && data < 28)
-        data = 28;
+    if (!trainer->isFrontier)
+    {
+        for (u32 stat = 0; stat < NUM_STATS; stat++)
+        {
+            u32 shift = stat * 5;
+            u32 iv = (data >> shift) & 31;
+            data = (data & ~(31u << shift)) | (max(iv, 28) << shift);
+        }
+    }
     SetMonData(mon, MON_DATA_IVS, &data);""",
     )
 
@@ -737,12 +781,14 @@ def modify_hard_trainer_ai(contents: str) -> str:
         flags |= AI_FLAG_DOUBLE_BATTLE;""",
         """    // Hard mode: even early enemy trainers make competent decisions.
     // Do not alter link battles, tutorials, or recorded battles.
-    if (trainerId != 0xFFFF && flags != 0
+    if (trainerId != 0xFFFF && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
         && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
+                                 | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_FRONTIER
                                  | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_SAFARI)))
     {
         flags |= AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_CHECK_VIABILITY
-               | AI_FLAG_TRY_TO_FAINT | AI_FLAG_TRY_TO_2HKO | AI_FLAG_HP_AWARE;
+               | AI_FLAG_TRY_TO_FAINT | AI_FLAG_TRY_TO_2HKO | AI_FLAG_HP_AWARE
+               | AI_FLAG_SMART_SWITCHING;
     }
     if (IsDoubleBattle() && flags != 0)
     {
@@ -1191,7 +1237,8 @@ def apply(engine: Path) -> None:
         map_path = engine / "data/maps" / map_name / "map.json"
         scripts_path = engine / "data/maps" / map_name / "scripts.inc"
         updates[map_path] = modify_quest_npc_map(map_path.read_text(encoding="utf-8"), map_name)
-        updates[scripts_path] = modify_quest_map_script(scripts_path.read_text(encoding="utf-8"), map_name)
+        updates[scripts_path] = modify_quest_map_script(
+            updates.get(scripts_path, scripts_path.read_text(encoding="utf-8")), map_name)
 
     # Don't partially write if validation fails.
     for path, content in updates.items():
@@ -1210,3 +1257,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

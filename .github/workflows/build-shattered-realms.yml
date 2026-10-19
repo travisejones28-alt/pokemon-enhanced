@@ -43,7 +43,13 @@ jobs:
             libnewlib-arm-none-eabi libpng-dev python3
 
       - name: Apply gameplay and configuration overrides
-        run: python3 scripts/apply_overrides.py --engine engine
+        run: |
+          set -euo pipefail
+          python3 scripts/apply_overrides.py --engine engine
+          git diff --binary -- engine > /tmp/shattered-first-application.diff
+          python3 scripts/apply_overrides.py --engine engine
+          git diff --binary -- engine > /tmp/shattered-second-application.diff
+          cmp /tmp/shattered-first-application.diff /tmp/shattered-second-application.diff
 
       - name: Build Shattered Realms GBA ROM
         run: make -C engine -j2 -Otarget TITLE=SHATTERED GAME_CODE=BSRE FILE_NAME=shattered-realms
@@ -90,4 +96,7 @@ jobs:
             Permanent latest build link:
             https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest/download/ShatteredRealms.gba
 
-            This release uses the Emerald Expansion prototype. Original Shattered Realms maps, story and quests are still in development.
+            Automated checks cover regression tests, full patch idempotency, compilation, GBA header and SHA-256 validation. They do not establish emulator gameplay or old-save compatibility.
+
+            This remains an Emerald Expansion prototype. Persistent learned-move history and the complete original world are unfinished. Read docs/IMPLEMENTATION_AUDIT.md and docs/SAVE_COMPATIBILITY.md before updating.
+

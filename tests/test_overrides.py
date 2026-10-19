@@ -131,7 +131,7 @@ class TestOverrides(unittest.TestCase):
         result = modify_player_battle_pp(original)
         self.assertIn("IsOnPlayerSide(battler)", result)
         self.assertIn("!BattlerHasAi(battler)", result)
-        self.assertIn("SetMonData(partyMon, MON_DATA_PP1 + i, &maxPP)", result)
+        self.assertIn("SetMonData(partyMon, MON_DATA_PP1 + i, &savedPP)", result)
         self.assertEqual(result, modify_player_battle_pp(result))
 
     def test_player_pp_exempt_but_enemy_still_checked(self):
@@ -186,6 +186,7 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
 }
         InitMoveSelectionsVarsAndStrings(battler);
         gBattleStruct->gimmick.playerSelect = FALSE;'''
+        original += "\nelse if (B_MOVE_REARRANGEMENT_IN_BATTLE < GEN_4 && JOY_NEW(SELECT_BUTTON)"
         result = modify_all_move_pages(original)
         for name in ("MOVE_IRON_TAIL", "MOVE_GRASS_KNOT", "MOVE_BRICK_BREAK", "MOVE_THUNDER_WAVE"):
             self.assertIn(name, result)
@@ -281,7 +282,7 @@ void BS_ItemRestoreHP(void)"""
     def test_hard_trainer_perfectish_ivs(self):
         sample = "    SetMonData(mon, MON_DATA_IVS, &trainerMon->iv);"
         after = modify_hard_trainer_ivs(sample)
-        self.assertIn("data < 28", after)
+        self.assertIn("max(iv, 28)", after)
         self.assertIn("SetMonData(mon, MON_DATA_IVS, &data)", after)
         self.assertEqual(after, modify_hard_trainer_ivs(after))
 
@@ -364,3 +365,4 @@ void BS_ItemRestoreHP(void)"""
 
 if __name__ == "__main__":
     unittest.main()
+

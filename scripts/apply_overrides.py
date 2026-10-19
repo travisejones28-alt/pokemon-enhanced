@@ -655,6 +655,225 @@ Route101_Text_TakeTiredPokemonToPokeCenter:'''
 
 
 
+
+# Rift chapter flags use pre-existing unused system flag bits, not new save fields.
+RIFT_NPCS = {
+    "OldaleTown": ("OldaleTown_EventScript_Girl", "ShatteredOldale_EventScript_RiftGuide"),
+    "Route101": ("Route101_EventScript_Boy", "ShatteredRoute101_EventScript_Anomaly"),
+    "Route102": ("Route102_EventScript_Boy", "ShatteredRoute102_EventScript_Anomaly"),
+    "Route103": ("Route103_EventScript_Man", "ShatteredRoute103_EventScript_Anomaly"),
+}
+
+RIFT_QUEST_SCRIPTS = {
+    "OldaleTown": r"""
+ShatteredOldale_EventScript_RiftGuide::
+	lock
+	faceplayer
+	goto_if_set FLAG_UNUSED_0x90F, ShatteredOldale_EventScript_RiftCleared
+	goto_if_unset FLAG_UNUSED_0x90B, ShatteredOldale_EventScript_StartQuest
+	goto_if_unset FLAG_UNUSED_0x90E, ShatteredOldale_EventScript_QuestProgress
+	msgbox ShatteredOldale_Text_EnterRift, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, ShatteredOldale_EventScript_QuestExit
+	closemessage
+	warp MAP_RIFT_HOLLOW, 18, 21
+	waitstate
+	release
+	end
+
+ShatteredOldale_EventScript_StartQuest::
+	goto_if_unset FLAG_SYS_POKEMON_GET, ShatteredOldale_EventScript_NoStarter
+	msgbox ShatteredOldale_Text_QuestStart, MSGBOX_DEFAULT
+	setflag FLAG_UNUSED_0x90B
+	release
+	end
+
+ShatteredOldale_EventScript_NoStarter::
+	msgbox ShatteredOldale_Text_NoStarter, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredOldale_EventScript_QuestProgress::
+	msgbox ShatteredOldale_Text_QuestProgress, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredOldale_EventScript_RiftCleared::
+	msgbox ShatteredOldale_Text_QuestComplete, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredOldale_EventScript_QuestExit::
+	closemessage
+	release
+	end
+
+ShatteredOldale_Text_QuestStart:
+	.string "I am studying the ECLIPSE RIFTS.\p"
+	.string "Please find three anomalies:\n"
+	.string "ROUTE 101, 102 and 103.\p"
+	.string "Speak to the researchers on\n"
+	.string "each route, then return here!$"
+
+ShatteredOldale_Text_NoStarter:
+	.string "First, rescue PROF. BIRCH and\n"
+	.string "choose your first POKeMON.$"
+
+ShatteredOldale_Text_QuestProgress:
+	.string "Investigate ROUTES 101, 102,\n"
+	.string "and 103, in that order.\p"
+	.string "Then return to open RIFT HOLLOW.$"
+
+ShatteredOldale_Text_EnterRift:
+	.string "All three anomalies are confirmed!\p"
+	.string "A doorway to RIFT HOLLOW is open.\n"
+	.string "Enter the dimensional breach?$"
+
+ShatteredOldale_Text_QuestComplete:
+	.string "You defeated the ECLIPSE WARDEN!\p"
+	.string "The region is safer, but\n"
+	.string "more RIFTS remain.$"
+""",
+    "Route101": r"""
+ShatteredRoute101_EventScript_Anomaly::
+	lock
+	faceplayer
+	goto_if_unset FLAG_UNUSED_0x90B, ShatteredRoute101_EventScript_Inactive
+	goto_if_set FLAG_UNUSED_0x90C, ShatteredRoute101_EventScript_Done
+	msgbox ShatteredRoute101_Text_Scan, MSGBOX_DEFAULT
+	setflag FLAG_UNUSED_0x90C
+	release
+	end
+
+ShatteredRoute101_EventScript_Inactive::
+	msgbox ShatteredRoute101_Text_Inactive, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredRoute101_EventScript_Done::
+	msgbox ShatteredRoute101_Text_Done, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredRoute101_Text_Scan:
+	.string "This RIFT is pulsing with\n"
+	.string "strange violet energy!\p"
+	.string "Anomaly one recorded!\n"
+	.string "Look for a scout on ROUTE 102.$"
+
+ShatteredRoute101_Text_Inactive:
+	.string "The air here has turned violet.\p"
+	.string "A researcher in OLDALE TOWN\n"
+	.string "might know what that means.$"
+
+ShatteredRoute101_Text_Done:
+	.string "The first anomaly is stable.\n"
+	.string "Head to ROUTE 102 next.$"
+""",
+    "Route102": r"""
+ShatteredRoute102_EventScript_Anomaly::
+	lock
+	faceplayer
+	goto_if_unset FLAG_UNUSED_0x90C, ShatteredRoute102_EventScript_Inactive
+	goto_if_set FLAG_UNUSED_0x90D, ShatteredRoute102_EventScript_Done
+	msgbox ShatteredRoute102_Text_Scan, MSGBOX_DEFAULT
+	setflag FLAG_UNUSED_0x90D
+	release
+	end
+
+ShatteredRoute102_EventScript_Inactive::
+	msgbox ShatteredRoute102_Text_Inactive, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredRoute102_EventScript_Done::
+	msgbox ShatteredRoute102_Text_Done, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredRoute102_Text_Scan:
+	.string "The second RIFT is stronger...\p"
+	.string "I saw TEAM ECLIPSE taking\n"
+	.string "readings near ROUTE 103!\p"
+	.string "Anomaly two recorded!$"
+
+ShatteredRoute102_Text_Inactive:
+	.string "An odd noise is coming from\n"
+	.string "the grass near here.\p"
+	.string "Investigate ROUTE 101 first.$"
+
+ShatteredRoute102_Text_Done:
+	.string "The second anomaly is stable.\n"
+	.string "Go north to ROUTE 103.$"
+""",
+    "Route103": r"""
+ShatteredRoute103_EventScript_Anomaly::
+	lock
+	faceplayer
+	goto_if_unset FLAG_UNUSED_0x90D, ShatteredRoute103_EventScript_Inactive
+	goto_if_set FLAG_UNUSED_0x90E, ShatteredRoute103_EventScript_Done
+	msgbox ShatteredRoute103_Text_Scan, MSGBOX_DEFAULT
+	setflag FLAG_UNUSED_0x90E
+	release
+	end
+
+ShatteredRoute103_EventScript_Inactive::
+	msgbox ShatteredRoute103_Text_Inactive, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredRoute103_EventScript_Done::
+	msgbox ShatteredRoute103_Text_Done, MSGBOX_DEFAULT
+	release
+	end
+
+ShatteredRoute103_Text_Scan:
+	.string "TEAM ECLIPSE left behind\n"
+	.string "a strange dimensional device!\p"
+	.string "Anomaly three recorded!\n"
+	.string "Return to OLDALE TOWN.$"
+
+ShatteredRoute103_Text_Inactive:
+	.string "These footprints do not look\n"
+	.string "human. Something passed by.\p"
+	.string "First check the earlier RIFTS.$"
+
+ShatteredRoute103_Text_Done:
+	.string "You found the last anomaly.\n"
+	.string "The OLDALE guide is waiting.$"
+""",
+}
+
+
+def modify_rift_map_groups(contents: str) -> str:
+    document = json.loads(contents)
+    group = document["gMapGroup_Dungeons"]
+    if "RiftHollow" not in group:
+        # Appending leaves every pre-existing dungeon map index unchanged.
+        group.append("RiftHollow")
+    return json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+
+
+def modify_quest_npc_map(contents: str, map_name: str) -> str:
+    old_script, new_script = RIFT_NPCS[map_name]
+    document = json.loads(contents)
+    matching = [obj for obj in document["object_events"] if obj.get("script") in (old_script, new_script)]
+    if len(matching) != 1:
+        raise ValueError(f"Could not uniquely identify quest NPC on {map_name}")
+    matching[0]["script"] = new_script
+    if map_name == "OldaleTown":
+        matching[0]["graphics_id"] = "OBJ_EVENT_GFX_SCIENTIST_1"
+    return json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+
+
+def modify_quest_map_script(contents: str, map_name: str) -> str:
+    patch = RIFT_QUEST_SCRIPTS[map_name]
+    first_label = RIFT_NPCS[map_name][1] + "::"
+    if first_label in contents:
+        return contents
+    return contents.rstrip() + "\n\n" + patch.strip() + "\n"
+
+
+
 def apply(engine: Path) -> None:
     if not (engine / "Makefile").is_file():
         raise FileNotFoundError(f"Missing pokeemerald-expansion Makefile: {engine}")
@@ -685,6 +904,14 @@ def apply(engine: Path) -> None:
     for relative_path, patcher in gameplay_sources.items():
         path = engine / relative_path
         updates[path] = patcher(path.read_text(encoding="utf-8"))
+
+    map_groups_path = engine / "data/maps/map_groups.json"
+    updates[map_groups_path] = modify_rift_map_groups(map_groups_path.read_text(encoding="utf-8"))
+    for map_name in RIFT_NPCS:
+        map_path = engine / "data/maps" / map_name / "map.json"
+        scripts_path = engine / "data/maps" / map_name / "scripts.inc"
+        updates[map_path] = modify_quest_npc_map(map_path.read_text(encoding="utf-8"), map_name)
+        updates[scripts_path] = modify_quest_map_script(scripts_path.read_text(encoding="utf-8"), map_name)
 
     # Don't partially write if validation fails.
     for path, content in updates.items():

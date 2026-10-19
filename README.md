@@ -3,7 +3,7 @@
 A work-in-progress **GBA adventure** using [RHH's pokeemerald-expansion](https://github.com/rh-hideout/pokeemerald-expansion) as the engine.
 
 > **Status: Alpha 0.1 — engine and gameplay prototype, NOT a new region or completed story.**
-> The current prototype still uses the Emerald overworld/story and original starter/rival sequence.
+> The prototype still uses Emerald's maps and major events. Our Pikachu starter and a Team Eclipse/rift story teaser are layered onto that opening; a new region and full quest campaign are not finished.
 
 ## Implemented in Alpha 0.1
 
@@ -15,12 +15,26 @@ A work-in-progress **GBA adventure** using [RHH's pokeemerald-expansion](https:/
 - Unique GBA header title/game code for identification in emulators.
 - GitHub Actions has **successfully compiled and validated** a 32 MiB `.gba` artifact for Delta on iOS ([verified build](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39269721177)). Emulator gameplay and save/load testing remain to be done.
 
+## Current main-branch gameplay changes
+
+**Source changes still require a successful ROM build and gameplay testing before they appear in Delta.**
+
+- Pikachu starter with strong signature attacks, plus a friendship-based bond move progression.
+- Multi-page battle move libraries for every player Pokémon: equipped attacks and all level-up moves unlocked by its level. SELECT switches pages. Forgotten TM/tutor moves are not yet archived.
+- Unlimited PP for the player, no visible numeric PP display, unlimited wallet, reusable Rare Candies and field supply of Master Balls, Max Repels, Max Revives, Full Restores and Escape Ropes.
+- 4× battle EXP without changing experience tables or existing stored levels.
+- Hard-mode trainers: higher levels, adaptive scaling to your strongest Pokémon, stronger IVs, smarter AI, hidden ability possibilities, no Bag items, no escaping.
+- Built-in Pokémon following enabled, better item descriptions and wild-battle controls.
+- Opening story teaser featuring strange Rifts and Team Eclipse. The new town, custom maps, gyms and proper quest campaign are still unimplemented.
+
+**Save protection:** See the [Delta save recovery and safe update checklist](docs/SAVE_COMPATIBILITY.md). Never delete the original game tile until you've imported and verified your previous save in the new version.
+
 ## Latest iPhone / Delta game download
 
 **Direct game link (always latest successful build):**
 https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest/download/ShatteredRealms.gba
 
-Every source change on `main` runs automated tests and builds the `.gba` game. Passing builds are published to [GitHub Releases](https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest) with the same filename each time. The link does not work until the first release has finished publishing. See [iPhone update & save instructions](docs/IPHONE_UPDATES.md) before replacing a game in Delta.
+Every source change on `main` runs automated tests and builds the `.gba` game. Passing builds are published to [GitHub Releases](https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest) with the same filename each time. The link does not work until the first release has finished publishing. See [iPhone update instructions](docs/IPHONE_UPDATES.md) and the [save-preserving update guide](docs/SAVE_COMPATIBILITY.md) before importing a newer game in Delta.
 
 **Save warning:** Modified ROM hashes can make Delta display a separate game, and some engine changes may make saves incompatible. Always export your old game's in-game save before importing an update.
 

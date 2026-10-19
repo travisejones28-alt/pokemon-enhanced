@@ -978,7 +978,7 @@ IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 """
     if len(re.findall(pattern, contents, re.S)) != 1:
         raise ValueError("Could not find original first gym leader party")
-    result = re.sub(pattern, lambda match: replacement.rstrip(), contents, count=1, flags=re.S)
+    result = re.sub(pattern, lambda match: replacement.rstrip() + "\n", contents, count=1, flags=re.S)
     # Preserve rematch IDs, but align other Roxanne battle names with Astra.
     result = re.sub(r"(=== TRAINER_ROXANNE_\d+ ===\nName: )ROXANNE",
                     lambda match: match.group(1) + "ASTRA", result)

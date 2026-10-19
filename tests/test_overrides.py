@@ -23,6 +23,8 @@ from scripts.apply_overrides import (
     modify_hard_trainer_ivs,
     modify_hard_trainer_ai,
     modify_hard_trainer_bag,
+    modify_rift_intro,
+    modify_route_rift_teaser,
 )
 
 
@@ -252,6 +254,24 @@ void BS_ItemRestoreHP(void)"""
         self.assertIn("data < 28", after)
         self.assertIn("SetMonData(mon, MON_DATA_IVS, &data)", after)
         self.assertEqual(after, modify_hard_trainer_ivs(after))
+
+
+
+    def test_shattered_realms_intro_teaser(self):
+        sample = "gText_Birch_MainSpeech::\n\t.string \"Old speech.$\"\n\ngText_Birch_AndYouAre::"
+        after = modify_rift_intro(sample)
+        self.assertIn("TEAM ECLIPSE", after)
+        self.assertIn("RIFTS", after)
+        self.assertIn("gText_Birch_AndYouAre::", after)
+        self.assertEqual(after, modify_rift_intro(after))
+
+    def test_route_101_teaser_without_changing_events(self):
+        sample = "Route101_Text_YouSavedMe:\n\t.string \"Old speech.$\"\n\nRoute101_Text_TakeTiredPokemonToPokeCenter:"
+        after = modify_route_rift_teaser(sample)
+        self.assertIn("RIFT flashed", after)
+        self.assertIn("TEAM ECLIPSE", after)
+        self.assertIn("Route101_Text_TakeTiredPokemonToPokeCenter:", after)
+        self.assertEqual(after, modify_route_rift_teaser(after))
 
 
 if __name__ == "__main__":

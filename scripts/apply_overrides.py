@@ -338,6 +338,151 @@ void HandleInputChooseMove(enum BattlerId battler)
     return contents
 
 
+
+def modify_unlimited_money(contents: str) -> str:
+    """The player's wallet always acts like max cash; no save-layout changes."""
+    contents = replace_once(
+        contents,
+        """u32 GetMoney(u32 *moneyPtr)
+{
+    return *moneyPtr ^ gSaveBlock2Ptr->encryptionKey;
+}""",
+        """u32 GetMoney(u32 *moneyPtr)
+{
+    if (moneyPtr == &gSaveBlock1Ptr->money)
+        return MAX_MONEY;
+    return *moneyPtr ^ gSaveBlock2Ptr->encryptionKey;
+}""",
+    )
+    return replace_once(
+        contents,
+        """void RemoveMoney(u32 *moneyPtr, u32 toSub)
+{
+    u32 toSet = GetMoney(moneyPtr);""",
+        """void RemoveMoney(u32 *moneyPtr, u32 toSub)
+{
+    // Purchases and losses cannot drain the player's infinite wallet.
+    if (moneyPtr == &gSaveBlock1Ptr->money)
+        return;
+    u32 toSet = GetMoney(moneyPtr);""",
+    )
+
+
+def modify_infinite_candy(contents: str) -> str:
+    """Rare Candies can be reused; preserve normal behavior for other items."""
+    return replace_once(
+        contents,
+        """bool32 RemoveBagItem(enum Item itemId, u16 count)
+{
+    itemId = SanitizeBagItemId(itemId);
+    if (itemId == ITEM_NONE)
+        return FALSE;""",
+        """bool32 RemoveBagItem(enum Item itemId, u16 count)
+{
+    itemId = SanitizeBagItemId(itemId);
+    if (itemId == ITEM_NONE)
+        return FALSE;
+    // Shattered Realms: unlimited use once the candy is in the normal Bag.
+    if (itemId == ITEM_RARE_CANDY
+        && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE
+        && !FlagGet(FLAG_STORING_ITEMS_IN_PYRAMID_BAG))
+        return CheckBagHasItem(ITEM_RARE_CANDY, 1);""",
+    )
+
+
+def modify_bag_candy_supply(contents: str) -> str:
+    """Provide Rare Candies to existing saves whenever the ordinary Bag opens."""
+    return replace_once(
+        contents,
+        """void GoToBagMenu(u8 location, u8 pocket, MainCallback exitCallback)
+{
+    gBagMenu = AllocZeroed(sizeof(*gBagMenu));""",
+        """void GoToBagMenu(u8 location, u8 pocket, MainCallback exitCallback)
+{
+    // Existing Delta saves receive the same reusable Rare Candy as new games.
+    // Avoid battle-frontier / special bags and do not duplicate the item.
+    if (location == ITEMMENULOCATION_FIELD
+        && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE
+        && !CheckBagHasItem(ITEM_RARE_CANDY, 1))
+        AddBagItem(ITEM_RARE_CANDY, 99);
+    gBagMenu = AllocZeroed(sizeof(*gBagMenu));""",
+    )
+
+
+def modify_fast_experience(contents: str) -> str:
+    """Give x4 experience, equivalent to quartering level-up work in battles."""
+    return replace_once(
+        contents,
+        """        *expAmount = value + 1;
+    }
+}
+
+void BS_ItemRestoreHP(void)""",
+        """        *expAmount = value + 1;
+    }
+    // Faster progression without changing EXP tables or existing saved levels.
+    // Battle EXP only; Rare Candies still grant one level per use.
+    *expAmount *= 4;
+}
+
+void BS_ItemRestoreHP(void)""",
+    )
+
+
+def modify_hard_trainer_levels(contents: str) -> str:
+    """Increase ordinary trainer levels; preserve Frontier trainer definitions."""
+    return replace_once(
+        contents,
+        """    CreateMon(mon, trainerMon->species, trainerMon->lvl, personality, trainer->otID);""",
+        """    // Hard mode: +25% levels and +2 levels for every standard trainer.
+    // Keep Frontier and battle facility enemy sets untouched.
+    u32 shatteredLevel = trainerMon->lvl;
+    if (!trainer->isFrontier)
+        shatteredLevel = min(MAX_LEVEL, ((shatteredLevel * 5) / 4) + 2);
+    CreateMon(mon, trainerMon->species, shatteredLevel, personality, trainer->otID);""",
+    )
+
+
+def modify_hard_trainer_ai(contents: str) -> str:
+    """Allow ordinary enemy trainers to choose moves with advanced AI."""
+    return replace_once(
+        contents,
+        """    if (IsDoubleBattle() && flags != 0)
+    {
+        flags |= AI_FLAG_DOUBLE_BATTLE;""",
+        """    // Hard mode: even early enemy trainers make competent decisions.
+    // Do not alter link battles, tutorials, or recorded battles.
+    if (trainerId != 0xFFFF && flags != 0
+        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
+                                 | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_SAFARI)))
+    {
+        flags |= AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_CHECK_VIABILITY
+               | AI_FLAG_TRY_TO_FAINT | AI_FLAG_TRY_TO_2HKO | AI_FLAG_HP_AWARE;
+    }
+    if (IsDoubleBattle() && flags != 0)
+    {
+        flags |= AI_FLAG_DOUBLE_BATTLE;""",
+    )
+
+
+def modify_hard_trainer_bag(contents: str) -> str:
+    """No using healing items in trainer battles, but allow catching in the wild."""
+    return replace_once(
+        contents,
+        """bool32 IsAllowedToUseBag(void)
+{
+    switch (VarGet(B_VAR_NO_BAG_USE))""",
+        """bool32 IsAllowedToUseBag(void)
+{
+    // Hard mode: trainer fights cannot be won by endlessly healing.
+    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FIRST_BATTLE)))
+        return FALSE;
+    switch (VarGet(B_VAR_NO_BAG_USE))""",
+    )
+
+
+
 def apply(engine: Path) -> None:
     if not (engine / "Makefile").is_file():
         raise FileNotFoundError(f"Missing pokeemerald-expansion Makefile: {engine}")
@@ -354,8 +499,14 @@ def apply(engine: Path) -> None:
         "src/starter_choose.c": modify_starter_choices,
         "src/battle_setup.c": modify_starter_gift,
         "src/battle_main.c": modify_player_battle_pp,
-        "src/battle_util.c": modify_player_pp_checks,
+        "src/battle_util.c": lambda c: modify_hard_trainer_bag(modify_player_pp_checks(c)),
         "src/battle_controller_player.c": lambda c: modify_pikachu_move_pages(modify_move_pp_display(c)),
+        "src/money.c": modify_unlimited_money,
+        "src/item.c": modify_infinite_candy,
+        "src/item_menu.c": modify_bag_candy_supply,
+        "src/battle_script_commands.c": modify_fast_experience,
+        "src/trainer_util.c": modify_hard_trainer_levels,
+        "src/battle_ai_main.c": modify_hard_trainer_ai,
     }
     for relative_path, patcher in gameplay_sources.items():
         path = engine / relative_path

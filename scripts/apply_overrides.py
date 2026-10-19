@@ -280,7 +280,7 @@ def modify_all_move_pages(contents: str) -> str:
     )
     contents = replace_once(
         contents,
-        "void HandleInputChooseMove(enum BattlerId battler)\n{
+        "void HandleInputChooseMove(enum BattlerId battler)\n{",
         """// Shattered Realms move library: multi-page selection without changing the
 // persistent four slots in BoxPokemon or the battle controller wire format.
 #define SHATTERED_MAX_LIBRARY_MOVES 256

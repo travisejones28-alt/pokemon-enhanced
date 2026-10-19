@@ -72,7 +72,7 @@ jobs:
         with:
           tag_name: alpha0.1-build-${{ github.run_number }}
           target_commitish: ${{ github.sha }}
-          name: Shattered Realms — iPhone Build #${{ github.run_number }}
+          name: "Shattered Realms - iPhone Build #${{ github.run_number }}"
           make_latest: true
           prerelease: false
           draft: false
@@ -81,7 +81,7 @@ jobs:
             dist/ShatteredRealms.gba
             dist/SHA256SUMS.txt
           body: |
-            **Automated Shattered Realms Alpha 0.1 build** from commit \`${{ github.sha }}\`.
+            **Automated Shattered Realms Alpha 0.1 build** from commit `${{ github.sha }}`.
 
             Download **ShatteredRealms.gba** under Assets, then import it with **Delta → + → Files** on iPhone.
 

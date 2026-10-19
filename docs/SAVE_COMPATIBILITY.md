@@ -18,7 +18,7 @@ If the new copy shows only **NEW GAME**, do not overwrite or delete the old copy
 
 ## Stable save structure and feature caveats
 
-The current Shattered Realms gameplay patches do **not** change the persistent Pokémon move-slot count, `BoxPokemon`, `SaveBlock1`, `SaveBlock2`, or `SaveBlock3` layouts. The multi-page move library is reconstructed in battle from the four currently saved attacks and each species' previously unlocked level-up attacks. Previously forgotten TM/tutor moves are **not** permanently remembered yet.
+The current Shattered Realms gameplay patches are designed **not** to change the persistent Pokémon move-slot count, `BoxPokemon`, `SaveBlock1`, `SaveBlock2`, or `SaveBlock3` layouts. The multi-page move library is reconstructed in battle from the four saved attacks, previously unlocked level-up moves, and compatible TM, tutor, and egg moves. These are *reconstructed choices*, not a per-Pokémon record of exactly which TM or tutor was learned earlier. A built-in move relearner is also enabled for eligible moves. The library has a 256-attack safety cap and has not been thoroughly tested with every species in Delta.
 
 The fourfold experience multiplier accelerates **battle EXP** instead of rewriting experience tables, preserving existing stored EXP. Hard-mode levels, money behavior, and infinite-item behavior are calculated or granted at runtime.
 

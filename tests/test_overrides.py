@@ -20,6 +20,7 @@ from scripts.apply_overrides import (
     modify_bag_candy_supply,
     modify_fast_experience,
     modify_hard_trainer_levels,
+    modify_hard_trainer_ivs,
     modify_hard_trainer_ai,
     modify_hard_trainer_bag,
 )
@@ -195,7 +196,8 @@ void RemoveMoney(u32 *moneyPtr, u32 toSub)
     if (itemId == ITEM_NONE)
         return FALSE;"""
         after = modify_infinite_candy(sample)
-        self.assertIn("return CheckBagHasItem(ITEM_RARE_CANDY, 1);", after)
+        self.assertIn("return CheckBagHasItem(itemId, 1);", after)
+        self.assertIn("ITEM_MASTER_BALL", after)
         self.assertIn("CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE", after)
         self.assertEqual(after, modify_infinite_candy(after))
 
@@ -205,6 +207,8 @@ void RemoveMoney(u32 *moneyPtr, u32 toSub)
     gBagMenu = AllocZeroed(sizeof(*gBagMenu));"""
         after = modify_bag_candy_supply(sample)
         self.assertIn("AddBagItem(ITEM_RARE_CANDY, 99);", after)
+        self.assertIn("AddBagItem(ITEM_MASTER_BALL, 99);", after)
+        self.assertIn("AddBagItem(ITEM_FULL_RESTORE, 99);", after)
         self.assertEqual(after, modify_bag_candy_supply(after))
 
     def test_four_times_battle_exp_preserves_exp_tables(self):
@@ -222,6 +226,7 @@ void BS_ItemRestoreHP(void)"""
         after = modify_hard_trainer_levels(sample)
         self.assertIn("if (!trainer->isFrontier)", after)
         self.assertIn("min(MAX_LEVEL", after)
+        self.assertIn("highestPlayerLevel", after)
         self.assertEqual(after, modify_hard_trainer_levels(after))
 
     def test_smart_hard_trainer_ai(self):
@@ -239,6 +244,15 @@ void BS_ItemRestoreHP(void)"""
         after = modify_hard_trainer_bag(sample)
         self.assertIn("return FALSE;", after)
         self.assertEqual(after, modify_hard_trainer_bag(after))
+
+
+    def test_hard_trainer_perfectish_ivs(self):
+        sample = "    SetMonData(mon, MON_DATA_IVS, &trainerMon->iv);"
+        after = modify_hard_trainer_ivs(sample)
+        self.assertIn("data < 28", after)
+        self.assertIn("SetMonData(mon, MON_DATA_IVS, &data)", after)
+        self.assertEqual(after, modify_hard_trainer_ivs(after))
+
 
 if __name__ == "__main__":
     unittest.main()

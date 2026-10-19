@@ -571,6 +571,55 @@ def modify_hard_trainer_bag(contents: str) -> str:
 
 
 
+
+def modify_rift_intro(contents: str) -> str:
+    """First original story teaser without altering map or event IDs."""
+    if "TEAM ECLIPSE" in contents:
+        return contents
+    pattern = r"gText_Birch_MainSpeech::\n.*?\ngText_Birch_AndYouAre::"
+    replacement = r'''gText_Birch_MainSpeech::
+	.string "Something strange has happened\\n"
+	.string "to our world.\\p"
+	.string "Violet RIFTS are opening across\\n"
+	.string "the regions of POKéMON.\\p"
+	.string "Creatures from distant lands\\n"
+	.string "are appearing everywhere.\\p"
+	.string "A shadowy group named\\n"
+	.string "TEAM ECLIPSE is investigating\\l"
+	.string "these mysterious breaches.\\p"
+	.string "I'm studying the RIFTS, but\\n"
+	.string "I need a brave new Trainer!\\p$"
+
+gText_Birch_AndYouAre::'''
+    matches = list(re.finditer(pattern, contents, flags=re.S))
+    if len(matches) != 1:
+        raise ValueError("Could not uniquely identify intro dialogue")
+    return re.sub(pattern, lambda m: replacement, contents, count=1, flags=re.S)
+
+
+def modify_route_rift_teaser(contents: str) -> str:
+    """Keep all Route 101 scripts intact; change only Birch's rescue dialogue."""
+    if "RIFT flashed" in contents:
+        return contents
+    pattern = r"Route101_Text_YouSavedMe:\n.*?\nRoute101_Text_TakeTiredPokemonToPokeCenter:"
+    replacement = r'''Route101_Text_YouSavedMe:
+	.string "PROF. BIRCH: Whew! Thank you!\\p"
+	.string "I was studying strange POKéMON\\n"
+	.string "when a violet RIFT flashed.\\p"
+	.string "Then I was attacked!\\p"
+	.string "TEAM ECLIPSE may know why\\n"
+	.string "these RIFTS keep opening.\\p"
+	.string "Come to my LAB. We have\\n"
+	.string "important work to do!$"
+
+Route101_Text_TakeTiredPokemonToPokeCenter:'''
+    matches = list(re.finditer(pattern, contents, flags=re.S))
+    if len(matches) != 1:
+        raise ValueError("Could not uniquely identify Route 101 dialogue")
+    return re.sub(pattern, lambda m: replacement, contents, count=1, flags=re.S)
+
+
+
 def apply(engine: Path) -> None:
     if not (engine / "Makefile").is_file():
         raise FileNotFoundError(f"Missing pokeemerald-expansion Makefile: {engine}")
@@ -595,6 +644,8 @@ def apply(engine: Path) -> None:
         "src/battle_script_commands.c": modify_fast_experience,
         "src/trainer_util.c": lambda c: modify_hard_trainer_ivs(modify_hard_trainer_levels(c)),
         "src/battle_ai_main.c": modify_hard_trainer_ai,
+        "data/text/birch_speech.inc": modify_rift_intro,
+        "data/maps/Route101/scripts.inc": modify_route_rift_teaser,
     }
     for relative_path, patcher in gameplay_sources.items():
         path = engine / relative_path

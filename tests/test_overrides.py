@@ -351,7 +351,7 @@ void BS_ItemRestoreHP(void)"""
         self.assertEqual(replaced, modify_first_gym_character(replaced))
 
     def test_rift_hollow_scripts_are_registered(self):
-        source = '\\t.include "data/maps/Route101/scripts.inc"'
+        source = '\t.include "data/maps/Route101/scripts.inc"'
         new = modify_rift_script_registration(source)
         self.assertIn('data/maps/RiftHollow/scripts.inc', new)
         self.assertEqual(new, modify_rift_script_registration(new))

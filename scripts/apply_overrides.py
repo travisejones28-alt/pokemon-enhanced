@@ -67,6 +67,14 @@ CONFIG = {
         "OW_FOLLOWERS_ENABLED": "TRUE",
         "OW_SHOW_ITEM_DESCRIPTIONS": "OW_ITEM_DESCRIPTIONS_ALWAYS",
     },
+    "include/config/pokedex_plus_hgss.h": {
+        "POKEDEX_PLUS_HGSS": "TRUE",
+        "HGSS_DARK_MODE": "TRUE",
+        "HGSS_SORT_TMS_BY_NUM": "TRUE",
+        "HGSS_HIDE_UNSEEN_EVOLUTION_NAMES": "FALSE",
+        "HGSS_HIDE_UNOWNED_EVOLUTION_METHODS": "FALSE",
+        "HGSS_SHOW_EGG_MOVES_FOR_EVOS": "TRUE",
+    },
     "include/config/battle.h": {
         "B_TRAINER_MON_RANDOM_ABILITY": "2",
         "B_QUICK_MOVE_CURSOR_TO_RUN": "TRUE",

@@ -430,10 +430,12 @@ def modify_infinite_candy(contents: str) -> str:
     if (itemId == ITEM_NONE)
         return FALSE;
     // Shattered Realms: unlimited use once the candy is in the normal Bag.
-    if (itemId == ITEM_RARE_CANDY
+    if ((itemId == ITEM_RARE_CANDY || itemId == ITEM_MASTER_BALL
+          || itemId == ITEM_MAX_REPEL || itemId == ITEM_MAX_REVIVE
+          || itemId == ITEM_FULL_RESTORE || itemId == ITEM_ESCAPE_ROPE)
         && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE
         && !FlagGet(FLAG_STORING_ITEMS_IN_PYRAMID_BAG))
-        return CheckBagHasItem(ITEM_RARE_CANDY, 1);""",
+        return CheckBagHasItem(itemId, 1);""",
     )
 
 
@@ -452,6 +454,20 @@ def modify_bag_candy_supply(contents: str) -> str:
         && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE
         && !CheckBagHasItem(ITEM_RARE_CANDY, 1))
         AddBagItem(ITEM_RARE_CANDY, 99);
+    if (location == ITEMMENULOCATION_FIELD
+        && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
+    {
+        if (!CheckBagHasItem(ITEM_MASTER_BALL, 1))
+            AddBagItem(ITEM_MASTER_BALL, 99);
+        if (!CheckBagHasItem(ITEM_MAX_REPEL, 1))
+            AddBagItem(ITEM_MAX_REPEL, 99);
+        if (!CheckBagHasItem(ITEM_MAX_REVIVE, 1))
+            AddBagItem(ITEM_MAX_REVIVE, 99);
+        if (!CheckBagHasItem(ITEM_FULL_RESTORE, 1))
+            AddBagItem(ITEM_FULL_RESTORE, 99);
+        if (!CheckBagHasItem(ITEM_ESCAPE_ROPE, 1))
+            AddBagItem(ITEM_ESCAPE_ROPE, 99);
+    }
     gBagMenu = AllocZeroed(sizeof(*gBagMenu));""",
     )
 
@@ -485,8 +501,33 @@ def modify_hard_trainer_levels(contents: str) -> str:
     // Keep Frontier and battle facility enemy sets untouched.
     u32 shatteredLevel = trainerMon->lvl;
     if (!trainer->isFrontier)
+    {
         shatteredLevel = min(MAX_LEVEL, ((shatteredLevel * 5) / 4) + 2);
+        // Adaptive rivals: Rare Candies cannot trivialize the entire game.
+        // Standard trainers are at least the player's best level + 1.
+        u32 highestPlayerLevel = 1;
+        for (u32 i = 0; i < gPartiesCount[B_TRAINER_PLAYER]; i++)
+        {
+            enum Species playerSpecies = GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_SPECIES_OR_EGG);
+            if (playerSpecies != SPECIES_NONE && playerSpecies != SPECIES_EGG)
+                highestPlayerLevel = max(highestPlayerLevel, GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_LEVEL));
+        }
+        shatteredLevel = max(shatteredLevel, min(MAX_LEVEL, highestPlayerLevel + 1));
+    }
     CreateMon(mon, trainerMon->species, shatteredLevel, personality, trainer->otID);""",
+    )
+
+
+def modify_hard_trainer_ivs(contents: str) -> str:
+    """Give normal opposing trainers respectable IVs in every stat."""
+    return replace_once(
+        contents,
+        "    SetMonData(mon, MON_DATA_IVS, &trainerMon->iv);",
+        """    // Minimum 28/31 IVs, so opponent stats keep up with infinite candies.
+    data = trainerMon->iv;
+    if (!trainer->isFrontier && data < 28)
+        data = 28;
+    SetMonData(mon, MON_DATA_IVS, &data);""",
     )
 
 
@@ -552,7 +593,7 @@ def apply(engine: Path) -> None:
         "src/item.c": modify_infinite_candy,
         "src/item_menu.c": modify_bag_candy_supply,
         "src/battle_script_commands.c": modify_fast_experience,
-        "src/trainer_util.c": modify_hard_trainer_levels,
+        "src/trainer_util.c": lambda c: modify_hard_trainer_ivs(modify_hard_trainer_levels(c)),
         "src/battle_ai_main.c": modify_hard_trainer_ai,
     }
     for relative_path, patcher in gameplay_sources.items():

@@ -715,7 +715,7 @@ RIFT_NPCS = {
     "OldaleTown": ("OldaleTown_EventScript_Girl", "ShatteredOldale_EventScript_RiftGuide"),
     "Route101": ("Route101_EventScript_Boy", "ShatteredRoute101_EventScript_Anomaly"),
     "Route102": ("Route102_EventScript_Boy", "ShatteredRoute102_EventScript_Anomaly"),
-    "Route103": ("Route103_EventScript_Man", "ShatteredRoute103_EventScript_Anomaly"),
+    "Route103": ("Route103_EventScript_Boy", "ShatteredRoute103_EventScript_Anomaly"),
 }
 
 RIFT_QUEST_SCRIPTS = {

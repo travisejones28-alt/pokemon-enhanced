@@ -1,97 +1,56 @@
-# Implementation audit — 19 October 2026
+# Shattered Realms implementation audit
 
-## Baseline and verified scope
+## Current source
 
-Audited main at `0c15a7e15d26a902862d1edc23e6076d9adcde19`.
-Build #27, #52 and #55 succeeded. Build #46 failed during compilation;
-intervening fixes registered Rift Hollow scripts and preserved engine trainer IDs.
-There are no representative Delta `.sav` files in this checkout and no installed
-GBA emulator or ARM toolchain in this session. GBA compilation runs in GitHub Actions.
-A passing build is not proof that a playthrough, battle mechanic or save migration works.
+The pinned Emerald Expansion engine remains in place. This update extends it
+with persistent move retention, complete teachable lists, a playable original
+Rift chapter, competitive boss teams and targeted GBA emulator regressions.
+It does not replace the whole Emerald campaign.
 
-## Repairs in this increment
+| System | Implemented behavior | Verification scope |
+| --- | --- | --- |
+| Patch pipeline | Staged writes, deterministic repeated application, pinned map-section count checks | Full application tested against a fresh source snapshot |
+| Move library | Current/saved moves, current/pre-evolution level/evolution/teachable/egg lists, persistent exceptional attacks | Host integration tests; targeted GBA cases |
+| Journal migration | Versioned, integrity-checked reserved save-tail extension; old blank tails initialize safely | Production codec executed by host tests; generated old-format save round trip in GBA suite |
+| Save layouts | Existing Pokémon/PC/main save sizes and offsets preserved | ARM ABI probes compared old and new headers |
+| Player PP | Selection/execution/Pressure/Spite/Grudge paths bypass local player depletion; enemy PP stays normal | Targeted single/double battle tests |
+| Battle effects | Transform/Mimic/Encore suspend paging; Sketch protects saved slots; Disable survives browsing | Host callback tests and targeted GBA regressions; full UI combinations still need Delta |
+| Supplies/EXP | Infinite wallet and selected consumables, reusable TMs, field supply grants, 4x battle EXP | Patch regressions; campaign balance testing remains |
+| Difficulty | Adaptive levels, IV floors, smart AI/switching and explicit sets for 14 key fights | Generated trainer data compiles; EV/team validation; full fight balance remains |
+| Companion | Native following plus Pikachu Bond interaction messages and persistent threshold unlocks | Source/logic tests; indoor/outdoor/surf/cycle visual checks still needed |
+| Original chapter | Lumen with lodge/workshop/Gym, Riftway, Nova, scout, Rift Hollow/Vesper, Stormscar/Zapdos, journal dialogue and rewards | Registrations, reachability and reward/flag checks; full playthrough remains |
+| Collection | Fifteen expanded wild tables including Riftway; habitat NPC; evolution shop; local alternatives for every trade target in species sources | Static source audit; full obtainable-species audit unfinished |
 
-- Full patch composition can run twice without changing bytes on its second pass.
-  Previously the PP-display and move-page patches could not compose twice.
-- Route 101 retains both the original-story teaser replacement and anomaly quest.
-  Previously the later quest pass re-read the original file and lost the teaser.
-- Patch anchors reject duplicate/mixed patched and unpatched copies.
-- Enemy IV floors apply separately to each of six packed five-bit fields.
-  Previously comparing the packed integer with 28 failed to raise most stats.
-- Player PP refills no longer replace runtime attacks with the saved four attacks.
-  Saved PP is calculated from the saved attack, independent of virtual pages.
-- Transform, Mimic and Encore suspend library paging and preserve the active
-  battle slots. Paging resumes when those effects end. This deliberately keeps
-  upstream slot-based effects intact; transformed Pokémon use their copied moves.
-- Link/replay and AI-controlled partners are excluded from library browsing.
-- Changing pages recalculates Z-Move compatibility and refreshes move UI.
-- Before forcing Struggle on a blocked visible page, the engine searches the
-  remaining library for a usable page. A failed search restores battle slots.
-- Unlimited PP also bypasses the execution-time zero-PP check and ordinary,
-  Pressure, Spite, Depletion and Grudge drain paths for local player battlers.
-  Enemy, AI-partner and link/replay rules remain upstream.
-- Sketch writes a learned move only over an existing saved Sketch slot; unrelated
-  virtual-page moves are never persisted by Sketch. A virtual Sketch with no
-  saved Sketch slot is battle-only until persistent history is implemented.
-- The Rift reward can be claimed on a later interaction if the Bag was full;
-  the boss defeat flag stays set, and an owned Shiny Charm is not duplicated.
-- Field Bag supplies include Linking Cords and common evolution stones, adding
-  an item only when absent. If a pocket is full, free space and reopen the Bag.
-- Advanced enemy AI also applies to ordinary zero-flag trainer definitions;
-  smarter switching is enabled. Facilities and recorded/link battles are excluded.
+## Important limits
 
-## What the move library actually does
+- The exceptional move journal has 152 entries across the save. Compatible moves
+  are reconstructed without entries. No entry is silently evicted. At capacity,
+  overwriting the only copy of an exceptional move is refused; see
+  [MOVE_HISTORY.md](MOVE_HISTORY.md), including the learning-dialogue caveat.
+- A virtual Sketch without an existing saved Sketch slot is battle-only.
+- The original prologue and title-screen artwork remain. Lumen is the first new
+  chapter hub, reached through Elara after obtaining a Pokémon partner.
+- This is not the full original campaign. Further realms, classic-region travel,
+  additional legendary/mythical quests and complete distribution remain open.
+- A source-level alternative to trading does not prove every species is obtainable.
+- No real previously exported Delta save was supplied. Generated save tests do
+  not establish compatibility with every historical ROM/save combination.
 
-SELECT advances through four-move pages; the page counter replaces PP. The
-current battle moves, saved moves, level-appropriate current/pre-evolution moves,
-species-compatible machines, a curated tutor list and egg moves are reconstructed.
-Pikachu gets four extra signature attacks and friendship unlocks at 120/180/230.
-The catalog is capped at 256 distinct moves. Disabled attacks still use upstream
-move-identity checks; targeting uses the upstream single/double battle controllers.
+## Required acceptance playthrough
 
-**This is not complete unlimited move history.** There is no persistent archive
-of forgotten event-only attacks, acquired moves from another species, or which
-machines/tutors were actually learned. Machine and egg compatibility currently
-unlocks attacks without acquiring them. Choice
-locks, multi-turn effects, Sketch, Transform interactions and double battle
-cancellations still need emulator regression tests. Do not call these verified.
+1. Back up a real in-game save, import the new ROM separately and Continue.
+2. Inspect party, PC, Bag, badges and location; change maps; save, quit and reload.
+3. Choose Pikachu in a separate new game. Verify its four saved signatures and
+   extra pages. Test SELECT/R, cancellation, switching, doubles, targets, fainting,
+   Transform, Mimic, Disable, Encore, Choice items, multi-turn moves and Sketch.
+4. Learn/replace an exceptional attack, evolve and deposit/withdraw the Pokémon,
+   save/reload and confirm the attack remains in the battle library.
+5. Walk the entire chapter in [CHAPTER_ONE.md](CHAPTER_ONE.md), test every door,
+   complete both full-Bag reward retries, earn the first badge and revisit Hoenn.
+6. Test following indoors/outdoors, stairs, doors, surfing, cycling and fainting.
+7. Test midgame and late bosses against varied teams and Rare Candy use.
 
-## Story and collection reality
-
-The source contains an Oldale three-anomaly quest, appended Rift Hollow dungeon,
-Eclipse boss and reward, plus Astra replacing the first Gym encounter. These need
-end-to-end playtesting. Most Hoenn progression remains intact. There is no complete
-original hometown, original route network, rival campaign, multiple realms or
-classic-region travel yet.
-
-Fourteen wild encounter tables include cross-generation species. Engine species
-support spans generations 1–9, but full availability and all trade evolutions have
-not been audited. The expanded Pokédex and follower system are configured, not
-verified across every species, interior, transition or movement mode.
-
-## Automated verification
-
-The regression suite includes actual vendored-source patch application, byte-for-
-byte second-pass comparison, no partial writes on invalid input, and host-compiled
-C tests of all packed IV fields, battle-library/PP eligibility, Sketch writes,
-and usable-page search/restoration. These host tests
-exercise generated C logic; they do not emulate battles.
-
-Actions also compiles the GBA ROM, validates title/game code/header checksum and
-size, and verifies a published SHA-256 manifest. Failed test/build steps cannot
-publish the release. Old tagged releases are retained.
-
-## Required release playtest
-
-1. Export an old in-game save before importing a different ROM in Delta.
-2. Continue, inspect party/PC/Bag/badges, change map, save, quit and reload.
-3. Start separately: choose level-5 Pikachu and check four signature moves.
-4. Test paged attacks in single and double battles, cancel/reopen, switching,
-   fainting, Transform, Mimic, Disable, Encore, Choice items and multi-turn moves.
-5. Verify opponent PP drains and player attacks remain usable after PP drain.
-6. Verify fourfold battle EXP, adaptive trainer levels and blocked trainer Bag.
-7. Play the full anomaly quest, Rift boss/reward, return portal and Astra fight.
-8. Test following indoors/outdoors, stairs, doors, surfing, cycling and fainting.
-
-No new game is intentionally required by this increment. Old-save compatibility
-remains unverified until actual old saves pass the above checks.
+The release workflow now runs the targeted mGBA suite before publication, in
+addition to host tests, repeated patch application, compilation and ROM/hash
+verification. A failed gate leaves the previous release available. See
+[BUILD_VALIDATION.md](BUILD_VALIDATION.md) for the recorded published build.

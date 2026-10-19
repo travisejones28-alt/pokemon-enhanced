@@ -129,13 +129,13 @@ class TestOverrides(unittest.TestCase):
             "            gBattleCommunication[battler] = STATE_BEFORE_ACTION_CHOSEN;"
         )
         result = modify_player_battle_pp(original)
-        self.assertIn("IsOnPlayerSide(battler)", result)
-        self.assertIn("!BattlerHasAi(battler)", result)
+        self.assertIn("ShatteredHasUnlimitedPP(battler)", result)
         self.assertIn("SetMonData(partyMon, MON_DATA_PP1 + i, &savedPP)", result)
         self.assertEqual(result, modify_player_battle_pp(result))
 
     def test_player_pp_exempt_but_enemy_still_checked(self):
         original = (
+            '#include "battle_util.h"\n'
             "    if (gBattleMons[battler].pp[moveId] == 0)\n"
             "    {\n"
             "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0)\n"
@@ -193,17 +193,17 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
         for name in ("MOVE_IRON_TAIL", "MOVE_GRASS_KNOT", "MOVE_BRICK_BREAK", "MOVE_THUNDER_WAVE"):
             self.assertIn(name, result)
         self.assertIn("GetSpeciesLevelUpLearnset(cursorSpecies)", result)
-        self.assertIn("CanLearnTeachableMove(species, machineMove)", result)
-        self.assertIn("CanLearnTeachableMove(species, tutorMove)", result)
-        self.assertIn("GetSpeciesEggMoves(eggSpecies)", result)
-        self.assertIn("SHATTERED_MAX_LIBRARY_MOVES 256", result)
-        self.assertIn("static const enum Move sTutorMoves[]", result)
+        self.assertIn("GetSpeciesTeachableLearnset(cursorSpecies)", result)
+        self.assertIn("ShatteredReadBoxHistory(&mon->box", result)
+        self.assertIn("GetSpeciesEggMoves(cursorSpecies)", result)
+        self.assertIn("SHATTERED_MAX_LIBRARY_MOVES MOVES_COUNT", result)
+        self.assertIn("sShatteredSeen[battler]", result)
         self.assertNotIn('#include "data/tutor_moves.h"', result)
         self.assertIn("GetMonData(mon, MON_DATA_FRIENDSHIP)", result)
         self.assertIn("MOVE_ZIPPY_ZAP", result)
         self.assertIn("MOVE_SPLISHY_SPLASH", result)
         self.assertIn("MOVE_FLOATY_FALL", result)
-        self.assertIn("JOY_NEW(SELECT_BUTTON)", result)
+        self.assertIn("JOY_NEW(SELECT_BUTTON | R_BUTTON)", result)
         self.assertIn("sShatteredMoves[battler]", result)
         self.assertIn("sShatteredMoveCounts[battler]", result)
         self.assertIn("level <= level", result)

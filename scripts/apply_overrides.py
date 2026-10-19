@@ -298,8 +298,7 @@ def modify_player_battle_pp(contents: str) -> str:
     after = """            RecordedBattle_CopyBattlerMoves(battler);
             // Shattered Realms: player-controlled Pokémon never run out of PP.
             // Do not alter the PP rules for opponents, link or recorded battles.
-            if (IsOnPlayerSide(battler) && !BattlerHasAi(battler)
-                && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED | BATTLE_TYPE_RECORDED_LINK)))
+            if (ShatteredHasUnlimitedPP(battler))
             {
                 struct Pokemon *partyMon = GetBattlerMon(battler);
                 for (i = 0; i < MAX_MON_MOVES; i++)
@@ -328,11 +327,19 @@ def modify_player_battle_pp(contents: str) -> str:
 
 def modify_player_pp_checks(contents: str) -> str:
     """Apply unlimited PP only to locally controlled player battlers."""
+    contents = replace_once(contents, '#include "battle_util.h"\n',
+                            '#include "battle_util.h"\n#include "shattered_battle.h"\n')
     contents = replace_once(
         contents,
         "u32 CheckMoveLimitations(enum BattlerId battler, u8 unusableMoves, u32 check)\n{",
         """bool32 ShatteredHasUnlimitedPP(enum BattlerId battler)
 {
+#if TESTING
+    // Upstream battle tests use recorded-link controllers to inject choices.
+    // Explicit opt-in exercises LOCAL rules without changing release replays.
+    if (gShatteredTestLocalMechanics && gTestRunnerEnabled)
+        return IsOnPlayerSide(battler) && !BattlerHasAi(battler);
+#endif
     return IsOnPlayerSide(battler) && !BattlerHasAi(battler)
         && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
                                 | BATTLE_TYPE_RECORDED_LINK));
@@ -460,6 +467,50 @@ def modify_rift_reward_retry(contents: str) -> str:
     )
 
 
+def modify_history_save_tail(contents: str) -> str:
+    contents = replace_once(contents, '#define ITEM_FLAGS_COUNT',
+                            '#include "shattered_history.h"\n#define ITEM_FLAGS_COUNT')
+    return replace_once(contents, '}; /* max size 1624 bytes */',
+                        '    u8 shatteredMoveHistory[SHATTERED_HISTORY_BYTES];\n}; /* max size 1624 bytes */')
+
+
+def modify_history_move_hook(contents: str) -> str:
+    contents = replace_once(contents, '#include "pokemon.h"\n',
+                            '#include "pokemon.h"\n#include "shattered_history.h"\n')
+    contents = replace_once(contents,
+        """void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
+{
+    const u8 *data = dataArg;""",
+        """void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
+{
+    const u8 *data = dataArg;
+    if (field >= MON_DATA_MOVE1 && field <= MON_DATA_MOVE4
+        && !ShatteredBeforeSetBoxMove(boxMon, field, data[0] | (u16)data[1] << 8))
+        return;""")
+
+    return replace_once(contents,
+        "    SetBoxMonData(mon, MON_DATA_MOVE1 + slot, &move);\n    u32 pp = GetMovePP(move);",
+        "    SetBoxMonData(mon, MON_DATA_MOVE1 + slot, &move);\n    if (GetBoxMonData(mon, MON_DATA_MOVE1 + slot) != move)\n        return;\n    u32 pp = GetMovePP(move);")
+
+
+def modify_companion_interaction(contents: str) -> str:
+    contents = replace_once(contents, '#include "pokemon.h"\n',
+                            '#include "pokemon.h"\n#include "shattered_history.h"\n')
+    return replace_once(contents,
+        """    species = GetMonData(mon, MON_DATA_SPECIES);
+    multi = GetMonData(mon, MON_DATA_FRIENDSHIP);""",
+        """    species = GetMonData(mon, MON_DATA_SPECIES);
+    multi = GetMonData(mon, MON_DATA_FRIENDSHIP);
+    const u8 *bondMessage = ShatteredGetBondMessage(mon);
+    if (bondMessage != NULL && mon->status == 0)
+    {
+        ObjectEventEmote(objEvent, multi >= 120 ? FOLLOWER_EMOTION_LOVE : FOLLOWER_EMOTION_HAPPY);
+        ctx->data[0] = (u32)bondMessage;
+        ScriptCall(ctx, EventScript_FollowerGeneric);
+        return;
+    }""")
+
+
 def modify_move_pp_display(contents: str) -> str:
     """Remove the PP counter from the battle move selection interface."""
     contents = replace_once(
@@ -506,27 +557,26 @@ def modify_all_move_pages(contents: str) -> str:
     """All player Pokémon can use all unlocked level-up attacks via SELECT pages.
 
     This is deliberately save-layout-preserving: the catalog is rebuilt from the
-    saved four move slots and the species' level-up learnset each battle turn.
-    Compatible TM/egg moves are unlocked by species rather than history.
-    Forgotten event-only moves are not archived; persistent history is pending.
+    saved four move slots, current/pre-evolution learnsets and persistent
+    exceptional-move archive. Ordinary compatible attacks need no archive slots.
+    SaveBlock3 uses a versioned appended tail; BoxPokemon remains unchanged.
     """
     contents = replace_once(contents, '#include "battle.h"\n',
-                            '#include "battle.h"\n#include "battle_util.h"\n')
+                             '#include "battle.h"\n#include "battle_util.h"\n#include "shattered_history.h"\n')
     contents = replace_once(
         contents,
         "void HandleInputChooseMove(enum BattlerId battler)\n{",
         """// Shattered Realms move library: multi-page selection without changing the
 // persistent four slots in BoxPokemon or the battle controller wire format.
-#define SHATTERED_MAX_LIBRARY_MOVES 256
-static enum Move sShatteredMoves[MAX_BATTLERS_COUNT][SHATTERED_MAX_LIBRARY_MOVES];
+#define SHATTERED_MAX_LIBRARY_MOVES MOVES_COUNT
+static EWRAM_DATA u16 sShatteredMoves[MAX_BATTLERS_COUNT][SHATTERED_MAX_LIBRARY_MOVES] = {0};
+static EWRAM_DATA u8 sShatteredSeen[MAX_BATTLERS_COUNT][(MOVES_COUNT + 7) / 8] = {0};
 static u16 sShatteredMoveCounts[MAX_BATTLERS_COUNT];
-static u8 sShatteredMovePages[MAX_BATTLERS_COUNT];
+static u16 sShatteredMovePages[MAX_BATTLERS_COUNT];
 
 static bool32 ShatteredCanUseLibrary(enum BattlerId battler)
 {
-    return IsOnPlayerSide(battler) && !BattlerHasAi(battler)
-        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
-                                | BATTLE_TYPE_RECORDED_LINK))
+    return ShatteredHasUnlimitedPP(battler)
         && !gBattleMons[battler].volatiles.transformed
         && !gBattleMons[battler].volatiles.mimickedMoves
         && gBattleMons[battler].volatiles.encoredMove == MOVE_NONE;
@@ -534,11 +584,12 @@ static bool32 ShatteredCanUseLibrary(enum BattlerId battler)
 
 static void ShatteredRememberMove(enum BattlerId battler, enum Move move)
 {
-    if (move == MOVE_NONE || move == LEVEL_UP_MOVE_END)
+    if (move == MOVE_NONE || move >= MOVES_COUNT)
         return;
-    for (u32 i = 0; i < sShatteredMoveCounts[battler]; i++)
-        if (sShatteredMoves[battler][i] == move)
-            return;
+    u8 mask = 1u << (move % 8);
+    if (sShatteredSeen[battler][move / 8] & mask)
+        return;
+    sShatteredSeen[battler][move / 8] |= mask;
     if (sShatteredMoveCounts[battler] < SHATTERED_MAX_LIBRARY_MOVES)
         sShatteredMoves[battler][sShatteredMoveCounts[battler]++] = move;
 }
@@ -547,10 +598,13 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
 {
     static const enum Move sStarterSignatureMoves[] =
     {
+        MOVE_THUNDERBOLT, MOVE_VOLT_TACKLE, MOVE_SURF, MOVE_EXTREME_SPEED,
         MOVE_IRON_TAIL, MOVE_GRASS_KNOT, MOVE_BRICK_BREAK, MOVE_THUNDER_WAVE,
     };
     sShatteredMoveCounts[battler] = 0;
     sShatteredMovePages[battler] = 0;
+    for (u32 i = 0; i < sizeof(sShatteredSeen[battler]); i++)
+        sShatteredSeen[battler][i] = 0;
     if (!ShatteredCanUseLibrary(battler))
         return;
 
@@ -564,52 +618,31 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
     for (u32 i = 0; i < MAX_MON_MOVES; i++)
         ShatteredRememberMove(battler, GetMonData(mon, MON_DATA_MOVE1 + i));
 
-    // Every previously unlocked level-up attack, including pre-evolutions.
+    // Persistent event/off-species attacks survive replacements and evolution.
+    u16 history[SHATTERED_HISTORY_CAPACITY];
+    u32 historyCount = ShatteredReadBoxHistory(&mon->box, history, ARRAY_COUNT(history));
+    for (u32 i = 0; i < historyCount; i++)
+        ShatteredRememberMove(battler, history[i]);
+
+    // Level-up, evolution, machine, tutor and egg moves from every pre-evolution.
+    // The complete teachable learnset replaces a partial hard-coded tutor list.
     for (enum Species cursorSpecies = species; cursorSpecies != SPECIES_NONE;
          cursorSpecies = GetSpeciesPreEvolution(cursorSpecies))
     {
         const struct LevelUpMove *learnset = GetSpeciesLevelUpLearnset(cursorSpecies);
         for (u32 i = 0; learnset[i].move != LEVEL_UP_MOVE_END; i++)
-        {
-            if (learnset[i].level > 0 && learnset[i].level <= level)
+            if (learnset[i].level <= level)
                 ShatteredRememberMove(battler, learnset[i].move);
-        }
-    }
-
-    // Species-compatible machines are available without owning each TM.
-    // This is a compatibility catalog, not a persistent learned-move archive.
-    for (u32 i = 0; i < NUM_ALL_MACHINES; i++)
-    {
-        enum Move machineMove = GetTMHMMoveId(i + 1);
-        if (machineMove != MOVE_NONE && CanLearnTeachableMove(species, machineMove))
-            ShatteredRememberMove(battler, machineMove);
-    }
-    // The pinned engine has no vendored data/tutor_moves.h. Use a curated
-    // set of tutor-style attacks with the same compatibility validation.
-    static const enum Move sTutorMoves[] =
-    {
-        MOVE_ICE_PUNCH, MOVE_FIRE_PUNCH, MOVE_THUNDER_PUNCH,
-        MOVE_DRAIN_PUNCH, MOVE_BUG_BITE, MOVE_IRON_HEAD,
-        MOVE_SEED_BOMB, MOVE_KNOCK_OFF, MOVE_SUPERPOWER,
-        MOVE_STEALTH_ROCK, MOVE_TRICK, MOVE_COVET, MOVE_SNORE,
-        MOVE_BOUNCE, MOVE_HEAT_WAVE, MOVE_ICY_WIND,
-        MOVE_TAILWIND, MOVE_DARK_PULSE, MOVE_THROAT_CHOP,
-    };
-    for (u32 i = 0; i < ARRAY_COUNT(sTutorMoves); i++)
-    {
-        enum Move tutorMove = sTutorMoves[i];
-        if (CanLearnTeachableMove(species, tutorMove))
-            ShatteredRememberMove(battler, tutorMove);
-    }
-
-    // Egg moves also remain available once the species can legally learn them.
-    enum Species eggSpecies = species;
-    while (GetSpeciesPreEvolution(eggSpecies) != SPECIES_NONE)
-        eggSpecies = GetSpeciesPreEvolution(eggSpecies);
-    const u16 *eggMoves = GetSpeciesEggMoves(eggSpecies);
-    if (eggMoves[0] != MOVE_UNAVAILABLE)
+        const u16 *teachable = GetSpeciesTeachableLearnset(cursorSpecies);
+        for (u32 i = 0; teachable[i] != MOVE_UNAVAILABLE; i++)
+            ShatteredRememberMove(battler, teachable[i]);
+        const u16 *eggMoves = GetSpeciesEggMoves(cursorSpecies);
         for (u32 i = 0; eggMoves[i] != MOVE_UNAVAILABLE; i++)
             ShatteredRememberMove(battler, eggMoves[i]);
+        if (cursorSpecies == SPECIES_PIKACHU)
+            for (u32 i = 0; i < ARRAY_COUNT(sStarterSignatureMoves); i++)
+                ShatteredRememberMove(battler, sStarterSignatureMoves[i]);
+    }
 
     // Your original Pikachu starter keeps four extra signature moves.
     // Built-in friendship is the save-compatible Bond System.
@@ -619,11 +652,20 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
             ShatteredRememberMove(battler, sStarterSignatureMoves[i]);
         u32 bond = GetMonData(mon, MON_DATA_FRIENDSHIP);
         if (bond >= 120)
+        {
             ShatteredRememberMove(battler, MOVE_ZIPPY_ZAP);
+            ShatteredRememberBondMove(&mon->box, MOVE_ZIPPY_ZAP);
+        }
         if (bond >= 180)
+        {
             ShatteredRememberMove(battler, MOVE_SPLISHY_SPLASH);
+            ShatteredRememberBondMove(&mon->box, MOVE_SPLISHY_SPLASH);
+        }
         if (bond >= 230)
+        {
             ShatteredRememberMove(battler, MOVE_FLOATY_FALL);
+            ShatteredRememberBondMove(&mon->box, MOVE_FLOATY_FALL);
+        }
     }
 }
 
@@ -662,7 +704,7 @@ bool32 ShatteredTryUsableLibraryPage(enum BattlerId battler)
     return FALSE;
 }
 
-static void ShatteredToggleMovePage(enum BattlerId battler)
+static void ShatteredToggleMovePage(enum BattlerId battler, bool32 reverse)
 {
     u32 pageCount = (sShatteredMoveCounts[battler] + MAX_MON_MOVES - 1) / MAX_MON_MOVES;
     if (pageCount <= 1)
@@ -670,7 +712,7 @@ static void ShatteredToggleMovePage(enum BattlerId battler)
 
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
     MoveSelectionDestroyCursorAt(gMoveSelectionCursor[battler]);
-    sShatteredMovePages[battler] = (sShatteredMovePages[battler] + 1) % pageCount;
+    sShatteredMovePages[battler] = (sShatteredMovePages[battler] + pageCount + (reverse ? -1 : 1)) % pageCount;
     for (u32 i = 0; i < MAX_MON_MOVES; i++)
     {
         u32 index = sShatteredMovePages[battler] * MAX_MON_MOVES + i;
@@ -702,12 +744,12 @@ void HandleInputChooseMove(enum BattlerId battler)
         contents,
         """    if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
     {""",
-        """    if (JOY_NEW(SELECT_BUTTON) && !gBattleStruct->descriptionSubmenu
+        """    if (JOY_NEW(SELECT_BUTTON | R_BUTTON) && !gBattleStruct->descriptionSubmenu
         && !gBattleStruct->zmove.viewing && ShatteredCanUseLibrary(battler)
         && sShatteredMoveCounts[battler] > MAX_MON_MOVES)
     {
         PlaySE(SE_SELECT);
-        ShatteredToggleMovePage(battler);
+        ShatteredToggleMovePage(battler, JOY_NEW(R_BUTTON));
     }
     else if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
     {""",
@@ -753,9 +795,9 @@ void HandleInputChooseMove(enum BattlerId battler)
     {
         u8 *cursor = ConvertIntToDecimalStringN(gDisplayedStringBattle,
                                                 sShatteredMovePages[battler] + 1,
-                                                STR_CONV_MODE_LEFT_ALIGN, 2);
+                                                STR_CONV_MODE_LEFT_ALIGN, 3);
         *(cursor)++ = CHAR_SLASH;
-        ConvertIntToDecimalStringN(cursor, pageCount, STR_CONV_MODE_LEFT_ALIGN, 2);
+        ConvertIntToDecimalStringN(cursor, pageCount, STR_CONV_MODE_LEFT_ALIGN, 3);
         BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
     }
     else
@@ -1301,6 +1343,32 @@ IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
     return result
 
 
+def modify_boss_teams(contents: str) -> str:
+    teams = json.loads((Path(__file__).parent / "boss_teams.json").read_text())
+    for trainer_id, team in teams.items():
+        pattern = re.compile(r"(?ms)^=== " + re.escape(trainer_id) + r" ===\n(.*?)(?=^=== |\Z)")
+        matches = list(pattern.finditer(contents))
+        if len(matches) != 1:
+            raise ValueError(f"Expected one boss definition for {trainer_id}")
+        header = matches[0].group(1).split("\n\n", 1)[0]
+        header = re.sub(r"(?m)^Items:.*\n?", "", header)
+        header = re.sub(r"(?m)^AI:.*", "AI: Check Bad Move / Check Viability / Try To Faint / HP Aware / Smart Switching", header)
+        members = []
+        for mon in team:
+            if len(mon["moves"]) != 4 or sum(mon["evs"].values()) > 510:
+                raise ValueError(f"Invalid boss set: {trainer_id} {mon['species']}")
+            members.append("\n".join([
+                f"{mon['species']} @ {mon['item']}", f"Level: {mon['level']}",
+                f"Ability: {mon['ability']}", f"Nature: {mon['nature']}",
+                "IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe",
+                "EVs: " + " / ".join(f"{value} {stat}" for stat, value in mon['evs'].items()),
+                *["- " + move for move in mon['moves']],
+            ]))
+        replacement = f"=== {trainer_id} ===\n{header.rstrip()}\n\n" + "\n\n".join(members) + "\n\n"
+        contents = pattern.sub(lambda match: replacement, contents, count=1)
+    return contents
+
+
 def modify_first_gym_dialogue(contents: str) -> str:
     """Original first gym storyline and badge flags remain, with new chapter script."""
     if "I guard the RIFT GYM" in contents:
@@ -1318,6 +1386,7 @@ def modify_first_gym_dialogue(contents: str) -> str:
     contents = contents[:start] + new_intro + contents[end:]
     # Keep engine symbols and save flags stable; rename dialogue only.
     contents = contents.replace('"ROXANNE', '"ASTRA').replace(' ROXANNE', ' ASTRA')
+    contents = contents.replace('STONE BADGE', 'RIFT BADGE')
     contents = contents.replace(
         '"of ROCK-type POKéMON.\\p"',
         '"of many different POKéMON.\\p"',
@@ -1362,6 +1431,9 @@ def apply(engine: Path) -> None:
     updates[encounter_file] = modify_encounters(encounter_file.read_text(encoding="utf-8"))
 
     gameplay_sources = {
+        "include/global.h": modify_history_save_tail,
+        "src/pokemon.c": modify_history_move_hook,
+        "src/event_object_movement.c": modify_companion_interaction,
         "src/starter_choose.c": modify_starter_choices,
         "src/battle_setup.c": modify_starter_gift,
         "src/battle_main.c": modify_player_battle_pp,
@@ -1385,7 +1457,7 @@ def apply(engine: Path) -> None:
         updates[path] = patcher(path.read_text(encoding="utf-8"))
 
     gym_party_path = engine / "src/data/trainers.party"
-    updates[gym_party_path] = modify_first_gym_party(gym_party_path.read_text(encoding="utf-8"))
+    updates[gym_party_path] = modify_boss_teams(modify_first_gym_party(gym_party_path.read_text(encoding="utf-8")))
     gym_script_path = engine / "data/maps/RustboroCity_Gym/scripts.inc"
     updates[gym_script_path] = modify_first_gym_dialogue(gym_script_path.read_text(encoding="utf-8"))
     gym_map_path = engine / "data/maps/RustboroCity_Gym/map.json"
@@ -1399,6 +1471,14 @@ def apply(engine: Path) -> None:
         updates[map_path] = modify_quest_npc_map(map_path.read_text(encoding="utf-8"), map_name)
         updates[scripts_path] = modify_quest_map_script(
             updates.get(scripts_path, scripts_path.read_text(encoding="utf-8")), map_name)
+
+    try:
+        from .chapter import PATCHERS
+    except ImportError:
+        from chapter import PATCHERS
+    for relative_path, patcher in PATCHERS.items():
+        path = engine / relative_path
+        updates[path] = patcher(updates.get(path, path.read_text(encoding="utf-8")))
 
     # Don't partially write if validation fails.
     for path, content in updates.items():

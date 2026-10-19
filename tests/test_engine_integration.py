@@ -17,15 +17,18 @@ from scripts.apply_overrides import (
     modify_pp_drain_and_sketch, modify_rift_reward_retry,
 )
 
+from scripts.chapter import PATCHERS as CHAPTER_PATCHERS
+
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / 'engine'
-INPUTS = set(CONFIG) | {
+INPUTS = set(CONFIG) | set(CHAPTER_PATCHERS) | {
     'Makefile', 'src/data/pokemon/species_info/gen_1_families.h',
     'src/data/wild_encounters.json', 'src/starter_choose.c', 'src/battle_setup.c',
     'src/battle_main.c', 'src/battle_util.c', 'src/battle_controller_player.c',
     'src/money.c', 'src/item.c', 'src/item_menu.c', 'src/battle_script_commands.c',
     'src/trainer_util.c', 'src/battle_ai_main.c', 'data/text/birch_speech.inc',
     'src/battle_move_resolution.c', 'include/battle_util.h',
+    'include/global.h', 'src/pokemon.c', 'src/event_object_movement.c',
     'data/maps/RiftHollow/scripts.inc',
     'data/maps/Route101/scripts.inc', 'data/event_scripts.s',
     'src/data/trainers.party', 'data/maps/RustboroCity_Gym/scripts.inc',
@@ -123,6 +126,9 @@ int main(void) {
         source = (ENGINE / 'src/battle_controller_player.c').read_text()
         patched = modify_all_move_pages(modify_move_pp_display(source))
         guard = re.search(r'static bool32 ShatteredCanUseLibrary.*?\n}', patched, re.S).group()
+        policy = re.search(r'bool32 ShatteredHasUnlimitedPP.*?\n}',
+                           modify_player_pp_checks((ENGINE/'src/battle_util.c').read_text()), re.S).group()
+        guard = policy + '\n' + guard
         self.compile_and_run('''#include <assert.h>
 typedef int bool32;
 enum BattlerId { PLAYER, ENEMY };

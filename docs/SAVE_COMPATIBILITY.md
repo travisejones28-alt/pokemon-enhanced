@@ -16,43 +16,50 @@
 
 If the new copy shows only **NEW GAME**, do not overwrite or delete the old copy. Check the exported `.sav`, import it into the right tile, and test again.
 
-## Stable save structure and feature caveats
+## Current save structures and migration
 
-The current Shattered Realms gameplay patches are designed **not** to change the persistent Pokémon move-slot count, `BoxPokemon`, `SaveBlock1`, `SaveBlock2`, or `SaveBlock3` layouts. The multi-page move library is reconstructed in battle from the four saved attacks, previously unlocked level-up moves, and compatible TM, tutor, and egg moves. These are *reconstructed choices*, not a per-Pokémon record of exactly which TM or tutor was learned earlier. A built-in move relearner is also enabled for eligible moves. The library has a 256-attack safety cap and has not been thoroughly tested with every species in Delta.
+SaveBlock1, SaveBlock2, party Pokémon, Box Pokémon and PC storage retain their
+previous sizes and offsets. Species indices and original map/layout/region IDs
+are preserved. The journal extends only the existing reserved SaveBlock3 tail:
+4 bytes becomes 1,540 bytes within its 1,624-byte sector-chunk capacity. See
+[MOVE_HISTORY.md](MOVE_HISTORY.md) for integrity checks, blank-tail migration and
+the 152-entry exceptional-attack limit.
 
-The fourfold experience multiplier accelerates **battle EXP** instead of rewriting experience tables, preserving existing stored EXP. Hard-mode levels, money behavior, and infinite-item behavior are calculated or granted at runtime.
+The library reconstructs current/pre-evolution level, evolution, machine/tutor
+and egg moves. Exceptional event/Sketch attacks have a persistent journal keyed
+by full trainer ID and personality. It cannot recover unknown moves forgotten
+before this journal existed. Transform and Mimic remain battle-only, and Encore
+holds the current slots. Numeric PP is replaced by page information.
 
-Companion following uses the existing Pokémon-follower configuration; its display and map transitions require in-game verification.
+Battle EXP is multiplied instead of changing saved experience tables. Existing
+levels remain as saved. Field supplies add absent entries only; free space and
+reopen the Bag if a pocket was full.
 
-Every published GitHub release is kept as a separate tagged build so older ROM versions remain available through [Releases](https://github.com/travisejones28-alt/pokemon-enhanced/releases). GitHub can ensure a 32 MB ROM compiles, but **only gameplay testing in Delta** can validate saves across releases.
+New maps and three new region sections append after existing IDs; NONE stays
+209. New trainers fit the existing 864-trainer flag capacity. Old saves reach
+Lumen through Elara in Littleroot after obtaining a Pokémon partner. No new game
+is intentionally required.
 
-## Smoke test for each release
+## Verification and limits
 
-- Existing saved game: continue, party, bag, PC, map transition, save and load.
-- New game: opening, choose Pikachu, Route 101 first battle and first trainer.
-- All-Pokémon move pages: use SELECT, use an older unlocked attack, switch, cancel and reopen menu, then battle end and reload save.
-- Hard trainer teams: adaptive levels, stronger AI, items disabled inside trainer battles.
-- Field Bag: grant Rare Candies and item supply kit, reuse and re-open Bag.
-- Overworld following: entering/exiting buildings, fishing, surfing, healing, fainting, Pokémon swapping.
+ARM ABI probes confirm unchanged persistent Pokémon, PC and main-save sizes and
+offsets. The automated suite includes the production journal codec and a
+generated older-format save/load/migrate/save/load test in mGBA. A generated
+fixture does not prove compatibility with every real Delta save. See the exact
+recorded results in [BUILD_VALIDATION.md](BUILD_VALIDATION.md).
 
+Before accepting an update, check Continue, party, PC, Bag, badges, map changes,
+saving and a fresh reload. Also verify an archived attack after evolution and
+PC deposit/withdrawal. Follower and full chapter playthrough checks remain.
 
-## Repair increment — 19 October 2026
+## Downgrade and recovery
 
-No Pokémon/save structures, species indices, map group ordering, or save-sector
-formats are changed by this repair. No migration or new game is intentionally
-required. This is a source audit, not an old-save test: representative exported
-Delta saves were unavailable. The prior ROM and exported save must be retained.
+Every release remains separately tagged. Keep the old ROM and untouched exported
+pre-update save. Older ROMs do not know the new map IDs or journal. Do not load a
+save situated in a new map with an old ROM. Recover using the pre-update backup.
+Saving in an older ROM can clear the journal. Do not overwrite your only backup.
 
-Virtual pages now preserve current battle slots through Transform, Mimic and
-Encore by suspending paging during those effects. Saved PP is refilled using
-the saved move's PP. No persistent move-history storage has been added.
-
-An unchanged filename, title and game code cannot guarantee one Delta tile.
-The ROM hash changes with code; transfer the exported battery save manually.
-Delta save states may capture old ROM-dependent RAM and should not be used for
-cross-build transfers. Use the in-game save and Continue.
-
-Sketch now protects the saved moves from virtual-page copying: only an existing
-saved Sketch slot is replaced permanently. A virtual Sketch without a saved
-Sketch slot remains battle-only. PP drain is bypassed at selection and execution
-for locally controlled player Pokémon; opponent and replay PP rules are retained.
+An unchanged filename, title or game code cannot guarantee one Delta tile:
+changed ROM contents can change Delta's game identity. Transfer the exported
+in-game battery save manually. Save states contain ROM-dependent RAM and should
+not be used for cross-build transfers.

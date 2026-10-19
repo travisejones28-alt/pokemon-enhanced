@@ -2,10 +2,10 @@
 
 A work-in-progress **GBA adventure** using [RHH's pokeemerald-expansion](https://github.com/rh-hideout/pokeemerald-expansion) as the engine.
 
-> **Status: Alpha 0.1 — engine and gameplay prototype, NOT a new region or completed story.**
-> The prototype still uses Emerald's maps and major events. Our Pikachu starter and a Team Eclipse/rift story teaser are layered onto that opening; a new region and full quest campaign are not finished.
+> **Status: Alpha 0.2 development — persistent move library and first Rift chapter; full campaign unfinished.**
+> The original opening remains a prologue. Lumen Crossing, Riftway Trail, Stormscar and their quests extend it while preserving Hoenn progression.
 
-See the [current implementation audit and remaining work](docs/IMPLEMENTATION_AUDIT.md). Automated builds do not establish gameplay or old-save compatibility.
+Read the [chapter walkthrough](docs/CHAPTER_ONE.md), [persistent move-library details](docs/MOVE_HISTORY.md), and [implementation audit](docs/IMPLEMENTATION_AUDIT.md). Automated builds do not establish gameplay or old-save compatibility.
 
 ## Implemented in Alpha 0.1
 
@@ -22,12 +22,14 @@ See the [current implementation audit and remaining work](docs/IMPLEMENTATION_AU
 **Source changes still require a successful ROM build and gameplay testing before they appear in Delta.**
 
 - Pikachu starter with strong signature attacks, plus a friendship-based bond move progression.
-- Multi-page battle move libraries for every player Pokémon: current/saved attacks, level-appropriate current/pre-evolution attacks, compatible machine and egg moves, and curated tutors. SELECT switches pages. This is a reconstructed catalog; persistent learned-move history is unfinished.
+- Multi-page battle move libraries for every player Pokémon: current/saved attacks, level-appropriate current/pre-evolution attacks, compatible machine and egg moves, and curated tutors. SELECT switches pages. Ordinary compatible attacks are reconstructed; exceptional event/Sketch attacks have a persistent save-tail journal. SELECT advances and R goes back. See the documented 152-entry exceptional-attack limit.
 - Unlimited PP for the player, no visible numeric PP display, unlimited wallet, reusable Rare Candies and field supply of Master Balls, Max Repels, Max Revives, Full Restores and Escape Ropes.
 - 4× battle EXP without changing experience tables or existing stored levels.
 - Hard-mode trainers: higher levels, adaptive scaling to your strongest Pokémon, stronger IVs, smarter AI, hidden ability possibilities, no Bag items, no escaping.
-- Built-in Pokémon following enabled, better item descriptions and wild-battle controls.
-- Opening story teaser featuring strange Rifts and Team Eclipse. A three-anomaly quest, Rift Hollow and Eclipse boss, and first Gym replacement are present in source but need playtesting. A new hometown and full original campaign remain unfinished.
+- Pokémon following with Pikachu Bond interaction messages, persistent Bond unlocks, better item descriptions and wild-battle controls.
+- Explicit competitive sets for all eight first Gym fights, Elite Four, Champion and Vesper: abilities, natures, EVs, coverage and held items.
+- All trade-evolution targets have a local item/level alternative in the current species sources; Karrablast and Shelmet now accept a Linking Cord.
+- Opening story teaser featuring strange Rifts and Team Eclipse. A three-anomaly quest, Lumen hub with lodge/workshop/Gym, Riftway rival and scout, Rift Hollow boss, Astra badge and Stormscar legendary quest are implemented. Chapter playthrough testing and the full later campaign remain unfinished.
 
 **Save protection:** See the [Delta save recovery and safe update checklist](docs/SAVE_COMPATIBILITY.md). Never delete the original game tile until you've imported and verified your previous save in the new version.
 

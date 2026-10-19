@@ -54,6 +54,9 @@ jobs:
       - name: Build Shattered Realms GBA ROM
         run: make -C engine -j2 -Otarget TITLE=SHATTERED GAME_CODE=BSRE FILE_NAME=shattered-realms
 
+      - name: Run Shattered Realms GBA emulator regressions
+        run: bash scripts/run_gba_tests.sh
+
       - name: Verify and package
         shell: bash
         run: |
@@ -98,5 +101,5 @@ jobs:
 
             Automated checks cover regression tests, full patch idempotency, compilation, GBA header and SHA-256 validation. They do not establish emulator gameplay or old-save compatibility.
 
-            This remains an Emerald Expansion prototype. Persistent learned-move history and the complete original world are unfinished. Read docs/IMPLEMENTATION_AUDIT.md and docs/SAVE_COMPATIBILITY.md before updating.
+            This remains an Emerald Expansion prototype. The persistent journal has a documented exceptional-attack capacity. The first original chapter is implemented; the full later campaign remains unfinished. Read docs/IMPLEMENTATION_AUDIT.md and docs/SAVE_COMPATIBILITY.md before updating.
 

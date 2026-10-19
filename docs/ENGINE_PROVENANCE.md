@@ -10,3 +10,8 @@ All tracked engine contents were copied from that pinned upstream Git checkout v
 Shattered Realms overrides live in `scripts/apply_overrides.py` and apply before building. A later milestone may move stabilized changes directly to the engine source after tests are in place. Engine upgrades must be deliberate and re-tested.
 
 The project is an unofficial fan work. Preserve upstream author credit and review any rights/redistribution considerations.
+
+Shattered Realms now also contains project-authored history/companion C modules,
+GBA tests, chapter maps/scripts, layouts and boss-team data. These additions are
+not upstream engine files. The original engine indices and main save layouts
+remain pinned; generated changes still apply through the staged override pass.

@@ -1,0 +1,1254 @@
+{
+  "TRAINER_ROXANNE_1": [
+    {
+      "species": "Wooper",
+      "level": 16,
+      "item": "Eviolite",
+      "ability": "Unaware",
+      "nature": "Bold",
+      "moves": [
+        "Mud Shot",
+        "Water Pulse",
+        "Yawn",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Sandile",
+      "level": 17,
+      "item": "Oran Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Bite",
+        "Bulldoze",
+        "Rock Tomb",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gible",
+      "level": 18,
+      "item": "Sitrus Berry",
+      "ability": "Rough Skin",
+      "nature": "Adamant",
+      "moves": [
+        "Dragon Breath",
+        "Bulldoze",
+        "Rock Tomb",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Misdreavus",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Levitate",
+      "nature": "Timid",
+      "moves": [
+        "Hex",
+        "Mystical Fire",
+        "Thunder Wave",
+        "Confuse Ray"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRAWLY_1": [
+    {
+      "species": "Croagunk",
+      "level": 20,
+      "item": "Eviolite",
+      "ability": "Dry Skin",
+      "nature": "Jolly",
+      "moves": [
+        "Drain Punch",
+        "Poison Jab",
+        "Fake Out",
+        "Sucker Punch"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Heracross",
+      "level": 21,
+      "item": "Sitrus Berry",
+      "ability": "Guts",
+      "nature": "Jolly",
+      "moves": [
+        "Brick Break",
+        "Pin Missile",
+        "Rock Tomb",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Hawlucha",
+      "level": 21,
+      "item": "Sitrus Berry",
+      "ability": "Unburden",
+      "nature": "Adamant",
+      "moves": [
+        "Acrobatics",
+        "Brick Break",
+        "Hone Claws",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Hariyama",
+      "level": 22,
+      "item": "Sitrus Berry",
+      "ability": "Thick Fat",
+      "nature": "Adamant",
+      "moves": [
+        "Force Palm",
+        "Knock Off",
+        "Bullet Punch",
+        "Rock Slide"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_WATTSON_1": [
+    {
+      "species": "Lanturn",
+      "level": 25,
+      "item": "Sitrus Berry",
+      "ability": "Volt Absorb",
+      "nature": "Calm",
+      "moves": [
+        "Scald",
+        "Volt Switch",
+        "Thunder Wave",
+        "Ice Beam"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 25,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Flash Cannon",
+        "Thunderbolt",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Raichu",
+      "level": 26,
+      "item": "Sitrus Berry",
+      "ability": "Lightning Rod",
+      "nature": "Timid",
+      "moves": [
+        "Thunderbolt",
+        "Grass Knot",
+        "Focus Blast",
+        "Nasty Plot"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Ampharos",
+      "level": 27,
+      "item": "Sitrus Berry",
+      "ability": "Static",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Dragon Pulse",
+        "Power Gem",
+        "Cotton Guard"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_FLANNERY_1": [
+    {
+      "species": "Ninetales",
+      "level": 30,
+      "item": "Heat Rock",
+      "ability": "Drought",
+      "nature": "Timid",
+      "moves": [
+        "Flamethrower",
+        "Solar Beam",
+        "Will O Wisp",
+        "Nasty Plot"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Arcanine",
+      "level": 30,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Flare Blitz",
+        "Extreme Speed",
+        "Wild Charge",
+        "Morning Sun"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Salazzle",
+      "level": 31,
+      "item": "Sitrus Berry",
+      "ability": "Corrosion",
+      "nature": "Timid",
+      "moves": [
+        "Flamethrower",
+        "Sludge Bomb",
+        "Dragon Pulse",
+        "Toxic"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Torkoal",
+      "level": 32,
+      "item": "Sitrus Berry",
+      "ability": "White Smoke",
+      "nature": "Bold",
+      "moves": [
+        "Lava Plume",
+        "Body Press",
+        "Rapid Spin",
+        "Yawn"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    }
+  ],
+  "TRAINER_NORMAN_1": [
+    {
+      "species": "Staraptor",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Brave Bird",
+        "Close Combat",
+        "U Turn",
+        "Quick Attack"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Heliolisk",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Dry Skin",
+      "nature": "Timid",
+      "moves": [
+        "Thunderbolt",
+        "Surf",
+        "Grass Knot",
+        "Volt Switch"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Ursaring",
+      "level": 35,
+      "item": "Sitrus Berry",
+      "ability": "Guts",
+      "nature": "Adamant",
+      "moves": [
+        "Facade",
+        "Crunch",
+        "Close Combat",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Slaking",
+      "level": 36,
+      "item": "Leftovers",
+      "ability": "Truant",
+      "nature": "Adamant",
+      "moves": [
+        "Body Slam",
+        "Earthquake",
+        "Shadow Claw",
+        "Slack Off"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_WINONA_1": [
+    {
+      "species": "Pelipper",
+      "level": 38,
+      "item": "Damp Rock",
+      "ability": "Drizzle",
+      "nature": "Bold",
+      "moves": [
+        "Scald",
+        "Hurricane",
+        "Roost",
+        "U Turn"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Skarmory",
+      "level": 38,
+      "item": "Leftovers",
+      "ability": "Sturdy",
+      "nature": "Impish",
+      "moves": [
+        "Brave Bird",
+        "Body Press",
+        "Roost",
+        "Whirlwind"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Gliscor",
+      "level": 39,
+      "item": "Sitrus Berry",
+      "ability": "Hyper Cutter",
+      "nature": "Jolly",
+      "moves": [
+        "Earthquake",
+        "Acrobatics",
+        "Rock Slide",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Altaria",
+      "level": 40,
+      "item": "Sitrus Berry",
+      "ability": "Natural Cure",
+      "nature": "Adamant",
+      "moves": [
+        "Dragon Dance",
+        "Dragon Claw",
+        "Earthquake",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_TATE_AND_LIZA_1": [
+    {
+      "species": "Claydol",
+      "level": 42,
+      "item": "Sitrus Berry",
+      "ability": "Levitate",
+      "nature": "Bold",
+      "moves": [
+        "Earth Power",
+        "Psychic",
+        "Reflect",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Bronzong",
+      "level": 42,
+      "item": "Leftovers",
+      "ability": "Levitate",
+      "nature": "Relaxed",
+      "moves": [
+        "Gyro Ball",
+        "Body Press",
+        "Light Screen",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Lunatone",
+      "level": 43,
+      "item": "Sitrus Berry",
+      "ability": "Levitate",
+      "nature": "Modest",
+      "moves": [
+        "Psychic",
+        "Power Gem",
+        "Ice Beam",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Solrock",
+      "level": 43,
+      "item": "Sitrus Berry",
+      "ability": "Levitate",
+      "nature": "Adamant",
+      "moves": [
+        "Rock Slide",
+        "Zen Headbutt",
+        "Will O Wisp",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Metagross",
+      "level": 44,
+      "item": "Sitrus Berry",
+      "ability": "Clear Body",
+      "nature": "Adamant",
+      "moves": [
+        "Meteor Mash",
+        "Zen Headbutt",
+        "Bullet Punch",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_JUAN_1": [
+    {
+      "species": "Pelipper",
+      "level": 46,
+      "item": "Damp Rock",
+      "ability": "Drizzle",
+      "nature": "Bold",
+      "moves": [
+        "Scald",
+        "Hurricane",
+        "Roost",
+        "U Turn"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Quagsire",
+      "level": 46,
+      "item": "Leftovers",
+      "ability": "Unaware",
+      "nature": "Relaxed",
+      "moves": [
+        "Earthquake",
+        "Scald",
+        "Recover",
+        "Toxic"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Ludicolo",
+      "level": 47,
+      "item": "Life Orb",
+      "ability": "Swift Swim",
+      "nature": "Modest",
+      "moves": [
+        "Hydro Pump",
+        "Giga Drain",
+        "Ice Beam",
+        "Fake Out"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 47,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Waterfall",
+        "Crunch",
+        "Earthquake",
+        "Dragon Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kingdra",
+      "level": 48,
+      "item": "Sitrus Berry",
+      "ability": "Swift Swim",
+      "nature": "Modest",
+      "moves": [
+        "Surf",
+        "Dragon Pulse",
+        "Ice Beam",
+        "Focus Energy"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_SIDNEY": [
+    {
+      "species": "Krookodile",
+      "level": 52,
+      "item": "Choice Scarf",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Earthquake",
+        "Knock Off",
+        "Stone Edge",
+        "Close Combat"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Mandibuzz",
+      "level": 52,
+      "item": "Leftovers",
+      "ability": "Overcoat",
+      "nature": "Impish",
+      "moves": [
+        "Foul Play",
+        "Roost",
+        "U Turn",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Greninja",
+      "level": 53,
+      "item": "Life Orb",
+      "ability": "Torrent",
+      "nature": "Timid",
+      "moves": [
+        "Hydro Pump",
+        "Dark Pulse",
+        "Ice Beam",
+        "Grass Knot"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Hydreigon",
+      "level": 53,
+      "item": "Sitrus Berry",
+      "ability": "Levitate",
+      "nature": "Timid",
+      "moves": [
+        "Dark Pulse",
+        "Dragon Pulse",
+        "Flamethrower",
+        "Flash Cannon"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kingambit",
+      "level": 54,
+      "item": "Sitrus Berry",
+      "ability": "Defiant",
+      "nature": "Adamant",
+      "moves": [
+        "Kowtow Cleave",
+        "Iron Head",
+        "Sucker Punch",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Tyranitar",
+      "level": 54,
+      "item": "Assault Vest",
+      "ability": "Sand Stream",
+      "nature": "Adamant",
+      "moves": [
+        "Stone Edge",
+        "Crunch",
+        "Earthquake",
+        "Ice Punch"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_PHOEBE": [
+    {
+      "species": "Spiritomb",
+      "level": 54,
+      "item": "Leftovers",
+      "ability": "Infiltrator",
+      "nature": "Calm",
+      "moves": [
+        "Dark Pulse",
+        "Will O Wisp",
+        "Pain Split",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Gengar",
+      "level": 54,
+      "item": "Life Orb",
+      "ability": "Cursed Body",
+      "nature": "Timid",
+      "moves": [
+        "Shadow Ball",
+        "Sludge Bomb",
+        "Focus Blast",
+        "Thunderbolt"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Chandelure",
+      "level": 55,
+      "item": "Choice Scarf",
+      "ability": "Flash Fire",
+      "nature": "Timid",
+      "moves": [
+        "Shadow Ball",
+        "Flamethrower",
+        "Energy Ball",
+        "Trick"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Mimikyu",
+      "level": 55,
+      "item": "Life Orb",
+      "ability": "Disguise",
+      "nature": "Jolly",
+      "moves": [
+        "Play Rough",
+        "Shadow Claw",
+        "Shadow Sneak",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Dusknoir",
+      "level": 56,
+      "item": "Leftovers",
+      "ability": "Pressure",
+      "nature": "Careful",
+      "moves": [
+        "Poltergeist",
+        "Earthquake",
+        "Will O Wisp",
+        "Pain Split"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Dragapult",
+      "level": 56,
+      "item": "Sitrus Berry",
+      "ability": "Infiltrator",
+      "nature": "Timid",
+      "moves": [
+        "Shadow Ball",
+        "Dragon Pulse",
+        "Flamethrower",
+        "U Turn"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_GLACIA": [
+    {
+      "species": "Abomasnow",
+      "level": 56,
+      "item": "Icy Rock",
+      "ability": "Snow Warning",
+      "nature": "Modest",
+      "moves": [
+        "Blizzard",
+        "Giga Drain",
+        "Earth Power",
+        "Ice Shard"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Froslass",
+      "level": 56,
+      "item": "Focus Sash",
+      "ability": "Cursed Body",
+      "nature": "Timid",
+      "moves": [
+        "Blizzard",
+        "Shadow Ball",
+        "Thunder Wave",
+        "Destiny Bond"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Walrein",
+      "level": 57,
+      "item": "Leftovers",
+      "ability": "Thick Fat",
+      "nature": "Calm",
+      "moves": [
+        "Surf",
+        "Ice Beam",
+        "Encore",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Mamoswine",
+      "level": 57,
+      "item": "Life Orb",
+      "ability": "Thick Fat",
+      "nature": "Jolly",
+      "moves": [
+        "Earthquake",
+        "Icicle Crash",
+        "Ice Shard",
+        "Stone Edge"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Glalie",
+      "level": 58,
+      "item": "Sitrus Berry",
+      "ability": "Inner Focus",
+      "nature": "Naive",
+      "moves": [
+        "Freeze Dry",
+        "Crunch",
+        "Earthquake",
+        "Ice Shard"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Weavile",
+      "level": 58,
+      "item": "Life Orb",
+      "ability": "Pressure",
+      "nature": "Jolly",
+      "moves": [
+        "Triple Axel",
+        "Knock Off",
+        "Ice Shard",
+        "Low Kick"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_DRAKE": [
+    {
+      "species": "Kingdra",
+      "level": 58,
+      "item": "Scope Lens",
+      "ability": "Sniper",
+      "nature": "Modest",
+      "moves": [
+        "Focus Energy",
+        "Surf",
+        "Draco Meteor",
+        "Ice Beam"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Hydreigon",
+      "level": 59,
+      "item": "Life Orb",
+      "ability": "Levitate",
+      "nature": "Timid",
+      "moves": [
+        "Dark Pulse",
+        "Draco Meteor",
+        "Flamethrower",
+        "Flash Cannon"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Dragonite",
+      "level": 59,
+      "item": "Sitrus Berry",
+      "ability": "Multiscale",
+      "nature": "Adamant",
+      "moves": [
+        "Dragon Dance",
+        "Dragon Claw",
+        "Extreme Speed",
+        "Earthquake"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Dragapult",
+      "level": 60,
+      "item": "Choice Specs",
+      "ability": "Infiltrator",
+      "nature": "Timid",
+      "moves": [
+        "Shadow Ball",
+        "Draco Meteor",
+        "Flamethrower",
+        "Thunderbolt"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Garchomp",
+      "level": 60,
+      "item": "Rocky Helmet",
+      "ability": "Rough Skin",
+      "nature": "Jolly",
+      "moves": [
+        "Earthquake",
+        "Dragon Claw",
+        "Stone Edge",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Salamence",
+      "level": 61,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Dragon Dance",
+        "Dual Wingbeat",
+        "Dragon Claw",
+        "Earthquake"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_WALLACE": [
+    {
+      "species": "Pelipper",
+      "level": 62,
+      "item": "Damp Rock",
+      "ability": "Drizzle",
+      "nature": "Bold",
+      "moves": [
+        "Scald",
+        "Hurricane",
+        "Roost",
+        "U Turn"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Swampert",
+      "level": 62,
+      "item": "Leftovers",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Earthquake",
+        "Waterfall",
+        "Ice Punch",
+        "Stealth Rock"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Ferrothorn",
+      "level": 63,
+      "item": "Leftovers",
+      "ability": "Iron Barbs",
+      "nature": "Relaxed",
+      "moves": [
+        "Power Whip",
+        "Gyro Ball",
+        "Leech Seed",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 63,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Dragon Dance",
+        "Waterfall",
+        "Earthquake",
+        "Crunch"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kingdra",
+      "level": 64,
+      "item": "Life Orb",
+      "ability": "Swift Swim",
+      "nature": "Modest",
+      "moves": [
+        "Hydro Pump",
+        "Draco Meteor",
+        "Ice Beam",
+        "Flash Cannon"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Milotic",
+      "level": 65,
+      "item": "Flame Orb",
+      "ability": "Marvel Scale",
+      "nature": "Bold",
+      "moves": [
+        "Scald",
+        "Ice Beam",
+        "Recover",
+        "Haze"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    }
+  ],
+  "TRAINER_ECLIPSE_WARDEN": [
+    {
+      "species": "Murkrow",
+      "level": 18,
+      "item": "Eviolite",
+      "ability": "Prankster",
+      "nature": "Timid",
+      "moves": [
+        "Tailwind",
+        "Taunt",
+        "Dark Pulse",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Croagunk",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Dry Skin",
+      "nature": "Adamant",
+      "moves": [
+        "Fake Out",
+        "Drain Punch",
+        "Sucker Punch",
+        "Poison Jab"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Houndour",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Flash Fire",
+      "nature": "Timid",
+      "moves": [
+        "Flamethrower",
+        "Snarl",
+        "Will O Wisp",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Sableye",
+      "level": 20,
+      "item": "Sitrus Berry",
+      "ability": "Prankster",
+      "nature": "Careful",
+      "moves": [
+        "Foul Play",
+        "Will O Wisp",
+        "Recover",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    }
+  ]
+}

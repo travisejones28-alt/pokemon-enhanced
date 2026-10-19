@@ -375,6 +375,22 @@ void HandleInputChooseMove(enum BattlerId battler)
         """        InitMoveSelectionsVarsAndStrings(battler);
         gBattleStruct->gimmick.playerSelect = FALSE;""",
         """        ShatteredBuildMoveLibrary(battler);
+        // Always re-enter on the saved first page, even if the user cancelled
+        // out of a previous virtual move page during this same turn.
+        if (IsOnPlayerSide(battler) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+        {
+            for (u32 slot = 0; slot < MAX_MON_MOVES; slot++)
+            {
+                enum Move move = slot < sShatteredMoveCounts[battler]
+                               ? sShatteredMoves[battler][slot] : MOVE_NONE;
+                u32 pp = GetMovePP(move);
+                moveInfo->moves[slot] = move;
+                moveInfo->currentPP[slot] = pp;
+                moveInfo->maxPP[slot] = pp;
+                gBattleMons[battler].moves[slot] = move;
+                gBattleMons[battler].pp[slot] = pp;
+            }
+        }
         InitMoveSelectionsVarsAndStrings(battler);
         gBattleStruct->gimmick.playerSelect = FALSE;""",
     )

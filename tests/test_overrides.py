@@ -358,25 +358,3 @@ void BS_ItemRestoreHP(void)"""
 
 if __name__ == "__main__":
     unittest.main()
-,'ROXANNE
-
-        gfx = json.dumps({"object_events": [
-            {"script": "RustboroCity_Gym_EventScript_Roxanne", "graphics_id": "OBJ_EVENT_GFX_ROXANNE"}
-        ]})
-        replaced = modify_first_gym_character(gfx)
-        self.assertIn("OBJ_EVENT_GFX_HEX_MANIAC", replaced)
-        self.assertEqual(replaced, modify_first_gym_character(replaced))
-
-if __name__ == "__main__":
-    unittest.main()
-).replace('RustboroCity_Gym_Text_RoxanneDefeat:', 'TRAINER_ROXANNE_1\\nRustboroCity_Gym_Text_RoxanneDefeat:')))
-
-        gfx = json.dumps({"object_events": [
-            {"script": "RustboroCity_Gym_EventScript_Roxanne", "graphics_id": "OBJ_EVENT_GFX_ROXANNE"}
-        ]})
-        replaced = modify_first_gym_character(gfx)
-        self.assertIn("OBJ_EVENT_GFX_HEX_MANIAC", replaced)
-        self.assertEqual(replaced, modify_first_gym_character(replaced))
-
-if __name__ == "__main__":
-    unittest.main()

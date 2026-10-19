@@ -164,7 +164,8 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
 
 
     def test_all_pokemon_move_library_pages(self):
-        original = '''void HandleInputChooseMove(enum BattlerId battler)
+        original = '''#include "data.h"
+void HandleInputChooseMove(enum BattlerId battler)
 {
     if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
     {
@@ -178,7 +179,12 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
         result = modify_all_move_pages(original)
         for name in ("MOVE_IRON_TAIL", "MOVE_GRASS_KNOT", "MOVE_BRICK_BREAK", "MOVE_THUNDER_WAVE"):
             self.assertIn(name, result)
-        self.assertIn("GetSpeciesLevelUpLearnset(species)", result)
+        self.assertIn("GetSpeciesLevelUpLearnset(cursorSpecies)", result)
+        self.assertIn("CanLearnTeachableMove(species, machineMove)", result)
+        self.assertIn("CanLearnTeachableMove(species, tutorMove)", result)
+        self.assertIn("GetSpeciesEggMoves(eggSpecies)", result)
+        self.assertIn("SHATTERED_MAX_LIBRARY_MOVES 256", result)
+        self.assertIn('#include "data/tutor_moves.h"', result)
         self.assertIn("GetMonData(mon, MON_DATA_FRIENDSHIP)", result)
         self.assertIn("MOVE_ZIPPY_ZAP", result)
         self.assertIn("MOVE_SPLISHY_SPLASH", result)

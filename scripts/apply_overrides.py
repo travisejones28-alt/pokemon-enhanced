@@ -170,9 +170,9 @@ def modify_player_battle_pp(contents: str) -> str:
                 struct Pokemon *partyMon = GetBattlerMon(battler);
                 for (i = 0; i < MAX_MON_MOVES; i++)
                 {
-                    // Restore Pikachu's saved moves before the next battle menu;
+                    // Restore all saved moves before the next battle menu;
                     // the extra page never replaces moves in the save file.
-                    if (gBattleMons[battler].species == SPECIES_PIKACHU)
+                    if (!gBattleMons[battler].volatiles.transformed)
                         gBattleMons[battler].moves[i] = GetMonData(partyMon, MON_DATA_MOVE1 + i);
                     if (gBattleMons[battler].moves[i] != MOVE_NONE)
                     {
@@ -241,37 +241,81 @@ def modify_move_pp_display(contents: str) -> str:
 
 
 
-def modify_pikachu_move_pages(contents: str) -> str:
-    """Eight accessible starter attacks in two battle-menu pages (SELECT toggles).
-    
-    Extra moves are virtual battle choices. The standard four saved moves remain
-    untouched, so we do not change BoxPokemon, battle data sizes or save layout.
+def modify_all_move_pages(contents: str) -> str:
+    """All player Pokémon can use all unlocked level-up attacks via SELECT pages.
+
+    This is deliberately save-layout-preserving: the catalog is rebuilt from the
+    saved four move slots and the species' level-up learnset each battle turn.
+    TM moves in saved slots remain available; forgotten TM moves are not yet
+    archived, since they need a separate persistent move-history structure.
     """
     contents = replace_once(
         contents,
         "void HandleInputChooseMove(enum BattlerId battler)\n{",
-        """// Shattered Realms starter: SELECT toggles between four normal saved moves
-// and four signature attacks without altering the saved Pokémon move slots.
-static u8 sShatteredPikachuPage[MAX_BATTLERS_COUNT];
+        """// Shattered Realms move library: multi-page selection without changing the
+// persistent four slots in BoxPokemon or the battle controller wire format.
+#define SHATTERED_MAX_LIBRARY_MOVES 64
+static enum Move sShatteredMoves[MAX_BATTLERS_COUNT][SHATTERED_MAX_LIBRARY_MOVES];
+static u8 sShatteredMoveCounts[MAX_BATTLERS_COUNT];
+static u8 sShatteredMovePages[MAX_BATTLERS_COUNT];
 
-static void ShatteredTogglePikachuPage(enum BattlerId battler)
+static void ShatteredRememberMove(enum BattlerId battler, enum Move move)
 {
-    static const enum Move sExtraMoves[MAX_MON_MOVES] =
-    {
-        MOVE_IRON_TAIL,
-        MOVE_GRASS_KNOT,
-        MOVE_BRICK_BREAK,
-        MOVE_THUNDER_WAVE,
-    };
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
+    if (move == MOVE_NONE || move == LEVEL_UP_MOVE_END)
+        return;
+    for (u32 i = 0; i < sShatteredMoveCounts[battler]; i++)
+        if (sShatteredMoves[battler][i] == move)
+            return;
+    if (sShatteredMoveCounts[battler] < SHATTERED_MAX_LIBRARY_MOVES)
+        sShatteredMoves[battler][sShatteredMoveCounts[battler]++] = move;
+}
 
+static void ShatteredBuildMoveLibrary(enum BattlerId battler)
+{
+    static const enum Move sStarterSignatureMoves[] =
+    {
+        MOVE_IRON_TAIL, MOVE_GRASS_KNOT, MOVE_BRICK_BREAK, MOVE_THUNDER_WAVE,
+    };
+    sShatteredMoveCounts[battler] = 0;
+    sShatteredMovePages[battler] = 0;
+    if (!IsOnPlayerSide(battler) || gBattleTypeFlags & BATTLE_TYPE_LINK)
+        return;
+
+    struct Pokemon *mon = GetBattlerMon(battler);
+    enum Species species = GetMonData(mon, MON_DATA_SPECIES);
+    u32 level = GetMonData(mon, MON_DATA_LEVEL);
+    // Preserve chosen TM, tutor, and event moves in the first four slots.
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+        ShatteredRememberMove(battler, GetMonData(mon, MON_DATA_MOVE1 + i));
+
+    // Every earlier level-up attack remains selectable even after replacement.
+    const struct LevelUpMove *learnset = GetSpeciesLevelUpLearnset(species);
+    for (u32 i = 0; learnset[i].move != LEVEL_UP_MOVE_END; i++)
+    {
+        if (learnset[i].level > 0 && learnset[i].level <= level)
+            ShatteredRememberMove(battler, learnset[i].move);
+    }
+
+    // Your original Pikachu starter keeps four extra signature moves.
+    if (species == SPECIES_PIKACHU)
+        for (u32 i = 0; i < ARRAY_COUNT(sStarterSignatureMoves); i++)
+            ShatteredRememberMove(battler, sStarterSignatureMoves[i]);
+}
+
+static void ShatteredToggleMovePage(enum BattlerId battler)
+{
+    u32 pageCount = (sShatteredMoveCounts[battler] + MAX_MON_MOVES - 1) / MAX_MON_MOVES;
+    if (pageCount <= 1)
+        return;
+
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
     MoveSelectionDestroyCursorAt(gMoveSelectionCursor[battler]);
-    sShatteredPikachuPage[battler] ^= 1;
+    sShatteredMovePages[battler] = (sShatteredMovePages[battler] + 1) % pageCount;
     for (u32 i = 0; i < MAX_MON_MOVES; i++)
     {
-        enum Move move = sShatteredPikachuPage[battler]
-                       ? sExtraMoves[i]
-                       : GetMonData(GetBattlerMon(battler), MON_DATA_MOVE1 + i);
+        u32 index = sShatteredMovePages[battler] * MAX_MON_MOVES + i;
+        enum Move move = index < sShatteredMoveCounts[battler]
+                       ? sShatteredMoves[battler][index] : MOVE_NONE;
         u32 pp = GetMovePP(move);
         moveInfo->moves[i] = move;
         moveInfo->currentPP[i] = pp;
@@ -281,7 +325,7 @@ static void ShatteredTogglePikachuPage(enum BattlerId battler)
     }
     gMoveSelectionCursor[battler] = 0;
     MoveSelectionDisplayMoveNames(battler);
-    MoveSelectionCreateCursorAt(gMoveSelectionCursor[battler], 0);
+    MoveSelectionCreateCursorAt(0, 0);
     MoveSelectionDisplayPPNumber(battler);
     MoveSelectionDisplayMoveType(battler);
     if (B_SHOW_EFFECTIVENESS)
@@ -297,11 +341,12 @@ void HandleInputChooseMove(enum BattlerId battler)
         """    if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
     {""",
         """    if (JOY_NEW(SELECT_BUTTON) && !gBattleStruct->descriptionSubmenu
-        && !gBattleStruct->zmove.viewing && gBattleMons[battler].species == SPECIES_PIKACHU
-        && IsOnPlayerSide(battler) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+        && !gBattleStruct->zmove.viewing && IsOnPlayerSide(battler)
+        && !(gBattleTypeFlags & BATTLE_TYPE_LINK)
+        && sShatteredMoveCounts[battler] > MAX_MON_MOVES)
     {
         PlaySE(SE_SELECT);
-        ShatteredTogglePikachuPage(battler);
+        ShatteredToggleMovePage(battler);
     }
     else if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)
     {""",
@@ -310,7 +355,7 @@ void HandleInputChooseMove(enum BattlerId battler)
         contents,
         """        InitMoveSelectionsVarsAndStrings(battler);
         gBattleStruct->gimmick.playerSelect = FALSE;""",
-        """        sShatteredPikachuPage[battler] = 0;
+        """        ShatteredBuildMoveLibrary(battler);
         InitMoveSelectionsVarsAndStrings(battler);
         gBattleStruct->gimmick.playerSelect = FALSE;""",
     )
@@ -322,12 +367,15 @@ void HandleInputChooseMove(enum BattlerId battler)
 }""",
         """static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
 {
-    if (gBattleMons[battler].species == SPECIES_PIKACHU && IsOnPlayerSide(battler))
+    u32 pageCount = (sShatteredMoveCounts[battler] + MAX_MON_MOVES - 1) / MAX_MON_MOVES;
+    if (pageCount > 1 && IsOnPlayerSide(battler) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
     {
-        if (sShatteredPikachuPage[battler] == 0)
-            BattlePutTextOnWindow(COMPOUND_STRING("1/2"), B_WIN_PP_REMAINING);
-        else
-            BattlePutTextOnWindow(COMPOUND_STRING("2/2"), B_WIN_PP_REMAINING);
+        u8 *cursor = ConvertIntToDecimalStringN(gDisplayedStringBattle,
+                                                sShatteredMovePages[battler] + 1,
+                                                STR_CONV_MODE_LEFT_ALIGN, 2);
+        *(cursor)++ = CHAR_SLASH;
+        ConvertIntToDecimalStringN(cursor, pageCount, STR_CONV_MODE_LEFT_ALIGN, 2);
+        BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
     }
     else
     {
@@ -336,7 +384,6 @@ void HandleInputChooseMove(enum BattlerId battler)
 }""",
     )
     return contents
-
 
 
 def modify_unlimited_money(contents: str) -> str:
@@ -500,7 +547,7 @@ def apply(engine: Path) -> None:
         "src/battle_setup.c": modify_starter_gift,
         "src/battle_main.c": modify_player_battle_pp,
         "src/battle_util.c": lambda c: modify_hard_trainer_bag(modify_player_pp_checks(c)),
-        "src/battle_controller_player.c": lambda c: modify_pikachu_move_pages(modify_move_pp_display(c)),
+        "src/battle_controller_player.c": lambda c: modify_all_move_pages(modify_move_pp_display(c)),
         "src/money.c": modify_unlimited_money,
         "src/item.c": modify_infinite_candy,
         "src/item_menu.c": modify_bag_candy_supply,

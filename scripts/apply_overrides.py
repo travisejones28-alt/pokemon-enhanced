@@ -67,6 +67,12 @@ CONFIG = {
         "OW_FOLLOWERS_ENABLED": "TRUE",
         "OW_SHOW_ITEM_DESCRIPTIONS": "OW_ITEM_DESCRIPTIONS_ALWAYS",
     },
+    "include/config/summary_screen.h": {
+        "P_ENABLE_MOVE_RELEARNERS": "TRUE",
+        "P_TM_MOVES_RELEARNER": "TRUE",
+        "P_SUMMARY_SCREEN_MOVE_RELEARNER": "TRUE",
+        "P_ENABLE_ALL_TM_MOVES": "TRUE",
+    },
     "include/config/pokedex_plus_hgss.h": {
         "POKEDEX_PLUS_HGSS": "TRUE",
         "HGSS_DARK_MODE": "TRUE",

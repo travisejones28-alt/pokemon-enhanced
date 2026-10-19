@@ -51,3 +51,8 @@ An unchanged filename, title and game code cannot guarantee one Delta tile.
 The ROM hash changes with code; transfer the exported battery save manually.
 Delta save states may capture old ROM-dependent RAM and should not be used for
 cross-build transfers. Use the in-game save and Continue.
+
+Sketch now protects the saved moves from virtual-page copying: only an existing
+saved Sketch slot is replaced permanently. A virtual Sketch without a saved
+Sketch slot remains battle-only. PP drain is bypassed at selection and execution
+for locally controlled player Pokémon; opponent and replay PP rules are retained.

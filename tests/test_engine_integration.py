@@ -13,7 +13,8 @@ import unittest
 
 from scripts.apply_overrides import (
     CONFIG, RIFT_NPCS, apply, modify_all_move_pages, modify_move_pp_display,
-    modify_hard_trainer_ivs, replace_once,
+    modify_hard_trainer_ivs, replace_once, modify_player_pp_checks,
+    modify_pp_drain_and_sketch, modify_rift_reward_retry,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,8 @@ INPUTS = set(CONFIG) | {
     'src/battle_main.c', 'src/battle_util.c', 'src/battle_controller_player.c',
     'src/money.c', 'src/item.c', 'src/item_menu.c', 'src/battle_script_commands.c',
     'src/trainer_util.c', 'src/battle_ai_main.c', 'data/text/birch_speech.inc',
+    'src/battle_move_resolution.c', 'include/battle_util.h',
+    'data/maps/RiftHollow/scripts.inc',
     'data/maps/Route101/scripts.inc', 'data/event_scripts.s',
     'src/data/trainers.party', 'data/maps/RustboroCity_Gym/scripts.inc',
     'data/maps/RustboroCity_Gym/map.json', 'data/maps/map_groups.json',
@@ -150,5 +153,135 @@ int main(void) {
     assert(!ShatteredCanUseLibrary(PLAYER));
     gBattleMons[PLAYER].volatiles.encoredMove = 0;
     assert(ShatteredCanUseLibrary(PLAYER));
+    return 0;
+}''')
+
+    def test_pp_eligibility_preserves_enemy_ai_and_recording_rules(self):
+        source = (ENGINE / 'src/battle_util.c').read_text()
+        patched = modify_player_pp_checks(source)
+        guard = re.search(r'bool32 ShatteredHasUnlimitedPP.*?\n}', patched, re.S).group()
+        self.compile_and_run("""#include <assert.h>
+typedef int bool32;
+enum BattlerId { PLAYER, ENEMY };
+#define BATTLE_TYPE_LINK 1
+#define BATTLE_TYPE_RECORDED 2
+#define BATTLE_TYPE_RECORDED_LINK 4
+static unsigned gBattleTypeFlags;
+static int ai;
+static int IsOnPlayerSide(enum BattlerId battler) { return battler == PLAYER; }
+static int BattlerHasAi(enum BattlerId battler) { (void)battler; return ai; }
+""" + guard + """
+int main(void) {
+    assert(ShatteredHasUnlimitedPP(PLAYER));
+    assert(!ShatteredHasUnlimitedPP(ENEMY));
+    for (unsigned flag = 1; flag <= 4; flag <<= 1) {
+        gBattleTypeFlags = flag; assert(!ShatteredHasUnlimitedPP(PLAYER));
+    }
+    gBattleTypeFlags = 0; ai = 1; assert(!ShatteredHasUnlimitedPP(PLAYER));
+    return 0;
+}""")
+
+    def test_sketch_writes_saved_moves_instead_of_virtual_page(self):
+        patched = modify_pp_drain_and_sketch((ENGINE / 'src/battle_script_commands.c').read_text())
+        start = patched.index('            if (ShatteredHasUnlimitedPP(gBattlerAttacker))')
+        end = patched.index('\n\n            BtlController_EmitSetMonData', start)
+        snippet = patched[start:end]
+        self.compile_and_run("""#include <assert.h>
+#include <stdint.h>
+typedef int32_t s32;
+#define MAX_MON_MOVES 4
+#define MOVE_SKETCH 166
+#define MON_DATA_MOVE1 0
+#define MON_DATA_PP1 4
+#define MON_DATA_PP_BONUSES 8
+struct Pokemon { unsigned data[9]; };
+static struct Pokemon saved;
+static int gBattlerAttacker;
+static int gBattlerTarget;
+static unsigned gLastPrintedMoves[2];
+static int ShatteredHasUnlimitedPP(int battler) { (void)battler; return 1; }
+static struct Pokemon *GetBattlerMon(int battler) { (void)battler; return &saved; }
+static unsigned GetMonData(struct Pokemon *mon, int field) { return mon->data[field]; }
+static unsigned GetMovePP(unsigned move) { (void)move; return 15; }
+static void run(int slot) {
+    struct { unsigned moves[4], pp[4], ppBonuses; } movePPData = {{99,98,97,96},{1,1,1,1},0};
+    s32 i;
+    for (i=0;i<4;i++) { saved.data[i] = 10+i; saved.data[4+i] = 20+i; }
+    saved.data[8] = 255;
+    if (slot >= 0) saved.data[slot] = MOVE_SKETCH;
+    gLastPrintedMoves[gBattlerTarget] = 42;
+""" + snippet + """
+    for (i=0;i<4;i++) {
+        assert(movePPData.moves[i] == (i == slot ? 42 : saved.data[i]));
+        assert(movePPData.pp[i] == (i == slot ? 15 : saved.data[4+i]));
+    }
+    assert(movePPData.ppBonuses == (slot < 0 ? 255u : (255u & ~(3u << (slot*2)))));
+}
+int main(void) { for(int slot=-1;slot<4;slot++) run(slot); return 0; }
+""")
+
+    def test_rift_reward_has_retry_without_resetting_boss_flag(self):
+        source = (ENGINE / 'data/maps/RiftHollow/scripts.inc').read_text()
+        patched = modify_rift_reward_retry(source)
+        self.assertEqual(patched, modify_rift_reward_retry(patched))
+        repeat = patched.split('RiftHollow_EventScript_WardenAfterVictory::', 1)[1]
+        self.assertIn('checkitem ITEM_SHINY_CHARM', repeat)
+        self.assertIn('FALSE, RiftHollow_EventScript_ClaimReward', repeat)
+        self.assertEqual(patched.count('setflag FLAG_UNUSED_0x90F'), 1)
+
+    def test_unusable_page_search_and_failed_search_restore_battle_slots(self):
+        patched = modify_all_move_pages(modify_move_pp_display(
+            (ENGINE / 'src/battle_controller_player.c').read_text()))
+        self.assertEqual(patched.count('bool32 ShatteredTryUsableLibraryPage('), 1)
+        helper = re.search(r'bool32 ShatteredTryUsableLibraryPage.*?\n}', patched, re.S).group()
+        self.compile_and_run('''#include <assert.h>
+#include <stdint.h>
+typedef uint32_t u32;
+typedef uint8_t u8;
+typedef int bool32;
+#define TRUE 1
+#define FALSE 0
+#define MAX_MON_MOVES 4
+#define MOVE_LIMITATIONS_ALL 255
+enum Move { MOVE_NONE = 0, TEST_ATTACK = 2 };
+enum BattlerId { PLAYER };
+static struct { enum Move moves[4]; u8 pp[4]; } gBattleMons[1];
+static unsigned sShatteredMoveCounts[1];
+static enum Move sShatteredMoves[1][256];
+static int eligible = 1, blocked, builds;
+static bool32 ShatteredCanUseLibrary(enum BattlerId battler)
+{ (void)battler; return eligible; }
+static void ShatteredBuildMoveLibrary(enum BattlerId battler)
+{
+    builds++;
+    enum Move moves[6] = {1,4,5,6,TEST_ATTACK,3};
+    sShatteredMoveCounts[battler] = 6;
+    for(int i=0;i<6;i++) sShatteredMoves[battler][i] = moves[i];
+}
+static unsigned GetMovePP(enum Move move) { return move ? 10 : 0; }
+static unsigned CheckMoveLimitations(enum BattlerId battler, unsigned unused, unsigned check)
+{
+    (void)unused; (void)check;
+    unsigned result = 0;
+    for(int i=0;i<4;i++)
+        if(blocked || gBattleMons[battler].moves[i] != TEST_ATTACK) result |= 1u << i;
+    return result;
+}
+''' + helper + '''
+static void original(void) {
+    for(int i=0;i<4;i++) { gBattleMons[0].moves[i] = 10+i; gBattleMons[0].pp[i] = 20+i; }
+}
+static void checkOriginal(void) {
+    for(int i=0;i<4;i++) { assert(gBattleMons[0].moves[i] == (enum Move)(10+i)); assert(gBattleMons[0].pp[i] == 20+i); }
+}
+int main(void) {
+    original(); eligible = 0;
+    assert(!ShatteredTryUsableLibraryPage(PLAYER)); assert(builds == 0); checkOriginal();
+    eligible = 1; blocked = 1;
+    assert(!ShatteredTryUsableLibraryPage(PLAYER)); checkOriginal();
+    blocked = 0; assert(ShatteredTryUsableLibraryPage(PLAYER));
+    assert(gBattleMons[0].moves[0] == TEST_ATTACK);
+    assert(gBattleMons[0].moves[2] == MOVE_NONE);
+    assert(gBattleMons[0].pp[0] == 10);
     return 0;
 }''')

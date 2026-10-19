@@ -327,16 +327,136 @@ def modify_player_battle_pp(contents: str) -> str:
 
 
 def modify_player_pp_checks(contents: str) -> str:
-    """Prevent an occasional mid-turn drain from forcing the player's Struggle."""
+    """Apply unlimited PP only to locally controlled player battlers."""
+    contents = replace_once(
+        contents,
+        "u32 CheckMoveLimitations(enum BattlerId battler, u8 unusableMoves, u32 check)\n{",
+        """bool32 ShatteredHasUnlimitedPP(enum BattlerId battler)
+{
+    return IsOnPlayerSide(battler) && !BattlerHasAi(battler)
+        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
+                                | BATTLE_TYPE_RECORDED_LINK));
+}
+
+u32 CheckMoveLimitations(enum BattlerId battler, u8 unusableMoves, u32 check)
+{""",
+    )
     contents = replace_once(
         contents,
         "    if (gBattleMons[battler].pp[moveId] == 0)\n    {",
-        "    if (gBattleMons[battler].pp[moveId] == 0 && !IsOnPlayerSide(battler))\n    {",
+        "    if (gBattleMons[battler].pp[moveId] == 0 && !ShatteredHasUnlimitedPP(battler))\n    {",
+    )
+    contents = replace_once(
+        contents,
+        "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0)",
+        "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0 && !ShatteredHasUnlimitedPP(battler))",
+    )
+
+    return replace_once(
+        contents,
+        "    if (unusable == allMovesMask) // All moves are unusable.",
+        """    if (unusable == allMovesMask && ShatteredTryUsableLibraryPage(battler))
+        unusable = CheckMoveLimitations(battler, 0, MOVE_LIMITATIONS_ALL);
+
+    if (unusable == allMovesMask) // All moves are unusable.""",
+    )
+
+
+def modify_unlimited_pp_header(contents: str) -> str:
+    return replace_once(contents, "bool32 IsAllowedToUseBag(void);",
+                        "bool32 IsAllowedToUseBag(void);\nbool32 ShatteredHasUnlimitedPP(enum BattlerId battler);\nbool32 ShatteredTryUsableLibraryPage(enum BattlerId battler);")
+
+
+def modify_pp_resolution(contents: str) -> str:
+    """No ordinary/Pressure/Grudge PP depletion; retain move bookkeeping."""
+    contents = replace_once(
+        contents,
+        "    if (gBattleMons[cv->battlerAtk].pp[gCurrMovePos] == 0\n",
+        "    if (!ShatteredHasUnlimitedPP(cv->battlerAtk)\n     && gBattleMons[cv->battlerAtk].pp[gCurrMovePos] == 0\n",
+    )
+    contents = replace_once(
+        contents,
+        """    if (gBattleMons[cv->battlerAtk].pp[movePosition] > ppToDeduct)
+        gBattleMons[cv->battlerAtk].pp[movePosition] -= ppToDeduct;
+    else
+        gBattleMons[cv->battlerAtk].pp[movePosition] = 0;""",
+        """    if (!ShatteredHasUnlimitedPP(cv->battlerAtk))
+    {
+        if (gBattleMons[cv->battlerAtk].pp[movePosition] > ppToDeduct)
+            gBattleMons[cv->battlerAtk].pp[movePosition] -= ppToDeduct;
+        else
+            gBattleMons[cv->battlerAtk].pp[movePosition] = 0;
+    }""",
+    )
+    contents = replace_once(
+        contents,
+        "    if (MOVE_IS_PERMANENT(cv->battlerAtk, movePosition))",
+        "    if (!ShatteredHasUnlimitedPP(cv->battlerAtk) && MOVE_IS_PERMANENT(cv->battlerAtk, movePosition))",
     )
     return replace_once(
         contents,
-        "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0)",
-        "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0 && !IsOnPlayerSide(battler))",
+        "            if (gBattleMons[cv->battlerDef].volatiles.grudge\n",
+        "            if (!ShatteredHasUnlimitedPP(cv->battlerAtk)\n             && gBattleMons[cv->battlerDef].volatiles.grudge\n",
+    )
+
+
+def modify_pp_drain_and_sketch(contents: str) -> str:
+    contents = replace_once(
+        contents,
+        "    if (gLastMoves[gBattlerTarget] != MOVE_NONE\n",
+        "    if (!ShatteredHasUnlimitedPP(gBattlerTarget)\n     && gLastMoves[gBattlerTarget] != MOVE_NONE\n",
+    )
+    return replace_once(
+        contents,
+        """            movePPData.ppBonuses = gBattleMons[gBattlerAttacker].ppBonuses;
+
+            BtlController_EmitSetMonData(gBattlerAttacker, B_COMM_TO_CONTROLLER, REQUEST_MOVES_PP_BATTLE,""",
+        """            movePPData.ppBonuses = gBattleMons[gBattlerAttacker].ppBonuses;
+            if (ShatteredHasUnlimitedPP(gBattlerAttacker))
+            {
+                // Sketch must not persist unrelated moves from a virtual page.
+                struct Pokemon *mon = GetBattlerMon(gBattlerAttacker);
+                s32 savedSketchSlot = -1;
+                for (i = 0; i < MAX_MON_MOVES; i++)
+                {
+                    movePPData.moves[i] = GetMonData(mon, MON_DATA_MOVE1 + i);
+                    movePPData.pp[i] = GetMonData(mon, MON_DATA_PP1 + i);
+                    if (movePPData.moves[i] == MOVE_SKETCH)
+                        savedSketchSlot = i;
+                }
+                movePPData.ppBonuses = GetMonData(mon, MON_DATA_PP_BONUSES);
+                // A virtual Sketch is battle-only unless a saved Sketch exists.
+                if (savedSketchSlot >= 0)
+                {
+                    movePPData.moves[savedSketchSlot] = gLastPrintedMoves[gBattlerTarget];
+                    movePPData.pp[savedSketchSlot] = GetMovePP(gLastPrintedMoves[gBattlerTarget]);
+                    movePPData.ppBonuses &= ~(3 << (savedSketchSlot * 2));
+                }
+            }
+
+            BtlController_EmitSetMonData(gBattlerAttacker, B_COMM_TO_CONTROLLER, REQUEST_MOVES_PP_BATTLE,""",
+    )
+
+
+def modify_rift_reward_retry(contents: str) -> str:
+    contents = replace_once(
+        contents,
+        "\tsetflag FLAG_UNUSED_0x90F\n\tmsgbox RiftHollow_Text_WardenReward, MSGBOX_DEFAULT",
+        "\tsetflag FLAG_UNUSED_0x90F\n\nRiftHollow_EventScript_ClaimReward::\n\tmsgbox RiftHollow_Text_WardenReward, MSGBOX_DEFAULT",
+    )
+    return replace_once(
+        contents,
+        """RiftHollow_EventScript_WardenAfterVictory::
+\tmsgbox RiftHollow_Text_WardenAfterVictory, MSGBOX_NPC
+\tend""",
+        """RiftHollow_EventScript_WardenAfterVictory::
+\tlock
+\tfaceplayer
+\tcheckitem ITEM_SHINY_CHARM
+\tgoto_if_eq VAR_RESULT, FALSE, RiftHollow_EventScript_ClaimReward
+\tmsgbox RiftHollow_Text_WardenAfterVictory, MSGBOX_DEFAULT
+\trelease
+\tend""",
     )
 
 
@@ -390,6 +510,8 @@ def modify_all_move_pages(contents: str) -> str:
     Compatible TM/egg moves are unlocked by species rather than history.
     Forgotten event-only moves are not archived; persistent history is pending.
     """
+    contents = replace_once(contents, '#include "battle.h"\n',
+                            '#include "battle.h"\n#include "battle_util.h"\n')
     contents = replace_once(
         contents,
         "void HandleInputChooseMove(enum BattlerId battler)\n{",
@@ -503,6 +625,41 @@ static void ShatteredBuildMoveLibrary(enum BattlerId battler)
         if (bond >= 230)
             ShatteredRememberMove(battler, MOVE_FLOATY_FALL);
     }
+}
+
+// Called before the engine commits to Struggle for a blocked visible page.
+bool32 ShatteredTryUsableLibraryPage(enum BattlerId battler)
+{
+    if (!ShatteredCanUseLibrary(battler))
+        return FALSE;
+    enum Move originalMoves[MAX_MON_MOVES];
+    u8 originalPP[MAX_MON_MOVES];
+    for (u32 slot = 0; slot < MAX_MON_MOVES; slot++)
+    {
+        originalMoves[slot] = gBattleMons[battler].moves[slot];
+        originalPP[slot] = gBattleMons[battler].pp[slot];
+    }
+    ShatteredBuildMoveLibrary(battler);
+    for (u32 page = 0; page * MAX_MON_MOVES < sShatteredMoveCounts[battler]; page++)
+    {
+        for (u32 slot = 0; slot < MAX_MON_MOVES; slot++)
+        {
+            u32 index = page * MAX_MON_MOVES + slot;
+            enum Move move = index < sShatteredMoveCounts[battler]
+                           ? sShatteredMoves[battler][index] : MOVE_NONE;
+            gBattleMons[battler].moves[slot] = move;
+            gBattleMons[battler].pp[slot] = GetMovePP(move);
+        }
+        if (CheckMoveLimitations(battler, 0, MOVE_LIMITATIONS_ALL) != ((1u << MAX_MON_MOVES) - 1))
+            return TRUE;
+    }
+    // All library choices really are blocked. Keep the original battle state.
+    for (u32 slot = 0; slot < MAX_MON_MOVES; slot++)
+    {
+        gBattleMons[battler].moves[slot] = originalMoves[slot];
+        gBattleMons[battler].pp[slot] = originalPP[slot];
+    }
+    return FALSE;
 }
 
 static void ShatteredToggleMovePage(enum BattlerId battler)
@@ -1213,7 +1370,10 @@ def apply(engine: Path) -> None:
         "src/money.c": modify_unlimited_money,
         "src/item.c": modify_infinite_candy,
         "src/item_menu.c": modify_bag_candy_supply,
-        "src/battle_script_commands.c": modify_fast_experience,
+        "src/battle_script_commands.c": lambda c: modify_pp_drain_and_sketch(modify_fast_experience(c)),
+        "src/battle_move_resolution.c": modify_pp_resolution,
+        "include/battle_util.h": modify_unlimited_pp_header,
+        "data/maps/RiftHollow/scripts.inc": modify_rift_reward_retry,
         "src/trainer_util.c": lambda c: modify_hard_trainer_ivs(modify_hard_trainer_levels(c)),
         "src/battle_ai_main.c": modify_hard_trainer_ai,
         "data/text/birch_speech.inc": modify_rift_intro,

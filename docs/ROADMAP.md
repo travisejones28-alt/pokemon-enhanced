@@ -57,6 +57,9 @@ The full **pokeemerald-expansion 1.17.1** source is committed under `engine/`, a
 - [x] Preserve runtime moves during Transform, Mimic and Encore; suspend paging.
 - [x] Supply common evolution stones and Linking Cords without duplicate entries.
 - [x] Add vendored-source integration and host C regression tests.
+- [x] Protect Sketch saved-move writes and preserve opponent/replay PP rules.
+- [x] Search other usable library pages before forcing Struggle.
+- [x] Allow retrying a full-Bag Rift reward without resetting boss victory.
 - [ ] Persistent per-Pokémon learned-move archive and migration design.
 - [ ] Emulator tests for every slot-sensitive battle mechanic and doubles.
 - [ ] Representative old/new save round-trip tests in Delta.

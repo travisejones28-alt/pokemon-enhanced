@@ -138,10 +138,12 @@ class TestOverrides(unittest.TestCase):
         original = (
             "    if (gBattleMons[battler].pp[moveId] == 0)\n"
             "    {\n"
-            "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0)"
+            "else if (check & MOVE_LIMITATION_PP && gBattleMons[battler].pp[i] == 0)\n"
+            "u32 CheckMoveLimitations(enum BattlerId battler, u8 unusableMoves, u32 check)\n{\n"
+            "    if (unusable == allMovesMask) // All moves are unusable."
         )
         result = modify_player_pp_checks(original)
-        self.assertIn("&& !IsOnPlayerSide(battler)", result)
+        self.assertIn("!ShatteredHasUnlimitedPP(battler)", result)
         self.assertEqual(result, modify_player_pp_checks(result))
 
     def test_no_pp_counter_in_battle_menu(self):
@@ -174,7 +176,7 @@ static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
 
 
     def test_all_pokemon_move_library_pages(self):
-        original = '''#include "data.h"
+        original = '''#include "battle.h"
 void HandleInputChooseMove(enum BattlerId battler)
 {
     if (JOY_NEW(A_BUTTON) && !gBattleStruct->descriptionSubmenu)

@@ -3,7 +3,7 @@
 ## Baseline and verified scope
 
 Audited main at `0c15a7e15d26a902862d1edc23e6076d9adcde19`.
-Build #27 and build #52 succeeded. Build #46 failed during compilation;
+Build #27, #52 and #55 succeeded. Build #46 failed during compilation;
 intervening fixes registered Rift Hollow scripts and preserved engine trainer IDs.
 There are no representative Delta `.sav` files in this checkout and no installed
 GBA emulator or ARM toolchain in this session. GBA compilation runs in GitHub Actions.
@@ -25,6 +25,16 @@ A passing build is not proof that a playthrough, battle mechanic or save migrati
   upstream slot-based effects intact; transformed Pokémon use their copied moves.
 - Link/replay and AI-controlled partners are excluded from library browsing.
 - Changing pages recalculates Z-Move compatibility and refreshes move UI.
+- Before forcing Struggle on a blocked visible page, the engine searches the
+  remaining library for a usable page. A failed search restores battle slots.
+- Unlimited PP also bypasses the execution-time zero-PP check and ordinary,
+  Pressure, Spite, Depletion and Grudge drain paths for local player battlers.
+  Enemy, AI-partner and link/replay rules remain upstream.
+- Sketch writes a learned move only over an existing saved Sketch slot; unrelated
+  virtual-page moves are never persisted by Sketch. A virtual Sketch with no
+  saved Sketch slot is battle-only until persistent history is implemented.
+- The Rift reward can be claimed on a later interaction if the Bag was full;
+  the boss defeat flag stays set, and an owned Shiny Charm is not duplicated.
 - Field Bag supplies include Linking Cords and common evolution stones, adding
   an item only when absent. If a pocket is full, free space and reopen the Bag.
 - Advanced enemy AI also applies to ordinary zero-flag trainer definitions;
@@ -42,7 +52,7 @@ move-identity checks; targeting uses the upstream single/double battle controlle
 **This is not complete unlimited move history.** There is no persistent archive
 of forgotten event-only attacks, acquired moves from another species, or which
 machines/tutors were actually learned. Machine and egg compatibility currently
-unlocks attacks without acquiring them. Some all-moves-unusable checks, Choice
+unlocks attacks without acquiring them. Choice
 locks, multi-turn effects, Sketch, Transform interactions and double battle
 cancellations still need emulator regression tests. Do not call these verified.
 
@@ -63,7 +73,8 @@ verified across every species, interior, transition or movement mode.
 
 The regression suite includes actual vendored-source patch application, byte-for-
 byte second-pass comparison, no partial writes on invalid input, and host-compiled
-C tests of all packed IV fields and battle-library eligibility. These host tests
+C tests of all packed IV fields, battle-library/PP eligibility, Sketch writes,
+and usable-page search/restoration. These host tests
 exercise generated C logic; they do not emulate battles.
 
 Actions also compiles the GBA ROM, validates title/game code/header checksum and

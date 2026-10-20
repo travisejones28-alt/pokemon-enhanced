@@ -1328,7 +1328,7 @@
   "TRAINER_BRENDAN_ROUTE_119_MUDKIP": [
     {
       "species": "Staraptor",
-      "level": 28,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -1346,7 +1346,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -1364,7 +1364,7 @@
     },
     {
       "species": "Magneton",
-      "level": 29,
+      "level": 34,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -1382,7 +1382,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -1400,7 +1400,7 @@
     },
     {
       "species": "Grovyle",
-      "level": 30,
+      "level": 35,
       "item": "Sitrus Berry",
       "ability": "Overgrow",
       "nature": "Timid",
@@ -1420,7 +1420,7 @@
   "TRAINER_BRENDAN_LILYCOVE_MUDKIP": [
     {
       "species": "Staraptor",
-      "level": 33,
+      "level": 38,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -1438,7 +1438,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -1456,7 +1456,7 @@
     },
     {
       "species": "Magneton",
-      "level": 34,
+      "level": 39,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -1474,7 +1474,7 @@
     },
     {
       "species": "Breloom",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Technician",
       "nature": "Adamant",
@@ -1492,7 +1492,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -1510,7 +1510,7 @@
     },
     {
       "species": "Sceptile",
-      "level": 35,
+      "level": 40,
       "item": "Sitrus Berry",
       "ability": "Overgrow",
       "nature": "Timid",
@@ -1604,7 +1604,7 @@
   "TRAINER_BRENDAN_ROUTE_119_TREECKO": [
     {
       "species": "Staraptor",
-      "level": 28,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -1622,7 +1622,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -1640,7 +1640,7 @@
     },
     {
       "species": "Magneton",
-      "level": 29,
+      "level": 34,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -1658,7 +1658,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -1676,7 +1676,7 @@
     },
     {
       "species": "Combusken",
-      "level": 30,
+      "level": 35,
       "item": "Sitrus Berry",
       "ability": "Speed Boost",
       "nature": "Jolly",
@@ -1696,7 +1696,7 @@
   "TRAINER_BRENDAN_LILYCOVE_TREECKO": [
     {
       "species": "Staraptor",
-      "level": 33,
+      "level": 38,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -1714,7 +1714,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -1732,7 +1732,7 @@
     },
     {
       "species": "Magneton",
-      "level": 34,
+      "level": 39,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -1750,7 +1750,7 @@
     },
     {
       "species": "Breloom",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Technician",
       "nature": "Adamant",
@@ -1768,7 +1768,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -1786,7 +1786,7 @@
     },
     {
       "species": "Blaziken",
-      "level": 35,
+      "level": 40,
       "item": "Sitrus Berry",
       "ability": "Speed Boost",
       "nature": "Jolly",
@@ -1880,7 +1880,7 @@
   "TRAINER_BRENDAN_ROUTE_119_TORCHIC": [
     {
       "species": "Staraptor",
-      "level": 28,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -1898,7 +1898,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -1916,7 +1916,7 @@
     },
     {
       "species": "Magneton",
-      "level": 29,
+      "level": 34,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -1934,7 +1934,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -1952,7 +1952,7 @@
     },
     {
       "species": "Marshtomp",
-      "level": 30,
+      "level": 35,
       "item": "Sitrus Berry",
       "ability": "Torrent",
       "nature": "Adamant",
@@ -1972,7 +1972,7 @@
   "TRAINER_BRENDAN_LILYCOVE_TORCHIC": [
     {
       "species": "Staraptor",
-      "level": 33,
+      "level": 38,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -1990,7 +1990,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -2008,7 +2008,7 @@
     },
     {
       "species": "Magneton",
-      "level": 34,
+      "level": 39,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -2026,7 +2026,7 @@
     },
     {
       "species": "Breloom",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Technician",
       "nature": "Adamant",
@@ -2044,7 +2044,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -2062,7 +2062,7 @@
     },
     {
       "species": "Swampert",
-      "level": 35,
+      "level": 40,
       "item": "Sitrus Berry",
       "ability": "Torrent",
       "nature": "Adamant",
@@ -2156,7 +2156,7 @@
   "TRAINER_MAY_ROUTE_119_MUDKIP": [
     {
       "species": "Staraptor",
-      "level": 28,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -2174,7 +2174,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -2192,7 +2192,7 @@
     },
     {
       "species": "Magneton",
-      "level": 29,
+      "level": 34,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -2210,7 +2210,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -2228,7 +2228,7 @@
     },
     {
       "species": "Grovyle",
-      "level": 30,
+      "level": 35,
       "item": "Sitrus Berry",
       "ability": "Overgrow",
       "nature": "Timid",
@@ -2248,7 +2248,7 @@
   "TRAINER_MAY_LILYCOVE_MUDKIP": [
     {
       "species": "Staraptor",
-      "level": 33,
+      "level": 38,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -2266,7 +2266,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -2284,7 +2284,7 @@
     },
     {
       "species": "Magneton",
-      "level": 34,
+      "level": 39,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -2302,7 +2302,7 @@
     },
     {
       "species": "Breloom",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Technician",
       "nature": "Adamant",
@@ -2320,7 +2320,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -2338,7 +2338,7 @@
     },
     {
       "species": "Sceptile",
-      "level": 35,
+      "level": 40,
       "item": "Sitrus Berry",
       "ability": "Overgrow",
       "nature": "Timid",
@@ -2432,7 +2432,7 @@
   "TRAINER_MAY_ROUTE_119_TREECKO": [
     {
       "species": "Staraptor",
-      "level": 28,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -2450,7 +2450,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -2468,7 +2468,7 @@
     },
     {
       "species": "Magneton",
-      "level": 29,
+      "level": 34,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -2486,7 +2486,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -2504,7 +2504,7 @@
     },
     {
       "species": "Combusken",
-      "level": 30,
+      "level": 35,
       "item": "Sitrus Berry",
       "ability": "Speed Boost",
       "nature": "Jolly",
@@ -2524,7 +2524,7 @@
   "TRAINER_MAY_LILYCOVE_TREECKO": [
     {
       "species": "Staraptor",
-      "level": 33,
+      "level": 38,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -2542,7 +2542,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -2560,7 +2560,7 @@
     },
     {
       "species": "Magneton",
-      "level": 34,
+      "level": 39,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -2578,7 +2578,7 @@
     },
     {
       "species": "Breloom",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Technician",
       "nature": "Adamant",
@@ -2596,7 +2596,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -2614,7 +2614,7 @@
     },
     {
       "species": "Blaziken",
-      "level": 35,
+      "level": 40,
       "item": "Sitrus Berry",
       "ability": "Speed Boost",
       "nature": "Jolly",
@@ -2708,7 +2708,7 @@
   "TRAINER_MAY_ROUTE_119_TORCHIC": [
     {
       "species": "Staraptor",
-      "level": 28,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -2726,7 +2726,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -2744,7 +2744,7 @@
     },
     {
       "species": "Magneton",
-      "level": 29,
+      "level": 34,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -2762,7 +2762,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 29,
+      "level": 34,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -2780,7 +2780,7 @@
     },
     {
       "species": "Marshtomp",
-      "level": 30,
+      "level": 35,
       "item": "Sitrus Berry",
       "ability": "Torrent",
       "nature": "Adamant",
@@ -2800,7 +2800,7 @@
   "TRAINER_MAY_LILYCOVE_TORCHIC": [
     {
       "species": "Staraptor",
-      "level": 33,
+      "level": 38,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Jolly",
@@ -2818,7 +2818,7 @@
     },
     {
       "species": "Gardevoir",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Trace",
       "nature": "Timid",
@@ -2836,7 +2836,7 @@
     },
     {
       "species": "Magneton",
-      "level": 34,
+      "level": 39,
       "item": "Eviolite",
       "ability": "Sturdy",
       "nature": "Modest",
@@ -2854,7 +2854,7 @@
     },
     {
       "species": "Breloom",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Technician",
       "nature": "Adamant",
@@ -2872,7 +2872,7 @@
     },
     {
       "species": "Gyarados",
-      "level": 34,
+      "level": 39,
       "item": "Sitrus Berry",
       "ability": "Intimidate",
       "nature": "Adamant",
@@ -2890,7 +2890,7 @@
     },
     {
       "species": "Swampert",
-      "level": 35,
+      "level": 40,
       "item": "Sitrus Berry",
       "ability": "Torrent",
       "nature": "Adamant",

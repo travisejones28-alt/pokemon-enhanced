@@ -61,4 +61,9 @@ Automatic learning no longer requires forgetting when the four saved slots are
 full; library attacks satisfy move-based evolution checks. Build-time gameplay
 profiles are implemented and tested, and finite-PP displays are restored. See
 [settings and limits](GAMEPLAY_SETTINGS.md) and [current validation](BUILD_VALIDATION.md).
-Enemy move expansion and an in-game configuration menu remain unfinished.
+The in-game Shattered Rules options and a bounded enemy move pool are now
+implemented in source (see GAMEPLAY_SETTINGS.md). Host C tests cover the enemy
+pool's state transitions and restrictions, and the GitHub workflow still gates
+ROM publication. **Full Delta acceptance** of the menu, save round-trip,
+Choice/Encore/Disable interactions and enemy move variety remains unfinished.
+Double-battle enemy virtual moves are intentionally excluded.

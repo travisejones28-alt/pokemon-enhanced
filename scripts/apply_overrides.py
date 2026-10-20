@@ -1508,6 +1508,30 @@ def apply(engine: Path) -> None:
         path = engine / relative_path
         updates[path] = patcher(path.read_text(encoding="utf-8"))
 
+    # Runtime source files use the saved Shattered Rules rather than the
+    # build defaults. Insert the header after normal patching so repeat
+    # application remains byte-idempotent, including mixed earlier patches.
+    runtime_sources = (
+        "src/trainer_util.c",
+        "src/battle_ai_main.c",
+        "src/battle_util.c",
+        "src/battle_controller_player.c",
+        "src/battle_script_commands.c",
+        "src/money.c",
+        "src/item.c",
+        "src/item_menu.c",
+    )
+    for relative_path in runtime_sources:
+        path = engine / relative_path
+        content = updates[path]
+        runtime_include = '#include "shattered_runtime.h"\\n'
+        if runtime_include not in content:
+            anchor = '#include "global.h"\\n'
+            if content.count(anchor) != 1:
+                raise ValueError(f"Runtime source has unexpected include anchor: {relative_path}")
+            content = content.replace(anchor, anchor + runtime_include, 1)
+        updates[path] = content
+
     gym_party_path = engine / "src/data/trainers.party"
     updates[gym_party_path] = modify_boss_teams(modify_first_gym_party(gym_party_path.read_text(encoding="utf-8")))
     gym_script_path = engine / "data/maps/RustboroCity_Gym/scripts.inc"

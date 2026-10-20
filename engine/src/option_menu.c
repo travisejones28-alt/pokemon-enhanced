@@ -1,5 +1,6 @@
 #include "global.h"
 #include "option_menu.h"
+#include "shattered_runtime.h"
 #include "bg.h"
 #include "gpu_regs.h"
 #include "international_string_util.h"
@@ -69,10 +70,13 @@ static void ButtonMode_DrawChoices(u8 selection);
 static void DrawHeaderText(void);
 static void DrawOptionMenuTexts(void);
 static void DrawBgWindowFrames(void);
+static void ShatteredRedrawOptions(u8 taskId);
 
 EWRAM_DATA static bool8 sArrowPressed = FALSE;
+EWRAM_DATA static bool8 sShatteredRulesPage = FALSE;
 
-static const u8 gText_Option[]             = _("OPTION");
+static const u8 gText_Option[]             = _("OPTION - SELECT: RULES");
+static const u8 gText_ShatteredRules[]     = _("SHATTERED - SELECT: BACK");
 static const u8 gText_TextSpeedSlow[]      = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}SLOW");
 static const u8 gText_TextSpeedMid[]       = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}MID");
 static const u8 gText_TextSpeedFast[]      = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}FAST");
@@ -101,6 +105,35 @@ static const u8 *const sOptionMenuItemsNames[MENUITEM_COUNT] =
     [MENUITEM_BUTTONMODE]  = COMPOUND_STRING("BUTTON MODE"),
     [MENUITEM_FRAMETYPE]   = COMPOUND_STRING("FRAME"),
     [MENUITEM_CANCEL]      = COMPOUND_STRING("CANCEL"),
+};
+
+// Second page reuses the same six option rows and CANCEL line.
+// No new sprites, tiles, windows, persistent structs, or menu handlers.
+static const u8 *const sShatteredRuleNames[MENUITEM_COUNT] =
+{
+    COMPOUND_STRING("DIFFICULTY"),
+    COMPOUND_STRING("LEVEL SCALING"),
+    COMPOUND_STRING("ENEMY MOVES"),
+    COMPOUND_STRING("EXP RATE"),
+    COMPOUND_STRING("MAX MONEY"),
+    COMPOUND_STRING("FREE SUPPLIES"),
+    COMPOUND_STRING("CANCEL"),
+};
+static const u8 *const sShatteredDifficultyNames[] =
+{
+    COMPOUND_STRING("NORMAL"), COMPOUND_STRING("HARD"), COMPOUND_STRING("EXTREME")
+};
+static const u8 *const sShatteredMoveNames[] =
+{
+    COMPOUND_STRING("CLASSIC"), COMPOUND_STRING("NO PP"), COMPOUND_STRING("PAGES")
+};
+static const u8 *const sShatteredExpNames[] =
+{
+    COMPOUND_STRING("X1"), COMPOUND_STRING("X2"), COMPOUND_STRING("X3"), COMPOUND_STRING("X4")
+};
+static const u8 *const sShatteredBoolNames[] =
+{
+    COMPOUND_STRING("OFF"), COMPOUND_STRING("ON")
 };
 
 static const struct WindowTemplate sOptionMenuWinTemplates[] =
@@ -204,6 +237,7 @@ void CB2_InitOptionMenu(void)
         gMain.state++;
         break;
     case 2:
+        sShatteredRulesPage = FALSE;
         ResetPaletteFade();
         ScanlineEffect_Stop();
         ResetTasks();
@@ -279,6 +313,12 @@ static void Task_OptionMenuFadeIn(u8 taskId)
 
 static void Task_OptionMenuProcessInput(u8 taskId)
 {
+    if (JOY_NEW(SELECT_BUTTON))
+    {
+        sShatteredRulesPage = !sShatteredRulesPage;
+        ShatteredRedrawOptions(taskId);
+        return;
+    }
     if (JOY_NEW(A_BUTTON))
     {
         if (gTasks[taskId].tMenuSelection == MENUITEM_CANCEL)
@@ -303,6 +343,15 @@ static void Task_OptionMenuProcessInput(u8 taskId)
         else
             gTasks[taskId].tMenuSelection = 0;
         HighlightOptionMenuItem(gTasks[taskId].tMenuSelection);
+    }
+    else if (sShatteredRulesPage)
+    {
+        if (gTasks[taskId].tMenuSelection != MENUITEM_CANCEL
+            && JOY_NEW(DPAD_LEFT | DPAD_RIGHT))
+        {
+            ShatteredRulesCycle(gTasks[taskId].tMenuSelection, JOY_NEW(DPAD_RIGHT) != 0);
+            ShatteredRedrawOptions(taskId);
+        }
     }
     else
     {
@@ -634,7 +683,9 @@ static void ButtonMode_DrawChoices(u8 selection)
 static void DrawHeaderText(void)
 {
     FillWindowPixelBuffer(WIN_HEADER, PIXEL_FILL(1));
-    AddTextPrinterParameterized(WIN_HEADER, FONT_NORMAL, gText_Option, 8, 1, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized(WIN_HEADER, FONT_NORMAL,
+                                sShatteredRulesPage ? gText_ShatteredRules : gText_Option,
+                                8, 1, TEXT_SKIP_DRAW, NULL);
     CopyWindowToVram(WIN_HEADER, COPYWIN_FULL);
 }
 
@@ -644,7 +695,43 @@ static void DrawOptionMenuTexts(void)
 
     FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
     for (i = 0; i < MENUITEM_COUNT; i++)
-        AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, sOptionMenuItemsNames[i], 8, (i * 16) + 1, TEXT_SKIP_DRAW, NULL);
+        AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL,
+                                    sShatteredRulesPage ? sShatteredRuleNames[i] : sOptionMenuItemsNames[i],
+                                    8, (i * 16) + 1, TEXT_SKIP_DRAW, NULL);
+    CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
+}
+
+static void ShatteredDrawRuleValues(void)
+{
+    const u8 *values[6];
+    values[0] = sShatteredDifficultyNames[ShatteredRuntimeDifficulty()];
+    values[1] = sShatteredBoolNames[ShatteredRuntimeScaling()];
+    values[2] = sShatteredMoveNames[ShatteredRuntimeMoveMode()];
+    values[3] = sShatteredExpNames[ShatteredRuntimeExpMultiplier() - 1];
+    values[4] = sShatteredBoolNames[ShatteredRuntimeUnlimitedMoney()];
+    values[5] = sShatteredBoolNames[ShatteredRuntimeFreeSupplies()];
+    for (u32 i = 0; i < ARRAY_COUNT(values); i++)
+        AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, values[i], 132,
+                                    (i * 16) + 1, TEXT_SKIP_DRAW, NULL);
+}
+
+static void ShatteredRedrawOptions(u8 taskId)
+{
+    DrawHeaderText();
+    DrawOptionMenuTexts();
+    if (sShatteredRulesPage)
+        ShatteredDrawRuleValues();
+    else
+    {
+        TextSpeed_DrawChoices(gTasks[taskId].tTextSpeed);
+        BattleScene_DrawChoices(gTasks[taskId].tBattleSceneOff);
+        BattleStyle_DrawChoices(gTasks[taskId].tBattleStyle);
+        Sound_DrawChoices(gTasks[taskId].tSound);
+        ButtonMode_DrawChoices(gTasks[taskId].tButtonMode);
+        FrameType_DrawChoices(gTasks[taskId].tWindowFrameType);
+    }
+    sArrowPressed = FALSE;
+    HighlightOptionMenuItem(gTasks[taskId].tMenuSelection);
     CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
 }
 

@@ -15,11 +15,11 @@ Read the [chapter walkthrough](docs/CHAPTER_ONE.md), [persistent move-library de
 - Kadabra, Machoke, Haunter and Graveler evolve by level, without trading. Linking Cord alternatives remain available.
 - Reusable TMs, modern Exp. Share key item, and evolution held items usable from the bag.
 - Unique GBA header title/game code for identification in emulators.
-- GitHub Actions has **successfully compiled and validated** the 32 MiB ROM in [build #59](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39326577859), including host tests, patch idempotency, targeted mGBA regressions, header checks and a SHA-256 manifest. Actual Delta save testing remains.
+- GitHub Actions has **successfully compiled and validated** the 32 MiB ROM in [build #65](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39355319252), including host tests, patch idempotency, targeted mGBA regressions, header checks and a SHA-256 manifest. Actual Delta save testing remains.
 
 ## Current main-branch gameplay changes
 
-**Published in build #59. Full campaign, visual and real-save acceptance checks remain listed in the implementation audit.**
+**Published in build #65. Full campaign, visual and real-save acceptance checks remain listed in the implementation audit.**
 
 - Pikachu starter with strong signature attacks, plus a friendship-based bond move progression.
 - Multi-page battle move libraries for every player Pokémon: current/saved attacks, level-appropriate current/pre-evolution attacks, compatible machine, tutor and egg moves. Ordinary compatible attacks are reconstructed; exceptional event/Sketch attacks have a persistent save-tail journal. SELECT advances and R goes back. See the documented 152-entry exceptional-attack limit.
@@ -27,11 +27,13 @@ Read the [chapter walkthrough](docs/CHAPTER_ONE.md), [persistent move-library de
 - 4× battle EXP without changing experience tables or existing stored levels.
 - Hard-mode trainers: higher levels, adaptive scaling to your strongest Pokémon, stronger IVs, smarter AI, hidden ability possibilities, no Bag items, no escaping.
 - Pokémon following with Pikachu Bond interaction messages, persistent Bond unlocks, better item descriptions and wild-battle controls.
-- Explicit competitive sets for all eight first Gym fights, Elite Four, Champion and Vesper: abilities, natures, EVs, coverage and held items.
+- Explicit competitive sets for 36 encounters: first Gym fights, Elite Four, Champion, Vesper, mid/late rivals, Maxie, Archie and Victory Road Wally. Includes abilities, natures, EVs, coverage, held items and weather strategies.
 - All trade-evolution targets have a local item/level alternative in the current species sources; Karrablast and Shelmet now accept a Linking Cord.
 - Opening story teaser featuring strange Rifts and Team Eclipse. A three-anomaly quest, Lumen hub with lodge/workshop/Gym, Riftway rival and scout, Rift Hollow boss, Astra badge and Stormscar legendary quest are implemented. Chapter playthrough testing and the full later campaign remain unfinished.
 
 **Save protection:** See the [Delta save recovery and safe update checklist](docs/SAVE_COMPATIBILITY.md). Never delete the original game tile until you've imported and verified your previous save in the new version.
+
+Automatic level/evolution learning now keeps full saved slots without repeated forget prompts; move-based evolution checks recognize library attacks. Functional **build-time** difficulty and convenience options are documented in [Gameplay Settings](docs/GAMEPLAY_SETTINGS.md). Enemy expanded moves and an in-game settings menu remain unfinished.
 
 ## Latest iPhone / Delta game download
 
@@ -45,7 +47,7 @@ Gameplay source changes on `main` run automated tests and build the `.gba` game.
 ## Build on GitHub (no PC necessary)
 
 1. Go to **Actions** > **Build Shattered Realms**.
-2. Select **Run workflow** (or open the [successful build #59](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39326577859)).
+2. Select **Run workflow** (or open the [successful build #65](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39355319252)).
 3. After the build succeeds, open the [latest release](https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest) and download **ShatteredRealms.gba** (no ZIP extraction needed).
 4. Import `ShatteredRealms.gba` with **Delta → + → Files** on iPhone.
 

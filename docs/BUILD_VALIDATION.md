@@ -1,53 +1,73 @@
-# Build #59 validation — 19 October 2026
+# Build #65 validation — 19 October 2026 (America/Chicago)
 
-Game source commit: `669bc9a6696dfb524fd0bb6874074651d66e8bff`.
+Game source commit: `1ffb11c7bef4776b5e55f40b9ea0689b74379f1b`.
 
-- [GitHub Actions run](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39326577859)
-- [Published release](https://github.com/travisejones28-alt/pokemon-enhanced/releases/tag/alpha0.1-build-59)
+- [Successful GitHub Actions run](https://github.com/travisejones28-alt/pokemon-enhanced/actions/runs/39355319252)
+- [Published release](https://github.com/travisejones28-alt/pokemon-enhanced/releases/tag/alpha0.1-build-65)
 - [Permanent ROM download](https://github.com/travisejones28-alt/pokemon-enhanced/releases/latest/download/ShatteredRealms.gba)
-- ROM size: 33554432 bytes (32 MiB).
-- Published ROM SHA-256: `643e57af8c83f99b5c635d856e2bbdfd378aa7ee015c36949db5d2fdbe5a10c5`.
-- Previous recovery ROM: [build #57](https://github.com/travisejones28-alt/pokemon-enhanced/releases/tag/alpha0.1-build-57).
+- ROM: 33,554,432 bytes (32 MiB), title `SHATTERED`, game code `BSRE`.
+- Published SHA-256: `f9a1bfacc5b8eca29bde2b0426e39223f717aa0588d3e16c052d9cfc88b33dcc`.
 
-## Results
+## Changes in this development pass
+
+- Functional build-time Normal/Hard/Extreme profiles and switches for adaptive
+  levels, global AI enhancements, unlimited PP, player move pages, battle EXP,
+  unlimited wallet and free supplies. Preferred defaults retained.
+- Finite-PP and replay/link battle menus display current/max PP again.
+- Automatic level/evolution move learning retains full saved slots without
+  repeatedly opening forget dialogs. Reconstructed moves remain available in
+  the expanded library. Manual TM/relearning editors still edit four saved slots.
+- Move-based evolution checks recognize attacks available in the move library.
+- Competitive teams expanded from 14 to 36 encounters, including all mid/late
+  Brendan/May starter branches, two Maxie fights, Archie and Victory Road Wally.
+- Include transformations repaired to remain byte-idempotent when composed.
+
+## Verification performed for this build
+
+All following checks ran in GitHub Actions, not locally in this Windows session:
 
 | Check | Result |
 | --- | --- |
-| Python regression suite | 59 passed locally from the clean committed source; Actions gate passed |
-| Full staged override application | Passed locally and in Actions |
-| Second complete application makes no changes | Passed locally and in Actions |
-| GBA compilation | Passed locally and in Actions |
-| Targeted mGBA regressions | 17 passed locally; Actions gate passed |
-| ROM title/game code | SHATTERED / BSRE |
-| ROM size/header checksum/SHA-256 manifest | Passed |
-| Release publication and expected ROM asset | Confirmed by release metadata |
-| Full chapter/boss balance playthrough | Not performed |
-| Follower map-transition visual checks | Not performed |
-| Actual exported Delta save compatibility | Not performed; no player save supplied |
+| Python regression suite and host C policy execution | Passed |
+| Full staged override application and identical second application | Passed |
+| Clean GBA ROM compilation | Passed |
+| Targeted mGBA emulator regression suite | Passed |
+| GBA title/game code, size, header checksum and SHA-256 packaging | Passed |
+| Release publication and expected ROM asset | Confirmed |
 
-The GBA tests cover exceptional move retention through replacement, evolution
-and PC storage; identity separation; journal capacity protection; friendship
-unlock persistence; trade alternatives; single/double battle PP; Spite;
-Transform; Encore; switching; blocked-page library recovery; and save footprint.
-A generated old-format flash save is loaded, migrated, saved and reloaded while
-checking party, Bag, position and the existing dexNavChain field. This is not a
-real historical Delta save.
+New host C cases exercise Normal/Hard/Extreme with scaling on/off, supported
+finite/unlimited PP and page combinations, invalid profile rejection and level
+caps/egg exclusion. New mGBA tests exercise automatic learning without saved-slot
+replacement and Tangela evolution using Ancient Power from the library.
+Existing targeted tests include battle PP rules, move history, generated
+old-save migration, party switching, blocked pages and persistent structure sizes.
 
-The upstream battle test harness uses replay controllers. Tests explicitly opt
-into local-player policy through a TESTING-only adapter; a separate replay case
-confirms ordinary PP depletion. The adapter is excluded from the production ROM.
+## Save and identity findings
 
-ARM ABI probes comparing old/new persistent structures confirmed unchanged
-SaveBlock1 (15568), SaveBlock2 (3884), PC storage (34144), Pokemon (100) and
-BoxPokemon (80) byte sizes, plus sampled offsets. SaveBlock3 grows from 4 to
-1540 bytes inside its existing 1624-byte reserved capacity. Existing species,
-map/layout/region and trainer-flag indices are preserved.
+This update does not change persistent structures, species/map identifiers or
+growth tables. Existing generated old-save migration and footprint tests pass.
+A real exported Delta save was not supplied, so actual player-save compatibility
+remains unverified.
 
-This is a **compiled alpha with targeted emulator regressions**. It does not
-establish every move/UI combination, real-save compatibility, or full campaign
-balance. See [the implementation audit](IMPLEMENTATION_AUDIT.md),
-[the chapter walkthrough](CHAPTER_ONE.md) and
-[save backup/import instructions](SAVE_COMPATIBILITY.md).
-Keep the old ROM tile and exported battery save until Continue, party, PC, Bag,
-maps and saving/reloading have been verified on iPhone. New ROM contents can
-produce another Delta tile; transfer the battery save manually, not a save state.
+Delta's [import implementation](https://github.com/rileytestut/Delta/blob/main/Delta/Database/DatabaseManager.swift)
+uses a SHA-1 hash of the imported file as the game identifier. Stable naming and
+GBA identifiers cannot prevent separate tiles after ROM contents change.
+Export the in-game battery save from the old tile, import it into the updated
+tile, verify Continue/party/PC/Bag/location/save/reload, and retain the old copy.
+Do not rely on emulator save states for cross-build transfer.
+
+## Remaining work and limits
+
+- No full campaign/boss-balance or visual playthrough was performed.
+- No physical GBA or actual iPhone/Delta test was performed.
+- Enemies still have four active moves. Expanded enemy move selection is unfinished.
+- Configuration is build-time, not an in-game settings menu.
+- The default is 4x battle EXP, not literal quarter-size growth tables or 4x Day Care.
+- Expanded pages require unlimited PP. The exceptional-move journal remains
+  limited to 152 records; compatible attacks do not use those records.
+- Full alternate-profile ROM/playthrough verification remains.
+- Priority next: real Delta save acceptance, campaign balance, in-game settings,
+  then safe enemy expanded-move mechanics.
+
+See [gameplay settings](GAMEPLAY_SETTINGS.md), [save transfer](SAVE_COMPATIBILITY.md)
+and [move history](MOVE_HISTORY.md).

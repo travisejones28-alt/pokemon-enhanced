@@ -16,7 +16,7 @@ It does not replace the whole Emerald campaign.
 | Player PP | Selection/execution/Pressure/Spite/Grudge paths bypass local player depletion; enemy PP stays normal | Targeted single/double battle tests |
 | Battle effects | Transform/Mimic/Encore suspend paging; Sketch protects saved slots; Disable survives browsing | Host callback tests and targeted GBA regressions; full UI combinations still need Delta |
 | Supplies/EXP | Infinite wallet and selected consumables, reusable TMs, field supply grants, 4x battle EXP | Patch regressions; campaign balance testing remains |
-| Difficulty | Adaptive levels, IV floors, smart AI/switching and explicit sets for 14 key fights | Generated trainer data compiles; EV/team validation; full fight balance remains |
+| Difficulty | Adaptive levels, IV floors, smart AI/switching and explicit sets for 36 key fights | Generated trainer data compiles; EV/team validation; full fight balance remains |
 | Companion | Native following plus Pikachu Bond interaction messages and persistent threshold unlocks | Source/logic tests; indoor/outdoor/surf/cycle visual checks still needed |
 | Original chapter | Lumen with lodge/workshop/Gym, Riftway, Nova, scout, Rift Hollow/Vesper, Stormscar/Zapdos, journal dialogue and rewards | Registrations, reachability and reward/flag checks; full playthrough remains |
 | Collection | Fifteen expanded wild tables including Riftway; habitat NPC; evolution shop; local alternatives for every trade target in species sources | Static source audit; full obtainable-species audit unfinished |
@@ -54,3 +54,11 @@ The release workflow now runs the targeted mGBA suite before publication, in
 addition to host tests, repeated patch application, compilation and ROM/hash
 verification. A failed gate leaves the previous release available. See
 [BUILD_VALIDATION.md](BUILD_VALIDATION.md) for the recorded published build.
+
+## Build 65 additions
+
+Automatic learning no longer requires forgetting when the four saved slots are
+full; library attacks satisfy move-based evolution checks. Build-time gameplay
+profiles are implemented and tested, and finite-PP displays are restored. See
+[settings and limits](GAMEPLAY_SETTINGS.md) and [current validation](BUILD_VALIDATION.md).
+Enemy move expansion and an in-game configuration menu remain unfinished.

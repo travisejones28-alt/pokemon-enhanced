@@ -63,3 +63,11 @@ An unchanged filename, title or game code cannot guarantee one Delta tile:
 changed ROM contents can change Delta's game identity. Transfer the exported
 in-game battery save manually. Save states contain ROM-dependent RAM and should
 not be used for cross-build transfers.
+
+## Build 65 update
+
+No save-layout change was introduced in this update. Generated old-save migration
+and save-footprint regression gates passed in Actions. Actual exported player
+saves still need acceptance testing. Delta's import code computes the ROM SHA-1
+as its identifier; see [DatabaseManager.swift](https://github.com/rileytestut/Delta/blob/main/Delta/Database/DatabaseManager.swift).
+Stable ROM names do not preserve that hash when the game changes.

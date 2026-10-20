@@ -8,6 +8,10 @@
 - Player unlimited PP, money and specified consumables; reusable TMs; 4x battle EXP.
 - Adaptive trainers, corrected IV floors, smarter switching and explicit competitive
   sets for the eight first Gym fights, Elite Four, Champion and Vesper.
+- Enemy extended attacks across turns in ordinary single trainer fights:
+  level-legal level-up library rotates into the fourth active slot with PP
+  bookkeeping, Hard/Extreme gating, and special-mode/forced-move safeguards.
+- In-game Shattered Rules page with persistent save-variable configuration.
 - Native followers, Pikachu interaction messages and retained Bond unlocks.
 - Lumen Crossing with lodge, workshop and Gym; Riftway Trail; Stormscar sanctuary;
   original rival/scout; anomaly quest, first boss, first badge and guardian quest.

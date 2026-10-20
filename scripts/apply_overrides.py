@@ -1512,6 +1512,7 @@ def apply(engine: Path) -> None:
     # build defaults. Insert the header after normal patching so repeat
     # application remains byte-idempotent, including mixed earlier patches.
     runtime_sources = (
+        "src/pokemon.c",
         "src/trainer_util.c",
         "src/battle_ai_main.c",
         "src/battle_util.c",

@@ -76,7 +76,7 @@ class TestChapter(unittest.TestCase):
 
     def test_boss_sets_have_legal_stats_and_complete_roles(self):
         teams = json.loads((ROOT/'scripts/boss_teams.json').read_text())
-        self.assertEqual(len(teams), 14)
+        self.assertGreaterEqual(len(teams), 36)
         for trainer, team in teams.items():
             with self.subTest(trainer=trainer):
                 self.assertTrue(3 <= len(team) <= 6)
@@ -121,3 +121,17 @@ class TestChapter(unittest.TestCase):
         self.assertEqual(count,858)
         self.assertEqual(capacity,864)
         self.assertLessEqual(count,capacity)
+
+    def test_story_teams_preserve_rival_branches_and_multi_battle_limits(self):
+        teams = json.loads((ROOT/'scripts/boss_teams.json').read_text())
+        source = (ENGINE/'src/data/trainers.party').read_text()
+        for name in ('BRENDAN', 'MAY'):
+            for stage in ('ROUTE_110', 'ROUTE_119', 'LILYCOVE'):
+                for choice in ('MUDKIP', 'TREECKO', 'TORCHIC'):
+                    self.assertIn(f'TRAINER_{name}_{stage}_{choice}', teams)
+        for trainer, team in teams.items():
+            block = source.split('=== ' + trainer + ' ===', 1)[1].split('\n=== ', 1)[0]
+            if 'Multi Party: Half' in block:
+                self.assertLessEqual(len(team), 3, trainer)
+        self.assertNotIn('TRAINER_WALLY_MAUVILLE', teams)
+        self.assertTrue(all('ROUTE_103' not in trainer for trainer in teams))

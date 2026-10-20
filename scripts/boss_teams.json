@@ -1250,5 +1250,2047 @@
         "SpD": 128
       }
     }
+  ],
+  "TRAINER_BRENDAN_ROUTE_110_MUDKIP": [
+    {
+      "species": "Staravia",
+      "level": 18,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kirlia",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Grovyle",
+      "level": 20,
+      "item": "Sitrus Berry",
+      "ability": "Overgrow",
+      "nature": "Timid",
+      "moves": [
+        "Giga Drain",
+        "Dragon Pulse",
+        "Focus Blast",
+        "Detect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_ROUTE_119_MUDKIP": [
+    {
+      "species": "Staraptor",
+      "level": 28,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 29,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Grovyle",
+      "level": 30,
+      "item": "Sitrus Berry",
+      "ability": "Overgrow",
+      "nature": "Timid",
+      "moves": [
+        "Giga Drain",
+        "Dragon Pulse",
+        "Focus Blast",
+        "Detect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_LILYCOVE_MUDKIP": [
+    {
+      "species": "Staraptor",
+      "level": 33,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 34,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Breloom",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Technician",
+      "nature": "Adamant",
+      "moves": [
+        "Mach Punch",
+        "Bullet Seed",
+        "Rock Tomb",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Sceptile",
+      "level": 35,
+      "item": "Sitrus Berry",
+      "ability": "Overgrow",
+      "nature": "Timid",
+      "moves": [
+        "Giga Drain",
+        "Dragon Pulse",
+        "Focus Blast",
+        "Detect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_ROUTE_110_TREECKO": [
+    {
+      "species": "Staravia",
+      "level": 18,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kirlia",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Combusken",
+      "level": 20,
+      "item": "Sitrus Berry",
+      "ability": "Speed Boost",
+      "nature": "Jolly",
+      "moves": [
+        "Blaze Kick",
+        "Brick Break",
+        "Rock Slide",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_ROUTE_119_TREECKO": [
+    {
+      "species": "Staraptor",
+      "level": 28,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 29,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Combusken",
+      "level": 30,
+      "item": "Sitrus Berry",
+      "ability": "Speed Boost",
+      "nature": "Jolly",
+      "moves": [
+        "Blaze Kick",
+        "Brick Break",
+        "Rock Slide",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_LILYCOVE_TREECKO": [
+    {
+      "species": "Staraptor",
+      "level": 33,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 34,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Breloom",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Technician",
+      "nature": "Adamant",
+      "moves": [
+        "Mach Punch",
+        "Bullet Seed",
+        "Rock Tomb",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Blaziken",
+      "level": 35,
+      "item": "Sitrus Berry",
+      "ability": "Speed Boost",
+      "nature": "Jolly",
+      "moves": [
+        "Blaze Kick",
+        "Brick Break",
+        "Rock Slide",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_ROUTE_110_TORCHIC": [
+    {
+      "species": "Staravia",
+      "level": 18,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kirlia",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Marshtomp",
+      "level": 20,
+      "item": "Sitrus Berry",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Punch",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_ROUTE_119_TORCHIC": [
+    {
+      "species": "Staraptor",
+      "level": 28,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 29,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Marshtomp",
+      "level": 30,
+      "item": "Sitrus Berry",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Punch",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_BRENDAN_LILYCOVE_TORCHIC": [
+    {
+      "species": "Staraptor",
+      "level": 33,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 34,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Breloom",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Technician",
+      "nature": "Adamant",
+      "moves": [
+        "Mach Punch",
+        "Bullet Seed",
+        "Rock Tomb",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Swampert",
+      "level": 35,
+      "item": "Sitrus Berry",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Punch",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_ROUTE_110_MUDKIP": [
+    {
+      "species": "Staravia",
+      "level": 18,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kirlia",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Grovyle",
+      "level": 20,
+      "item": "Sitrus Berry",
+      "ability": "Overgrow",
+      "nature": "Timid",
+      "moves": [
+        "Giga Drain",
+        "Dragon Pulse",
+        "Focus Blast",
+        "Detect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_ROUTE_119_MUDKIP": [
+    {
+      "species": "Staraptor",
+      "level": 28,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 29,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Grovyle",
+      "level": 30,
+      "item": "Sitrus Berry",
+      "ability": "Overgrow",
+      "nature": "Timid",
+      "moves": [
+        "Giga Drain",
+        "Dragon Pulse",
+        "Focus Blast",
+        "Detect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_LILYCOVE_MUDKIP": [
+    {
+      "species": "Staraptor",
+      "level": 33,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 34,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Breloom",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Technician",
+      "nature": "Adamant",
+      "moves": [
+        "Mach Punch",
+        "Bullet Seed",
+        "Rock Tomb",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Sceptile",
+      "level": 35,
+      "item": "Sitrus Berry",
+      "ability": "Overgrow",
+      "nature": "Timid",
+      "moves": [
+        "Giga Drain",
+        "Dragon Pulse",
+        "Focus Blast",
+        "Detect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_ROUTE_110_TREECKO": [
+    {
+      "species": "Staravia",
+      "level": 18,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kirlia",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Combusken",
+      "level": 20,
+      "item": "Sitrus Berry",
+      "ability": "Speed Boost",
+      "nature": "Jolly",
+      "moves": [
+        "Blaze Kick",
+        "Brick Break",
+        "Rock Slide",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_ROUTE_119_TREECKO": [
+    {
+      "species": "Staraptor",
+      "level": 28,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 29,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Combusken",
+      "level": 30,
+      "item": "Sitrus Berry",
+      "ability": "Speed Boost",
+      "nature": "Jolly",
+      "moves": [
+        "Blaze Kick",
+        "Brick Break",
+        "Rock Slide",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_LILYCOVE_TREECKO": [
+    {
+      "species": "Staraptor",
+      "level": 33,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 34,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Breloom",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Technician",
+      "nature": "Adamant",
+      "moves": [
+        "Mach Punch",
+        "Bullet Seed",
+        "Rock Tomb",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Blaziken",
+      "level": 35,
+      "item": "Sitrus Berry",
+      "ability": "Speed Boost",
+      "nature": "Jolly",
+      "moves": [
+        "Blaze Kick",
+        "Brick Break",
+        "Rock Slide",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_ROUTE_110_TORCHIC": [
+    {
+      "species": "Staravia",
+      "level": 18,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Kirlia",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 19,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Marshtomp",
+      "level": 20,
+      "item": "Sitrus Berry",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Punch",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_ROUTE_119_TORCHIC": [
+    {
+      "species": "Staraptor",
+      "level": 28,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 29,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 29,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Marshtomp",
+      "level": 30,
+      "item": "Sitrus Berry",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Punch",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAY_LILYCOVE_TORCHIC": [
+    {
+      "species": "Staraptor",
+      "level": 33,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Jolly",
+      "moves": [
+        "Aerial Ace",
+        "U-turn",
+        "Quick Attack",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Psychic",
+        "Draining Kiss",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 34,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Breloom",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Technician",
+      "nature": "Adamant",
+      "moves": [
+        "Mach Punch",
+        "Bullet Seed",
+        "Rock Tomb",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 34,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Ice Fang",
+        "Crunch",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Swampert",
+      "level": 35,
+      "item": "Sitrus Berry",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Punch",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAXIE_MT_CHIMNEY": [
+    {
+      "species": "Torkoal",
+      "level": 24,
+      "item": "Sitrus Berry",
+      "ability": "Drought",
+      "nature": "Bold",
+      "moves": [
+        "Lava Plume",
+        "Stealth Rock",
+        "Yawn",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Golbat",
+      "level": 24,
+      "item": "Sitrus Berry",
+      "ability": "Inner Focus",
+      "nature": "Jolly",
+      "moves": [
+        "Wing Attack",
+        "Poison Fang",
+        "Taunt",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Houndoom",
+      "level": 25,
+      "item": "Sitrus Berry",
+      "ability": "Flash Fire",
+      "nature": "Timid",
+      "moves": [
+        "Flamethrower",
+        "Dark Pulse",
+        "Solar Beam",
+        "Nasty Plot"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Camerupt",
+      "level": 25,
+      "item": "Sitrus Berry",
+      "ability": "Solid Rock",
+      "nature": "Modest",
+      "moves": [
+        "Flamethrower",
+        "Earth Power",
+        "Rock Slide",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_MAXIE_MAGMA_HIDEOUT": [
+    {
+      "species": "Torkoal",
+      "level": 37,
+      "item": "Sitrus Berry",
+      "ability": "Drought",
+      "nature": "Bold",
+      "moves": [
+        "Lava Plume",
+        "Stealth Rock",
+        "Yawn",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Crobat",
+      "level": 37,
+      "item": "Sitrus Berry",
+      "ability": "Infiltrator",
+      "nature": "Jolly",
+      "moves": [
+        "Brave Bird",
+        "U-turn",
+        "Roost",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Flygon",
+      "level": 38,
+      "item": "Sitrus Berry",
+      "ability": "Levitate",
+      "nature": "Jolly",
+      "moves": [
+        "Earthquake",
+        "Dragon Claw",
+        "U-turn",
+        "Rock Slide"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Houndoom",
+      "level": 38,
+      "item": "Sitrus Berry",
+      "ability": "Flash Fire",
+      "nature": "Timid",
+      "moves": [
+        "Flamethrower",
+        "Dark Pulse",
+        "Solar Beam",
+        "Nasty Plot"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Camerupt",
+      "level": 39,
+      "item": "Sitrus Berry",
+      "ability": "Solid Rock",
+      "nature": "Modest",
+      "moves": [
+        "Flamethrower",
+        "Earth Power",
+        "Solar Beam",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_ARCHIE": [
+    {
+      "species": "Pelipper",
+      "level": 41,
+      "item": "Damp Rock",
+      "ability": "Drizzle",
+      "nature": "Bold",
+      "moves": [
+        "Scald",
+        "Hurricane",
+        "U-turn",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 252,
+        "Def": 128,
+        "SpD": 128
+      }
+    },
+    {
+      "species": "Ludicolo",
+      "level": 41,
+      "item": "Sitrus Berry",
+      "ability": "Swift Swim",
+      "nature": "Modest",
+      "moves": [
+        "Surf",
+        "Giga Drain",
+        "Ice Beam",
+        "Rain Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Crobat",
+      "level": 41,
+      "item": "Sitrus Berry",
+      "ability": "Infiltrator",
+      "nature": "Jolly",
+      "moves": [
+        "Brave Bird",
+        "U-turn",
+        "Roost",
+        "Taunt"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Swampert",
+      "level": 42,
+      "item": "Sitrus Berry",
+      "ability": "Torrent",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Punch",
+        "Stealth Rock"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gyarados",
+      "level": 42,
+      "item": "Sitrus Berry",
+      "ability": "Intimidate",
+      "nature": "Adamant",
+      "moves": [
+        "Waterfall",
+        "Earthquake",
+        "Ice Fang",
+        "Dragon Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Sharpedo",
+      "level": 43,
+      "item": "Life Orb",
+      "ability": "Speed Boost",
+      "nature": "Adamant",
+      "moves": [
+        "Crunch",
+        "Waterfall",
+        "Ice Fang",
+        "Protect"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    }
+  ],
+  "TRAINER_WALLY_VR_1": [
+    {
+      "species": "Altaria",
+      "level": 44,
+      "item": "Sitrus Berry",
+      "ability": "Natural Cure",
+      "nature": "Adamant",
+      "moves": [
+        "Dragon Dance",
+        "Dragon Claw",
+        "Earthquake",
+        "Roost"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Roserade",
+      "level": 44,
+      "item": "Sitrus Berry",
+      "ability": "Natural Cure",
+      "nature": "Timid",
+      "moves": [
+        "Giga Drain",
+        "Sludge Bomb",
+        "Sleep Powder",
+        "Toxic Spikes"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Magneton",
+      "level": 44,
+      "item": "Eviolite",
+      "ability": "Sturdy",
+      "nature": "Modest",
+      "moves": [
+        "Thunderbolt",
+        "Flash Cannon",
+        "Volt Switch",
+        "Thunder Wave"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Azumarill",
+      "level": 44,
+      "item": "Sitrus Berry",
+      "ability": "Huge Power",
+      "nature": "Adamant",
+      "moves": [
+        "Aqua Jet",
+        "Play Rough",
+        "Liquidation",
+        "Knock Off"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gallade",
+      "level": 45,
+      "item": "Sitrus Berry",
+      "ability": "Steadfast",
+      "nature": "Jolly",
+      "moves": [
+        "Close Combat",
+        "Psycho Cut",
+        "Night Slash",
+        "Swords Dance"
+      ],
+      "evs": {
+        "HP": 4,
+        "Atk": 252,
+        "Spe": 252
+      }
+    },
+    {
+      "species": "Gardevoir",
+      "level": 45,
+      "item": "Sitrus Berry",
+      "ability": "Trace",
+      "nature": "Timid",
+      "moves": [
+        "Moonblast",
+        "Psychic",
+        "Thunderbolt",
+        "Calm Mind"
+      ],
+      "evs": {
+        "HP": 4,
+        "SpA": 252,
+        "Spe": 252
+      }
+    }
   ]
 }

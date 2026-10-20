@@ -35,3 +35,12 @@ Profile policy tests compile and execute the generated C level and PP/library
 guards for Normal/Hard/Extreme, scaling on/off and supported PP/page combinations.
 The full GBA build and emulator release gate exercise the default profile.
 Full alternate-profile ROM/playthrough verification remains.
+
+## Additional story battles
+
+Competitive authored sets now cover 36 encounters, including all Brendan/May
+starter branches on Routes 110/119 and in Lilycove, Maxie at Mt. Chimney and the
+Magma Hideout, Archie and Victory Road Wally. Teams use pivots, setup, priority,
+weather, status and complementary coverage. Early Route 103 and Mauville Wally
+parties remain unchanged; shared Mossdeep multi-battle party sizes remain intact.
+Full encounter balance and campaign playthrough have not been performed.

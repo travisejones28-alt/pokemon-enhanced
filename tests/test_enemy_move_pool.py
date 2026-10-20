@@ -24,7 +24,7 @@ class TestEnemyMovePool(unittest.TestCase):
         patched = modify_enemy_move_pool(MINIMAL_SOURCE)
         self.assertEqual(patched, modify_enemy_move_pool(patched))
         self.assertEqual(patched.count("ShatteredRotateEnemyMoves(battler);"), 1)
-        self.assertEqual(patched.count("struct ShatteredEnemyMovePool"), 2)
+        self.assertEqual(patched.count("struct ShatteredEnemyMovePool"), 3)
         script = (ROOT / "scripts/apply_overrides.py").read_text()
         self.assertIn("modify_enemy_move_pool(modify_hard_trainer_ai(c))", script)
         self.assertIn('"src/battle_ai_main.c"', script)

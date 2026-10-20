@@ -48,10 +48,30 @@ Frontier-generated trainer levels/IVs are excluded from profile boosts.
 Eggs do not raise the adaptive level floor; generated levels cap at 100.
 
 Finite PP displays current/max PP again, including replay/link contexts that
-never receive unlimited PP. Expanded pages do not implement per-move PP storage,
-so they cannot safely coexist with finite PP. Enemy trainers still use four
-active moves; expanded enemy selection is unfinished. The in-game Move Mode
+never receive unlimited PP. Player expanded pages do not implement per-move
+PP storage, so they cannot safely coexist with finite PP. The in-game Move Mode
 only changes locally controlled player battlers.
+
+## Enemy expanded move pool (Hard/Extreme)
+
+Ordinary **single trainer battles** now use a separate, battle-only enemy move
+pool. The trainer's first three authored move slots remain fixed. Before AI
+scoring each turn, the fourth slot cycles through its original move and
+eligible, already-learned species level-up attacks (up to 64 candidates),
+excluding duplicates, Sketch, Transform, Mimic and Struggle. Native AI still
+scores and executes its four currently presented moves, so opponents can use
+more than four *different* attacks over a multi-turn battle, not four or more
+simultaneously. Each candidate keeps a separate PP count across turn rotations.
+
+The mechanic follows enhanced AI: **Hard and Extreme enabled, Normal disabled**.
+It does not operate in double battles, link/replay, Battle Frontier/Palace,
+partner/multi battles or scripted first battles. It also pauses replacement
+under Choice locks, Disable, Encore, Mimic/Transform, multi-turn and recharge
+states. The team and save layouts remain untouched; no save migration is
+required. This is an initial bounded implementation: high-level enemy moves
+which are not in their own level-up learnset remain in their authored slots;
+all double-battle and special-mode expansion is future work. Full visual
+playtesting and broader battle-effect compatibility are still required.
 
 The 4x EXP default approximates one-quarter battle grinding while keeping
 existing saved experience valid. It does not literally quarter all growth

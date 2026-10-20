@@ -1023,6 +1023,152 @@ def modify_hard_trainer_ivs(contents: str) -> str:
     )
 
 
+
+def modify_enemy_move_pool(contents: str) -> str:
+    """Rotate one enemy move slot through level-legal moves between safe turns.
+
+    Native AI still evaluates four *currently active* moves each turn. Over a
+    multi-turn solo trainer battle, slot four exposes a larger pool while the
+    first three authored slots remain stable. No Pokemon/SaveBlock layouts,
+    controller packet formats or persistent trainer-party moves are modified.
+    """
+    contents = replace_once(
+        contents,
+        "void SetAiLogicDataForTurn(struct AiLogicData *aiData)\n{",
+        """// A deliberately bounded, battle-only extension: retain authored slots 1-3
+// and page the fourth slot through level-up moves. Do not change link,
+// recorded, facility, double, Palace, or scripted special battle semantics.
+#define SHATTERED_ENEMY_POOL_CAPACITY 64
+struct ShatteredEnemyMovePool
+{
+    enum Species species;
+    u8 partyIndex;
+    u8 count;
+    u8 active;
+    bool8 initialized;
+    u16 lastTurn;
+    enum Move moves[SHATTERED_ENEMY_POOL_CAPACITY];
+    u8 pp[SHATTERED_ENEMY_POOL_CAPACITY];
+};
+EWRAM_DATA static struct ShatteredEnemyMovePool sShatteredEnemyPools[MAX_BATTLERS_COUNT] = {0};
+
+static bool32 ShatteredCanRotateEnemyMoves(enum BattlerId battler)
+{
+    if (!SHATTERED_ENHANCED_AI
+        || !(gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+        || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
+            | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_FRONTIER
+            | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_SAFARI
+            | BATTLE_TYPE_PALACE | BATTLE_TYPE_INGAME_PARTNER
+            | BATTLE_TYPE_MULTI))
+        || IsDoubleBattle()
+        || IsOnPlayerSide(battler)
+        || !IsBattlerAlive(battler))
+        return FALSE;
+
+    // Do not disrupt slot-dependent battle effects and forced actions.
+    if (gBattleMons[battler].volatiles.multipleTurns
+        || gBattleMons[battler].volatiles.rechargeTimer
+        || gBattleMons[battler].volatiles.transformed
+        || gBattleMons[battler].volatiles.mimickedMoves
+        || gBattleMons[battler].volatiles.encoredMove != MOVE_NONE
+        || gBattleMons[battler].volatiles.disabledMove != MOVE_NONE
+        || gBattleStruct->choicedMove[battler] != MOVE_NONE
+        || gBattleMons[battler].moves[3] == MOVE_NONE)
+        return FALSE;
+    return TRUE;
+}
+
+static void ShatteredRotateEnemyMoves(enum BattlerId battler)
+{
+    struct ShatteredEnemyMovePool *pool = &sShatteredEnemyPools[battler];
+    enum Species species = gBattleMons[battler].species;
+    u32 level = gBattleMons[battler].level;
+
+    if (!ShatteredCanRotateEnemyMoves(battler))
+        return;
+
+    // Battle counter resets between encounters; party index/species and slot
+    // identity also invalidate stale caches on switch, Transform or resets.
+    if (gBattleTurnCounter == 0
+        || !pool->initialized
+        || pool->species != species
+        || pool->partyIndex != gBattlerPartyIndexes[battler]
+        || pool->moves[pool->active] != gBattleMons[battler].moves[3])
+    {
+        memset(pool, 0, sizeof(*pool));
+        pool->initialized = TRUE;
+        pool->species = species;
+        pool->partyIndex = gBattlerPartyIndexes[battler];
+        pool->lastTurn = 0xFFFF;
+        pool->count = 1;
+        pool->moves[0] = gBattleMons[battler].moves[3];
+        pool->pp[0] = gBattleMons[battler].pp[3];
+
+        const struct LevelUpMove *learnset = GetSpeciesLevelUpLearnset(species);
+        for (u32 i = 0; learnset[i].move != LEVEL_UP_MOVE_END; i++)
+        {
+            enum Move move = learnset[i].move;
+            bool32 duplicate = FALSE;
+            if (learnset[i].level > level || move == MOVE_NONE
+                || move == MOVE_STRUGGLE || move == MOVE_SKETCH
+                || move == MOVE_TRANSFORM || move == MOVE_MIMIC
+                || move >= MOVES_COUNT || GetMovePP(move) == 0)
+                continue;
+            for (u32 slot = 0; slot < MAX_MON_MOVES; slot++)
+                if (gBattleMons[battler].moves[slot] == move)
+                    duplicate = TRUE;
+            for (u32 j = 0; j < pool->count; j++)
+                if (pool->moves[j] == move)
+                    duplicate = TRUE;
+            if (!duplicate && pool->count < SHATTERED_ENEMY_POOL_CAPACITY)
+            {
+                pool->moves[pool->count] = move;
+                pool->pp[pool->count] = GetMovePP(move);
+                pool->count++;
+            }
+        }
+    }
+
+    // A move can be scored repeatedly, but it is only rotated once per turn.
+    if (pool->lastTurn == gBattleTurnCounter || pool->count <= 1)
+        return;
+
+    // Record actual depleted PP of the active move before replacing it.
+    pool->pp[pool->active] = gBattleMons[battler].pp[3];
+    u32 next = gBattleTurnCounter % pool->count;
+    for (u32 offset = 0; offset < pool->count; offset++)
+    {
+        u32 index = (next + offset) % pool->count;
+        if (pool->pp[index] != 0)
+        {
+            next = index;
+            break;
+        }
+    }
+    pool->active = next;
+    pool->lastTurn = gBattleTurnCounter;
+    gBattleMons[battler].moves[3] = pool->moves[next];
+    gBattleMons[battler].pp[3] = pool->pp[next];
+}
+
+void SetAiLogicDataForTurn(struct AiLogicData *aiData)
+{""",
+    )
+    return replace_once(
+        contents,
+        "    // get/assume all battler data and simulate AI damage\n    u32 battlersCount = gBattlersCount;",
+        """    // Rotate before limitations and damage calculations, so AI sees the
+    // same slot that the native opponent controller will ultimately execute.
+    // This is never called for doubles or special/recorded/link battles.
+    for (enum BattlerId battler = 0; battler < gBattlersCount; battler++)
+        ShatteredRotateEnemyMoves(battler);
+
+    // get/assume all battler data and simulate AI damage
+    u32 battlersCount = gBattlersCount;""",
+    )
+
+
 def modify_hard_trainer_ai(contents: str) -> str:
     """Allow ordinary enemy trainers to choose moves with advanced AI."""
     return replace_once(
@@ -1499,7 +1645,7 @@ def apply(engine: Path) -> None:
         "include/battle_util.h": modify_unlimited_pp_header,
         "data/maps/RiftHollow/scripts.inc": modify_rift_reward_retry,
         "src/trainer_util.c": lambda c: modify_hard_trainer_ivs(modify_hard_trainer_levels(c)),
-        "src/battle_ai_main.c": modify_hard_trainer_ai,
+        "src/battle_ai_main.c": lambda c: modify_enemy_move_pool(modify_hard_trainer_ai(c)),
         "data/text/birch_speech.inc": modify_rift_intro,
         "data/maps/Route101/scripts.inc": modify_route_rift_teaser,
         "data/event_scripts.s": modify_rift_script_registration,

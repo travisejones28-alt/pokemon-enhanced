@@ -79,7 +79,8 @@ class TestEngineIntegration(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / 'test.c'
             binary = Path(directory) / 'test'
-            source.write_text(code)
+            source.write_text('#define TRUE 1\n#define FALSE 0\n' +
+                              (ENGINE / 'include/config/shattered.h').read_text() + '\n' + code)
             result = subprocess.run([compiler, '-std=c99', '-Wall', '-Wextra',
                                      '-Werror', str(source), '-o', str(binary)],
                                     capture_output=True, text=True, timeout=30)

@@ -334,6 +334,8 @@ def modify_player_pp_checks(contents: str) -> str:
         "u32 CheckMoveLimitations(enum BattlerId battler, u8 unusableMoves, u32 check)\n{",
         """bool32 ShatteredHasUnlimitedPP(enum BattlerId battler)
 {
+    if (!SHATTERED_UNLIMITED_PP)
+        return FALSE;
 #if TESTING
     // Upstream battle tests use recorded-link controllers to inject choices.
     // Explicit opt-in exercises LOCAL rules without changing release replays.
@@ -468,6 +470,8 @@ def modify_rift_reward_retry(contents: str) -> str:
 
 
 def modify_history_save_tail(contents: str) -> str:
+    contents = replace_once(contents, '#include "config/save.h"',
+                            '#include "config/save.h"\n#include "config/shattered.h"')
     contents = replace_once(contents, '#define ITEM_FLAGS_COUNT',
                             '#include "shattered_history.h"\n#define ITEM_FLAGS_COUNT')
     return replace_once(contents, '}; /* max size 1624 bytes */',
@@ -576,7 +580,7 @@ static u16 sShatteredMovePages[MAX_BATTLERS_COUNT];
 
 static bool32 ShatteredCanUseLibrary(enum BattlerId battler)
 {
-    return ShatteredHasUnlimitedPP(battler)
+    return SHATTERED_EXPANDED_MOVES && ShatteredHasUnlimitedPP(battler)
         && !gBattleMons[battler].volatiles.transformed
         && !gBattleMons[battler].volatiles.mimickedMoves
         && gBattleMons[battler].volatiles.encoredMove == MOVE_NONE;
@@ -791,7 +795,19 @@ void HandleInputChooseMove(enum BattlerId battler)
         """static void MoveSelectionDisplayPPNumber(enum BattlerId battler)
 {
     u32 pageCount = (sShatteredMoveCounts[battler] + MAX_MON_MOVES - 1) / MAX_MON_MOVES;
-    if (pageCount > 1 && IsOnPlayerSide(battler) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+    if (!ShatteredHasUnlimitedPP(battler))
+    {
+        if (gBattleResources->bufferA[battler][2] == TRUE)
+            return;
+        struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
+        SetPPNumbersPaletteInMoveSelection(battler);
+        u8 *cursor = ConvertIntToDecimalStringN(gDisplayedStringBattle,
+            moveInfo->currentPP[gMoveSelectionCursor[battler]], STR_CONV_MODE_RIGHT_ALIGN, 2);
+        *(cursor)++ = CHAR_SLASH;
+        ConvertIntToDecimalStringN(cursor, moveInfo->maxPP[gMoveSelectionCursor[battler]], STR_CONV_MODE_RIGHT_ALIGN, 2);
+        BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
+    }
+    else if (pageCount > 1 && IsOnPlayerSide(battler) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
     {
         u8 *cursor = ConvertIntToDecimalStringN(gDisplayedStringBattle,
                                                 sShatteredMovePages[battler] + 1,
@@ -819,7 +835,7 @@ def modify_unlimited_money(contents: str) -> str:
 }""",
         """u32 GetMoney(u32 *moneyPtr)
 {
-    if (moneyPtr == &gSaveBlock1Ptr->money)
+    if (SHATTERED_UNLIMITED_MONEY && moneyPtr == &gSaveBlock1Ptr->money)
         return MAX_MONEY;
     return *moneyPtr ^ gSaveBlock2Ptr->encryptionKey;
 }""",
@@ -832,7 +848,7 @@ def modify_unlimited_money(contents: str) -> str:
         """void RemoveMoney(u32 *moneyPtr, u32 toSub)
 {
     // Purchases and losses cannot drain the player's infinite wallet.
-    if (moneyPtr == &gSaveBlock1Ptr->money)
+    if (SHATTERED_UNLIMITED_MONEY && moneyPtr == &gSaveBlock1Ptr->money)
         return;
     u32 toSet = GetMoney(moneyPtr);""",
     )
@@ -853,7 +869,7 @@ def modify_infinite_candy(contents: str) -> str:
     if (itemId == ITEM_NONE)
         return FALSE;
     // Shattered Realms: unlimited use once the candy is in the normal Bag.
-    if ((itemId == ITEM_RARE_CANDY || itemId == ITEM_MASTER_BALL
+    if (SHATTERED_FREE_SUPPLIES && (itemId == ITEM_RARE_CANDY || itemId == ITEM_MASTER_BALL
           || itemId == ITEM_MAX_REPEL || itemId == ITEM_MAX_REVIVE
           || itemId == ITEM_FULL_RESTORE || itemId == ITEM_ESCAPE_ROPE)
         && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE
@@ -873,11 +889,11 @@ def modify_bag_candy_supply(contents: str) -> str:
 {
     // Existing Delta saves receive the same reusable Rare Candy as new games.
     // Avoid battle-frontier / special bags and do not duplicate the item.
-    if (location == ITEMMENULOCATION_FIELD
+    if (SHATTERED_FREE_SUPPLIES && location == ITEMMENULOCATION_FIELD
         && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE
         && !CheckBagHasItem(ITEM_RARE_CANDY, 1))
         AddBagItem(ITEM_RARE_CANDY, 99);
-    if (location == ITEMMENULOCATION_FIELD
+    if (SHATTERED_FREE_SUPPLIES && location == ITEMMENULOCATION_FIELD
         && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
     {
         if (!CheckBagHasItem(ITEM_MASTER_BALL, 1))
@@ -918,7 +934,7 @@ void BS_ItemRestoreHP(void)""",
     }
     // Faster progression without changing EXP tables or existing saved levels.
     // Battle EXP only; Rare Candies still grant one level per use.
-    *expAmount *= 4;
+    *expAmount *= SHATTERED_EXP_MULTIPLIER;
 }
 
 void BS_ItemRestoreHP(void)""",
@@ -933,9 +949,11 @@ def modify_hard_trainer_levels(contents: str) -> str:
         """    // Hard mode: +25% levels and +2 levels for every standard trainer.
     // Keep Frontier and battle facility enemy sets untouched.
     u32 shatteredLevel = trainerMon->lvl;
-    if (!trainer->isFrontier)
+    if (!trainer->isFrontier && SHATTERED_DIFFICULTY != SHATTERED_NORMAL)
     {
-        shatteredLevel = min(MAX_LEVEL, ((shatteredLevel * 5) / 4) + 2);
+        shatteredLevel = SHATTERED_DIFFICULTY == SHATTERED_EXTREME
+            ? min(MAX_LEVEL, ((shatteredLevel * 5) / 4) + 2)
+            : min(MAX_LEVEL, ((shatteredLevel * 11) / 10) + 1);
         // Adaptive rivals: Rare Candies cannot trivialize the entire game.
         // Standard trainers are at least the player's best level + 1.
         u32 highestPlayerLevel = 1;
@@ -945,7 +963,9 @@ def modify_hard_trainer_levels(contents: str) -> str:
             if (playerSpecies != SPECIES_NONE && playerSpecies != SPECIES_EGG)
                 highestPlayerLevel = max(highestPlayerLevel, GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_LEVEL));
         }
-        shatteredLevel = max(shatteredLevel, min(MAX_LEVEL, highestPlayerLevel + 1));
+        if (SHATTERED_LEVEL_SCALING)
+            shatteredLevel = max(shatteredLevel, min(MAX_LEVEL, highestPlayerLevel
+                + (SHATTERED_DIFFICULTY == SHATTERED_EXTREME ? 1 : 0)));
     }
     CreateMon(mon, trainerMon->species, shatteredLevel, personality, trainer->otID);""",
     )
@@ -958,13 +978,14 @@ def modify_hard_trainer_ivs(contents: str) -> str:
         "    SetMonData(mon, MON_DATA_IVS, &trainerMon->iv);",
         """    // IVs are SIX packed 5-bit values, not a single uniform IV.
     data = trainerMon->iv;
-    if (!trainer->isFrontier)
+    if (!trainer->isFrontier && SHATTERED_DIFFICULTY != SHATTERED_NORMAL)
     {
         for (u32 stat = 0; stat < NUM_STATS; stat++)
         {
             u32 shift = stat * 5;
             u32 iv = (data >> shift) & 31;
-            data = (data & ~(31u << shift)) | (max(iv, 28) << shift);
+            u32 boosted = SHATTERED_DIFFICULTY == SHATTERED_EXTREME ? max(iv, 28) : max(iv, 20);
+            data = (data & ~(31u << shift)) | (boosted << shift);
         }
     }
     SetMonData(mon, MON_DATA_IVS, &data);""",
@@ -980,7 +1001,7 @@ def modify_hard_trainer_ai(contents: str) -> str:
         flags |= AI_FLAG_DOUBLE_BATTLE;""",
         """    // Hard mode: even early enemy trainers make competent decisions.
     // Do not alter link battles, tutorials, or recorded battles.
-    if (trainerId != 0xFFFF && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    if (SHATTERED_ENHANCED_AI && trainerId != 0xFFFF && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
         && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED
                                  | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_FRONTIER
                                  | BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_SAFARI)))
@@ -1005,7 +1026,7 @@ def modify_hard_trainer_bag(contents: str) -> str:
         """bool32 IsAllowedToUseBag(void)
 {
     // Hard mode: trainer fights cannot be won by endlessly healing.
-    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    if (SHATTERED_DIFFICULTY == SHATTERED_EXTREME && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
         && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FIRST_BATTLE)))
         return FALSE;
     switch (VarGet(B_VAR_NO_BAG_USE))""",

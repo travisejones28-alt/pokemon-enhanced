@@ -221,7 +221,7 @@ void RemoveMoney(u32 *moneyPtr, u32 toSub)
     u32 toSet = GetMoney(moneyPtr);"""
         after = modify_unlimited_money(sample)
         self.assertIn("return MAX_MONEY;", after)
-        self.assertIn("if (moneyPtr == &gSaveBlock1Ptr->money)", after)
+        self.assertIn("SHATTERED_UNLIMITED_MONEY && moneyPtr == &gSaveBlock1Ptr->money", after)
         self.assertEqual(after, modify_unlimited_money(after))
 
     def test_reusable_candies_regular_bag_only(self):
@@ -253,13 +253,13 @@ void RemoveMoney(u32 *moneyPtr, u32 toSub)
 
 void BS_ItemRestoreHP(void)"""
         after = modify_fast_experience(sample)
-        self.assertIn("*expAmount *= 4;", after)
+        self.assertIn("*expAmount *= SHATTERED_EXP_MULTIPLIER;", after)
         self.assertEqual(after, modify_fast_experience(after))
 
     def test_trainer_boost_not_frontier(self):
         sample = "    CreateMon(mon, trainerMon->species, trainerMon->lvl, personality, trainer->otID);"
         after = modify_hard_trainer_levels(sample)
-        self.assertIn("if (!trainer->isFrontier)", after)
+        self.assertIn("if (!trainer->isFrontier && SHATTERED_DIFFICULTY != SHATTERED_NORMAL)", after)
         self.assertIn("min(MAX_LEVEL", after)
         self.assertIn("highestPlayerLevel", after)
         self.assertEqual(after, modify_hard_trainer_levels(after))

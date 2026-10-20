@@ -158,3 +158,41 @@ TEST("Shattered save extension preserves every original persistent Pokemon and m
     EXPECT_EQ(__builtin_offsetof(struct SaveBlock3, dexNavChain), 0);
     EXPECT_EQ(sizeof(struct SaveBlock3), 1540);
 }
+
+
+TEST("Shattered automatic learning retains four saved attacks without forget prompts")
+{
+    struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][0];
+    const enum Move saved[] = {MOVE_ROAR_OF_TIME, MOVE_SPACIAL_REND, MOVE_DARK_VOID, MOVE_AEROBLAST};
+    memset(gSaveBlock3Ptr->shatteredMoveHistory, 0, SHATTERED_HISTORY_BYTES);
+    CreateMon(mon, SPECIES_PIKACHU, 50, 2001, OTID_STRUCT_PRESET(2002));
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+        SetMonMoveSlot(mon, saved[i], i);
+    const struct LevelUpMove *learnset = GetSpeciesLevelUpLearnset(SPECIES_PIKACHU);
+    u32 entry = 0;
+    while (learnset[entry].move != LEVEL_UP_MOVE_END && learnset[entry].level <= 1)
+        entry++;
+    EXPECT(learnset[entry].move != LEVEL_UP_MOVE_END);
+    u32 level = learnset[entry].level;
+    EXPECT_EQ(MonTryLearningNewMoveAtLevel(mon, TRUE, level), MON_ALREADY_KNOWS_MOVE);
+    EXPECT(ShatteredBoxKnowsMove(&mon->box, learnset[entry].move));
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+        EXPECT_EQ(GetMonData(mon, MON_DATA_MOVE1 + i), saved[i]);
+    // Multiple moves at one level must eventually finish, never repeat forever.
+    u32 attempts = 0;
+    while (MonTryLearningNewMoveAtLevel(mon, FALSE, level) != MOVE_NONE && attempts < 100)
+        attempts++;
+    EXPECT(attempts < 100);
+}
+
+TEST("Shattered move-based evolution recognizes an attack in the expanded library")
+{
+    struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][0];
+    memset(gSaveBlock3Ptr->shatteredMoveHistory, 0, SHATTERED_HISTORY_BYTES);
+    CreateMon(mon, SPECIES_TANGELA, 100, 2003, OTID_STRUCT_PRESET(2004));
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+        SetMonMoveSlot(mon, MOVE_TACKLE, i);
+    EXPECT(ShatteredBoxKnowsMove(&mon->box, MOVE_ANCIENT_POWER));
+    EXPECT_EQ(GetEvolutionTargetSpecies(mon, EVO_MODE_NORMAL, ITEM_NONE, NULL, NULL, CHECK_EVO),
+              SPECIES_TANGROWTH);
+}

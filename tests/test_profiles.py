@@ -8,7 +8,7 @@ import unittest
 
 from scripts.apply_overrides import (
     modify_hard_trainer_levels, modify_player_pp_checks, modify_all_move_pages,
-    modify_move_pp_display,
+    modify_move_pp_display, modify_automatic_learning, modify_history_move_hook,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -146,3 +146,12 @@ int main(void) {
         self.assertIn("if (!ShatteredHasUnlimitedPP(battler))", display)
         self.assertIn("moveInfo->currentPP[gMoveSelectionCursor[battler]]", display)
         self.assertIn("moveInfo->maxPP[gMoveSelectionCursor[battler]]", display)
+
+
+    def test_automatic_learning_patch_composes_and_is_idempotent(self):
+        original = (ENGINE / "src/pokemon.c").read_text()
+        patched = modify_automatic_learning(modify_history_move_hook(original))
+        self.assertEqual(patched, modify_automatic_learning(modify_history_move_hook(patched)))
+        self.assertIn("retVal = ShatteredLearnAutomaticMove(mon, gMoveToLearn);", patched)
+        self.assertIn("return ShatteredLearnAutomaticMove(mon, gMoveToLearn);", patched)
+        self.assertIn("ShatteredBoxKnowsMove(&mon->box, params[i].arg1)", patched)

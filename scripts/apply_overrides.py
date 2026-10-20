@@ -478,6 +478,37 @@ def modify_history_save_tail(contents: str) -> str:
                         '    u8 shatteredMoveHistory[SHATTERED_HISTORY_BYTES];\n}; /* max size 1624 bytes */')
 
 
+def modify_automatic_learning(contents: str) -> str:
+    """Retain saved slots; automatic learnset attacks already exist in the library."""
+    contents = replace_once(contents, '#include "pokemon.h"\n',
+                            '#include "pokemon.h"\n#include "shattered_battle.h"\n')
+    contents = replace_once(contents,
+        "enum Move MonTryLearningNewMoveAtLevel(struct Pokemon *mon, bool32 firstMove, u32 level)\n{",
+        """static u16 ShatteredLearnAutomaticMove(struct Pokemon *mon, enum Move move)
+{
+    u16 result = GiveMoveToMon(mon, move);
+    // The caller has advanced its learnset cursor. Returning ALREADY_KNOWS
+    // continues to the next automatic attack without opening a forget dialog.
+    // Manual TMs/relearning still use the ordinary four-slot editor.
+    if (SHATTERED_EXPANDED_MOVES && result == MON_HAS_MAX_MOVES)
+        return MON_ALREADY_KNOWS_MOVE;
+    return result;
+}
+
+enum Move MonTryLearningNewMoveAtLevel(struct Pokemon *mon, bool32 firstMove, u32 level)
+{""")
+    contents = replace_once(contents,
+        "        retVal = GiveMoveToMon(mon, gMoveToLearn);",
+        "        retVal = ShatteredLearnAutomaticMove(mon, gMoveToLearn);")
+    contents = replace_once(contents,
+        "            return GiveMoveToMon(mon, gMoveToLearn);",
+        "            return ShatteredLearnAutomaticMove(mon, gMoveToLearn);")
+    return replace_once(contents,
+        "            if (MonKnowsMove(mon, params[i].arg1))",
+        """            if (MonKnowsMove(mon, params[i].arg1)
+                || (SHATTERED_EXPANDED_MOVES && ShatteredBoxKnowsMove(&mon->box, params[i].arg1)))""")
+
+
 def modify_history_move_hook(contents: str) -> str:
     contents = replace_once(contents, '#include "pokemon.h"\n',
                             '#include "pokemon.h"\n#include "shattered_history.h"\n')
@@ -1453,7 +1484,7 @@ def apply(engine: Path) -> None:
 
     gameplay_sources = {
         "include/global.h": modify_history_save_tail,
-        "src/pokemon.c": modify_history_move_hook,
+        "src/pokemon.c": lambda c: modify_automatic_learning(modify_history_move_hook(c)),
         "src/event_object_movement.c": modify_companion_interaction,
         "src/starter_choose.c": modify_starter_choices,
         "src/battle_setup.c": modify_starter_gift,

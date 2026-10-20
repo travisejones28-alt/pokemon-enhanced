@@ -1,8 +1,33 @@
-# Gameplay build profiles
+# Shattered Realms gameplay settings
 
-Edit `engine/include/config/shattered.h` before building. These are **build-time
-settings**, not an in-game menu. Defaults preserve the published Extreme-style
-rules. Save and Pokemon structures remain unchanged.
+**In-game (Build #74+ candidate):** Open START -> OPTION, then press **SELECT**
+to switch to the **SHATTERED RULES** page. Use Up/Down to choose an item
+and Left/Right to change it; press SELECT again to return to standard options.
+B or CANCEL exits. Changes affect subsequent battles and field actions.
+**Use the game's SAVE command to preserve them after restarting Delta.**
+The game's own ordinary Options page remains unchanged.
+
+| In-game setting | Values | Default |
+| --- | --- | --- |
+| Difficulty | Normal / Hard / Extreme | Extreme |
+| Level scaling | On / Off | On |
+| Move mode | Classic (four moves, finite PP) / No PP (four moves) / Pages (unlimited PP and move library) | Pages |
+| EXP rate | x1 / x2 / x3 / x4 battle EXP | x4 |
+| Max money | On / Off | On |
+| Free supplies | On / Off | On |
+
+Enhanced ordinary-trainer AI follows the difficulty setting (off on Normal,
+on for Hard/Extreme). Explicit authored boss teams retain their intended AI.
+An existing save with no Shattered setting automatically uses the original
+build defaults. The menu uses the formerly unused **VAR_UNUSED_0x404E**
+(0x404E) in the existing saved event variables with a validated version marker;
+no save/Pokemon structure sizes or offsets are changed. The setting value must
+be saved in-game and does not travel with save states reliably across ROM builds.
+
+The build-time defaults remain in `engine/include/config/shattered.h` for
+older saves, builds and policy tests. At runtime, the Options page overrides
+those values in ordinary gameplay; unsupported link/recorded-battle mechanics
+continue using native rules.
 
 | Setting | Behavior |
 | --- | --- |
@@ -25,16 +50,18 @@ Eggs do not raise the adaptive level floor; generated levels cap at 100.
 Finite PP displays current/max PP again, including replay/link contexts that
 never receive unlimited PP. Expanded pages do not implement per-move PP storage,
 so they cannot safely coexist with finite PP. Enemy trainers still use four
-active moves; expanded enemy selection is unfinished.
+active moves; expanded enemy selection is unfinished. The in-game Move Mode
+only changes locally controlled player battlers.
 
 The 4x EXP default approximates one-quarter battle grinding while keeping
 existing saved experience valid. It does not literally quarter all growth
-tables. No runtime configuration or additional save fields are introduced.
+tables. Runtime configuration now uses an existing unused saved event variable; no new save fields or layouts are introduced.
 
 Profile policy tests compile and execute the generated C level and PP/library
 guards for Normal/Hard/Extreme, scaling on/off and supported PP/page combinations.
 The full GBA build and emulator release gate exercise the default profile.
-Full alternate-profile ROM/playthrough verification remains.
+Full alternate-profile ROM/playthrough verification remains. On-device runtime
+Options menu acceptance and actual Delta save round-trip verification remain.
 
 ## Additional story battles
 

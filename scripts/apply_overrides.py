@@ -480,8 +480,8 @@ def modify_history_save_tail(contents: str) -> str:
 
 def modify_automatic_learning(contents: str) -> str:
     """Retain saved slots; automatic learnset attacks already exist in the library."""
-    contents = replace_once(contents, '#include "pokemon.h"\n',
-                            '#include "pokemon.h"\n#include "shattered_battle.h"\n')
+    contents = replace_once(contents, '#include "shattered_history.h"\n',
+                            '#include "shattered_history.h"\n#include "shattered_battle.h"\n')
     contents = replace_once(contents,
         "enum Move MonTryLearningNewMoveAtLevel(struct Pokemon *mon, bool32 firstMove, u32 level)\n{",
         """static u16 ShatteredLearnAutomaticMove(struct Pokemon *mon, enum Move move)

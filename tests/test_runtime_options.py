@@ -114,7 +114,7 @@ int main(void)
         self.assertIn("sShatteredRulesPage ? sShatteredRuleNames", menu)
         self.assertIn("ShatteredRuntimeExpMultiplier()", menu)
         self.assertIn("ShatteredRuntimeFreeSupplies()", menu)
-        for file in ("src/trainer_util.c", "src/battle_ai_main.c", "src/battle_util.c",
+        for file in ("src/pokemon.c", "src/trainer_util.c", "src/battle_ai_main.c", "src/battle_util.c",
                      "src/battle_controller_player.c", "src/battle_script_commands.c",
                      "src/money.c", "src/item.c", "src/item_menu.c"):
             self.assertIn(f'"{file}"', patcher)

@@ -1524,9 +1524,9 @@ def apply(engine: Path) -> None:
     for relative_path in runtime_sources:
         path = engine / relative_path
         content = updates[path]
-        runtime_include = '#include "shattered_runtime.h"\\n'
+        runtime_include = '#include "shattered_runtime.h"\n'
         if runtime_include not in content:
-            anchor = '#include "global.h"\\n'
+            anchor = '#include "global.h"\n'
             if content.count(anchor) != 1:
                 raise ValueError(f"Runtime source has unexpected include anchor: {relative_path}")
             content = content.replace(anchor, anchor + runtime_include, 1)

@@ -1,6 +1,6 @@
 # Shattered Realms gameplay settings
 
-**In-game (Build #74+ candidate):** Open START -> OPTION, then press **SELECT**
+**In-game (new runtime-options builds):** Open START -> OPTION, then press **SELECT**
 to switch to the **SHATTERED RULES** page. Use Up/Down to choose an item
 and Left/Right to change it; press SELECT again to return to standard options.
 B or CANCEL exits. Changes affect subsequent battles and field actions.
